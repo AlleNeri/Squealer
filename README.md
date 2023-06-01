@@ -1,11 +1,11 @@
 # Squealer
 Progetto di tecnologie web A.A. 2023
-## Docker
-I tecnici di laboratorio hanno consigliato di utilizzare i Dockerfile contenuti in `Docker` in quanto sarebbero quelli utilizzati per lo spazio web delle macchine di laboratorio.
 ## Da fare
 - dare un occhiata più nello specifico ai Dockerfile(quello di mongo pretende di runnare un suo script).
 - aggiungere i volumi ai container nel Makefile.
 - tutto il resto.
+## Docker
+I tecnici di laboratorio hanno consigliato di utilizzare i Dockerfile contenuti in `Docker` in quanto sarebbero quelli utilizzati per lo spazio web delle macchine di laboratorio.
 ## Makefile
 ### Ragioni
 Usare il più possibile il Makefile come un layer di astrazione per non doversi interfacciare direttamente com Docker. Vantaggi: astrazione, incapsulamento, etc...
@@ -25,5 +25,8 @@ Il Makefile contiene alcune entry utili per buildare le immagini docker, per run
 - `start-node-bg`: avvia il container di mongo in background.
 - `stop-node`: stoppa il container di node.
 - `remove-node`: rimuove il container di node.
+- `clear`/`clean`: rimozione del file di log `docker.log`.
+### Logs
+Le entry che generano un output molto lungo e spesso poco utile lo avranno redirezionato su un file `docker.log`. Se necessaria una maggiore comprensione del comando fare riferimento al file.
 ### Problemi frequenti
 PS: sulla mia macchina docker pretende di essere lanciato come amministratore di sistema; nel caso le entry del Makefile falliranno. Per risolvere lanciare direttamente `make ...` come root, quindi `sudo make ...`.

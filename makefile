@@ -19,12 +19,26 @@ STARTING-CONTAINER = docker run -p 80:80
 STOPPING-CONTAINER = docker stop
 
 # removing a container
-REMOVING-CONTAINER = docker stop
+REMOVING-CONTAINER = docker rm
+
+# docker log
+LOG-FILE =  docker.log
+LOG = >> $(LOG-FILE)
+PRINT-LOG-END = tail -n2 $(LOG-FILE)
+
+# phony target
+.PHONY: clean
+clean: clear
 
 # creating the docker images
 create-images: $(MONGO-DIR)/Dockerfile $(NODE-DIR)/Dockerfile
-	$(IMAGE-CREATE) $(MONGO-DOCKER-IMG) $(MONGO-DIR)
-	$(IMAGE-CREATE) $(NODE-DOCKER-IMG) $(NODE-DIR)
+	$(info See $(LOG-FILE) for more info)
+	echo "$(IMAGE-CREATE) $(MONGO-DOCKER-IMG) $(MONGO-DIR):\n" $(LOG)
+	$(IMAGE-CREATE) $(MONGO-DOCKER-IMG) $(MONGO-DIR) $(LOG)
+	$(PRINT-LOG-END)
+	echo "$(IMAGE-CREATE) $(NODE-DOCKER-IMG) $(NODE-DIR):\n" $(LOG)
+	$(IMAGE-CREATE) $(NODE-DOCKER-IMG) $(NODE-DIR) $(LOG)
+	$(PRINT-LOG-END)
 
 # running mongo
 start-mongo:
@@ -57,3 +71,7 @@ stop-node:
 # removing node
 remove-node: stop-node
 	$(REMOVING-CONTAINER) $(NODE-DOCKER-NAME)
+
+# clear all
+clear:
+	rm -f $(LOG-FILE)
