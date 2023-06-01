@@ -15,7 +15,7 @@ Lanciare `make start-mongo` per lanciare il container mongo; analogo per node.
 Lanciare `make start-mongo-bg` per lanciare mongo il background il container mongo; analogo per node.
 Lanciare `make remove-mongo` per stoppare e rimuover il container.
 ### Specifiche
-Il Makefile contiene alcune entry utili per buildare le immagini docker, per runnarle e stopparle([vedere sezione su Docker](#-Docker)):
+Il Makefile contiene alcune entry utili per buildare le immagini docker, per runnarle e stopparle([vedere sezione su Docker](#docker)):
 - `create-images`: crea le immagini a partire dai Dockerfile nelle cartelle specifiche.
 - `start-mongo`: avvia il container di mongo.
 - `start-mongo-bg`: avvia il container di mongo in background.
