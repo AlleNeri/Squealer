@@ -12,17 +12,14 @@ Usare il più possibile il Makefile come un layer di astrazione per non doversi 
 ### Quik start
 Lanciare alla prima clone e ad ogni aggiornamento dei Dockerfile `make create-images`.
 Lanciare `make start-mongo` per lanciare il container mongo; analogo per node.
-Lanciare `make start-mongo-bg` per lanciare mongo il background il container mongo; analogo per node.
 Lanciare `make remove-mongo` per stoppare e rimuover il container.
 ### Specifiche
 Il Makefile contiene alcune entry utili per buildare le immagini docker, per runnarle e stopparle([vedere sezione su Docker](#docker)):
 - `create-images`: crea le immagini a partire dai Dockerfile nelle cartelle specifiche.
 - `start-mongo`: avvia il container di mongo.
-- `start-mongo-bg`: avvia il container di mongo in background.
 - `stop-mongo`: stoppa il container di mongo.
 - `remove-mongo`: rimuove il container di mongo.
 - `start-node`: avvia il container di mongo.
-- `start-node-bg`: avvia il container di mongo in background.
 - `stop-node`: stoppa il container di node.
 - `remove-node`: rimuove il container di node.
 - `clear`/`clean`: rimozione del file di log `docker.log`.
