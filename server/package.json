@@ -10,7 +10,7 @@
     "prestart": "npm run build",
     "start": "node dist/index.js",
     "predev": "npm run free",
-    "dev": "concurrently \"npx tsc --watch\" \"nodemon ./dist/index.js\""
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon ./dist/\""
   },
   "author": "AlleNeri SaadMedhat",
   "license": "ISC",
