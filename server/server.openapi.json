@@ -1,0 +1,44 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"description": "Squealer the social network",
+		"version": "preAlpha",
+		"title": "API Squealer"
+	},
+
+	"definitions": {
+		"User": {
+			"type": "object",
+			"required": [ "id", "name", "category" ],
+			"properties": {
+				"id": { "type": "integer" },
+				"name": { "type": "string" },
+				"category": {
+					"type": "string",
+					"enum": [ "user", "vip", "manager", "moderator" ]
+				},
+				"follows": {
+					"type": "array",
+					"items": { "type": "integer" }
+				}
+			}
+		},
+		"Post": {
+			"type": "object",
+			"required": [ "id", "user" ],
+			"properties": {
+				"id": { "type": "integer" },
+				"user": { "type": "integer" },
+				"text": { "type": "string" }
+			}
+		},
+		"Canale": {
+			"type": "object",
+			"required": [ "id", "name" ],
+			"properties": {
+				"id": { "type": "integer" },
+				"name": { "type": "string" }
+			}
+		}
+	}
+}
