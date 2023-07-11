@@ -3,7 +3,7 @@ FROM buildpack-deps:buster
 RUN groupadd --gid 1000 node \
   && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
 
-ENV NODE_VERSION 20.2.0
+ENV NODE_VERSION 20.0.0
 
 RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
   && case "${dpkgArch##*-}" in \
@@ -66,4 +66,4 @@ RUN set -ex \
 COPY docker-entrypoint.sh /usr/local/bin/
 ENTRYPOINT ["docker-entrypoint.sh"]
 
-CMD [ "node" ]
+CMD [ "node index.js" ]
