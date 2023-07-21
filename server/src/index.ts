@@ -1,7 +1,11 @@
+import dotenv from "dotenv";
 import express, { Express, Request, Response } from "express";
 
-import { PORT } from "./env/general.js";
 import { router } from "./view/routers.js";
+
+dotenv.config({path: __dirname + "/../config.env"});
+
+const PORT: number = Number(process.env.PORT) || 8080;
 
 const app: Express = express();
 
