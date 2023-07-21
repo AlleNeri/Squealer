@@ -1,15 +1,18 @@
 /**
  * Generating RSA keys for JWT authentication.
  */
-import dotenv from "dotenv";
 import crypto from 'crypto';
 import fs from 'fs';
 
-dotenv.config({path: __dirname + "/../config.env"});
+import "./env";
 
 //get the key location from the config.env file
-const keyLocation : fs.PathLike | string | undefined = process.env.RSA_KEYS_LOCATION;
+const keyLocation : fs.PathLike | string | undefined = process.env.RSA_KEYS_LOCATION,
+	pubKey : string | undefined = process.env.PUB_KEY_NAME,
+	privKey : string | undefined = process.env.PRIV_KEY_NAME;
 if(keyLocation === undefined) throw new Error("RSA_KEYS_LOCATION is not defined in the config.env file.");
+if(pubKey === undefined) throw new Error("PUB_KEY_NAME is not defined in the config.env file.");
+if(privKey === undefined) throw new Error("PRIV_KEY_NAME is not defined in the config.env file.");
 
 //check if the key location exists, if not create it
 if(!fs.existsSync(keyLocation)) fs.mkdirSync(keyLocation);
@@ -27,8 +30,8 @@ function createKey(): void {
 			format: 'pem',
 		}
 	});
-	fs.writeFileSync(keyLocation + '/rsa-pub.pem', keyPairs.publicKey);
-	fs.writeFileSync(keyLocation + '/rsa-priv.pem', keyPairs.privateKey);
+	fs.writeFileSync(keyLocation + '/' + pubKey, keyPairs.publicKey);
+	fs.writeFileSync(keyLocation + '/' + privKey, keyPairs.privateKey);
 }
 
 createKey();
