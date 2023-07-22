@@ -18,7 +18,7 @@ interface Options {
 
 const options: Options = {
 	jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-	secretOrKey: fs.readFileSync(keyLocation + '/' + pubKey, 'utf8'),
+	secretOrKey: fs.readFileSync(`${keyLocation}/${pubKey}`, 'utf8'),
 	algorithms: ['RS256'],
 };
 

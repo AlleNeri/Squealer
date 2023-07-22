@@ -30,8 +30,8 @@ function createKey(): void {
 			format: 'pem',
 		}
 	});
-	fs.writeFileSync(keyLocation + '/' + pubKey, keyPairs.publicKey);
-	fs.writeFileSync(keyLocation + '/' + privKey, keyPairs.privateKey);
+	fs.writeFileSync(`${keyLocation}/${pubKey}`, keyPairs.publicKey);
+	fs.writeFileSync(`${keyLocation}/${privKey}`, keyPairs.privateKey);
 }
 
 createKey();
