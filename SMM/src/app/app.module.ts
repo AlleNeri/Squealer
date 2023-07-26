@@ -11,6 +11,7 @@ import { RegisterComponent } from './components/register/register.component';
 import { HomeComponent } from './components/home/home.component';
 
 import { MatTabsModule } from '@angular/material/tabs';
+import { NotLoggedComponent } from './components/not-logged/not-logged.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { MatTabsModule } from '@angular/material/tabs';
     LoginComponent,
     RegisterComponent,
     HomeComponent,
+    NotLoggedComponent,
   ],
   imports: [
     BrowserModule,
