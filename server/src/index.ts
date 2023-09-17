@@ -1,12 +1,16 @@
 /*** Imports ***/
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
+import mongoose from "mongoose";
 
 import { router } from "./view/routers.js";
 import "./env";
 
 /*** Configs ***/
 const PORT: number = Number(process.env.PORT) || 8080;
+
+/*** Mongoose initialization ***/
+mongoose.connect(`mongodb://${process.env.DBHOST}:${process.env.DBPORT}/${process.env.DBNAME}` || "");
 
 /*** Express initialization ***/
 const app: Express = express();

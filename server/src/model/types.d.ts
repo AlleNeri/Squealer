@@ -1,12 +1,7 @@
-import { HashSalt } from '../controller/pwdUtils';
-
-interface AuthUser {
-	username: string;
-	hashSalt: HashSalt;
-};
+import mongoose from 'mongoose';
 
 interface User extends AuthUser {
 	_id: string;
 };
 
-export { AuthUser, User };
+export { ICredentials, User };
