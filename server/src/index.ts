@@ -10,7 +10,9 @@ import "./env";
 const PORT: number = Number(process.env.PORT) || 8080;
 
 /*** Mongoose initialization ***/
-mongoose.connect(`mongodb://${process.env.DBHOST}:${process.env.DBPORT}/${process.env.DBNAME}` || "");
+mongoose.connect(`mongodb://${process.env.DBHOST}:${process.env.DBPORT}/${process.env.DBNAME}`)
+	.then(()=>console.log(`Connected to database: ${process.env.DBNAME}`))
+	.catch(err=>console.log(`Error connecting to database: ${err}`));
 
 /*** Express initialization ***/
 const app: Express = express();
