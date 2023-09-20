@@ -3,7 +3,8 @@ import express, { Express, Request, Response } from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 
-import { router } from "./view/routers.js";
+import { router } from "./view/routers";
+import { postRoute } from "./view/post";
 import "./env";
 
 /*** Configs ***/
@@ -23,8 +24,9 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 app.use("/router", router);
+app.use("/post", postRoute);
 
-app.get('/', (req: Request, res: Response)=>{
+app.get('/', (_: Request, res: Response)=>{
 	console.log(`\tRequest detected: /`);
 	res.send(`The server seams to run correctly.`);
 });
