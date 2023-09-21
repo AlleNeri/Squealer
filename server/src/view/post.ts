@@ -6,7 +6,9 @@ export const postRoute: Router=Router();
 
 //get all posts
 postRoute.get("/", (_: Request, res: Response) => {
-	Post.find().then(posts=> res.status(200).json(posts));
+	Post.find()
+		.then(posts=> res.status(200).json(posts))
+		.catch(err => res.status(400).json(err));
 });
 
 //get a specific post
