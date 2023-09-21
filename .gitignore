@@ -1,0 +1,7 @@
+# server
+server/node_modules
+
+# SMM
+SMM/node_modules
+SMM/dist
+SMM/.angular

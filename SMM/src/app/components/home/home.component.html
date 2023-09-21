@@ -1,0 +1,11 @@
+
+<div *ngIf="this.auth.isLoggedIn(); then thenBlock else elseBlock"></div>
+<ng-template #thenBlock>
+  <p>Logged in</p>
+</ng-template>
+<ng-template #elseBlock>
+  <!--- <p>Not logged in</p> --->
+  <app-home-header></app-home-header>
+  <app-not-logged></app-not-logged>
+  <app-home-footer></app-home-footer>
+</ng-template>
