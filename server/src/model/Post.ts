@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import {type} from 'os';
 
 const PostSchema: mongoose.Schema=new mongoose.Schema({
 	title: {type: String, required: true},
@@ -21,3 +22,5 @@ const PostSchema: mongoose.Schema=new mongoose.Schema({
 if(!process.env.DBCOLLECTION_POST) throw new Error("DBCOLLECTION_POST is not defined in the config.env file.");
 
 export default mongoose.model(process.env.DBCOLLECTION_POST, PostSchema);
+
+export type Post=mongoose.InferSchemaType<typeof PostSchema>;

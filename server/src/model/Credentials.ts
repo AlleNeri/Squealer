@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import { HashSalt } from '../controller/pwdUtils';
 import '../env';
 
-const CredentialSchema: mongoose.Schema=new mongoose.Schema({
+const CredentialsSchema: mongoose.Schema=new mongoose.Schema({
 	user_id: {
 		type: mongoose.Types.ObjectId,
 		ref: process.env.DBCOLLECTION_USER,
@@ -20,7 +20,7 @@ const CredentialSchema: mongoose.Schema=new mongoose.Schema({
 	},
 });
 
-CredentialSchema.virtual("hashSalt").get(function(): HashSalt {
+CredentialsSchema.virtual("hashSalt").get(function(): HashSalt {
 	return {
 		hash: this.hash,
 		salt: this.salt,
@@ -29,4 +29,6 @@ CredentialSchema.virtual("hashSalt").get(function(): HashSalt {
 
 if(!process.env.DBCOLLECTION_CREDENTIALS) throw new Error("DBCOLLECTION_CREDENTIALS is not defined in the config.env file.");
 
-export default mongoose.model(process.env.DBCOLLECTION_CREDENTIALS, CredentialSchema);
+export default mongoose.model(process.env.DBCOLLECTION_CREDENTIALS, CredentialsSchema);
+
+export type Credentials=mongoose.InferSchemaType<typeof CredentialsSchema>;

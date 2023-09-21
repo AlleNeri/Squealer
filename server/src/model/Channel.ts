@@ -11,3 +11,5 @@ const ChannelSchema: mongoose.Schema=new mongoose.Schema({
 if(!process.env.DBCOLLECTION_CHANNEL) throw new Error("DBCOLLECTION_CHANNEL is not defined in the config.env file.");
 
 export default mongoose.model(process.env.DBCOLLECTION_CHANNEL, ChannelSchema);
+
+export type Channel=mongoose.InferSchemaType<typeof ChannelSchema>;

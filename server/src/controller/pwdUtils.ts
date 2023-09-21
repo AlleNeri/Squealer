@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import jsonwebtoken from 'jsonwebtoken';
 
 import "../env";
-import { User } from '../model/types.d';
+import { User } from '../model/User';
 
 interface IHashSalt {
 	salt: string;
@@ -28,7 +28,8 @@ function issueJwt(user: User): object {
 	if(keyLocation === undefined) throw new Error("RSA_KEYS_LOCATION is not defined in the config.env file.");
 	if(privKey === undefined) throw new Error("PRIV_KEY_NAME is not defined in the config.env file.");
 	const PRIV_KEY=fs.readFileSync(`${keyLocation}/${privKey}`, 'utf8');
-	
+	//TODO: if we have time we should find a way to read the file only once and store it in a variable(read the file is a very expensive operation)
+
 	const signedToken: string=jsonwebtoken.sign(payload, PRIV_KEY, { expiresIn: expiresIn, algorithm: 'RS256' });
 
 	return {

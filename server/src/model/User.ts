@@ -19,3 +19,5 @@ const UserSchema: mongoose.Schema=new mongoose.Schema({
 if(!process.env.DBCOLLECTION_USER) throw new Error("DBCOLLECTION_USER is not defined in the config.env file.");
 
 export default mongoose.model(process.env.DBCOLLECTION_USER, UserSchema);
+
+export type User=mongoose.InferSchemaType<typeof UserSchema>;
