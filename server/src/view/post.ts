@@ -4,9 +4,9 @@ import PostSchema, { Post } from "../model/Post";
 
 export const postRoute: Router=Router();
 
-//get all posts
-postRoute.get("/", (_: Request, res: Response) => {
-	PostSchema.find()
+//get all posts or filter by query params
+postRoute.get("/", (req: Request, res: Response) => {
+	PostSchema.find(req.query)
 		.then((posts: Post[]) => res.status(200).json(posts))
 		.catch((err: Error) => res.status(400).json(err));
 });
@@ -20,8 +20,6 @@ postRoute.get("/:id", (req: Request, res: Response) => {
 
 //create a post
 postRoute.post("/", (req: Request, res: Response) => {
-	if(!req.body.title || !req.body.content)
-		return res.status(400).json({ msg: "Please send all required fields" });
 	const newPost: Post=new PostSchema(req.body.post);
 	newPost.save()
 		.then((post: Post) => res.status(200).json(post))

@@ -1,14 +1,17 @@
 import mongoose from 'mongoose';
-import {type} from 'os';
+
+import "../env";
 
 const PostSchema: mongoose.Schema=new mongoose.Schema({
 	title: {type: String, required: true},
 	content: {
 		required: true,
-		text: String,
-		img: String,
-		video: String,
-		position: String,
+		type: {
+			text: String,
+			img: String,
+			video: String,
+			position: String,
+		}
 	},
 	keywords: [String],
 	date: {type: Date, default: Date.now, required: true, immutable: true},

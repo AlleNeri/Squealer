@@ -4,9 +4,9 @@ import ChannelSchema, { Channel } from "../model/Channel";
 
 export const channelRouter: Router=Router();
 
-//get all channels
-channelRouter.get("/", async (_: Request, res: Response) => {
-	ChannelSchema.find()
+//get all channels or filter by query params
+channelRouter.get("/", async (req: Request, res: Response) => {
+	ChannelSchema.find(req.query)
 		.then((channels: Channel[]) => res.status(200).json(channels))
 		.catch((err: Error) => res.status(400).json({ msg: "Channel not found", err: err }));
 });
@@ -20,8 +20,6 @@ channelRouter.get("/:id", async (req: Request, res: Response) => {
 
 //create a channel
 channelRouter.post("/", async (req: Request, res: Response) => {
-	if(!req.body.name)
-		return res.status(400).json({ msg: "Please send all required fields" });
 	const newChannel: Channel=new ChannelSchema(req.body.channel);
 	newChannel.save()
 		.then((channel: Channel) => res.status(200).json(channel))
