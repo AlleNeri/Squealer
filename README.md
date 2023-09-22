@@ -5,6 +5,8 @@ Progetto di tecnologie web A.A. 2023
 - [ ] Sviluppare un back-end.
     - [X] Creare gli schemi dei dati.
     - [ ] Creare le route.
+        - [X] Abbozzarle.
+        - [ ] Renderle utili: aggiungere quelle utili, rimuovere quelle inutili.
     - [ ] Implementare autenticazione.
 - [ ] Sviluppare i front-end.
     - [ ] Sviluppare il social.
