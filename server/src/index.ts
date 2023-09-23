@@ -2,9 +2,17 @@
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
 import mongoose from "mongoose";
+import passport from "passport";
+import session from "express-session";
 
 import { router } from "./view/routers";
 import { postRoute } from "./view/post";
+import { userRoute } from "./view/user";
+import { channelRoute } from "./view/channel";
+import { strategy, userSerializer, userDeserializer } from "./controller/passport-strategy";
+import { checkLogin } from "./controller/userLogin";
+import { PRIV_KEY } from "./controller/pwdUtils";
+
 import "./env";
 
 /*** Configs ***/
@@ -15,6 +23,11 @@ mongoose.connect(`mongodb://${process.env.DBHOST}:${process.env.DBPORT}/${proces
 	.then(()=>console.log(`Connected to database: ${process.env.DBNAME}`))
 	.catch(err=>console.log(`Error connecting to database: ${err}`));
 
+/*** Passport initialization ***/
+passport.use("login", strategy);
+passport.serializeUser(userSerializer);
+passport.deserializeUser(userDeserializer);
+
 /*** Express initialization ***/
 const app: Express = express();
 
@@ -22,9 +35,19 @@ const app: Express = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(session({
+	secret: PRIV_KEY,
+	resave: false,
+	saveUninitialized: false,
+}));
 
-app.use("/router", router);
+//TODO: add checkLogin to all protected routes
+app.use("/router", checkLogin, router);	// This is for testing purposes only. TODO: Remove this line.
 app.use("/post", postRoute);
+app.use("/user", userRoute);
+app.use("/channel", channelRoute);
 
 app.get('/', (_: Request, res: Response)=>{
 	console.log(`\tRequest detected: /`);

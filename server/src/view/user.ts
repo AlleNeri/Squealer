@@ -1,8 +1,9 @@
 import { Router, Request, Response } from 'express';
+import passport from 'passport';
 
 import UserSchema, { User } from '../model/User';
 
-import { registerRouter } from './authentication';
+import { registerRouter, loginRouter } from './authentication';
 
 export const userRoute: Router=Router();
 
@@ -21,7 +22,8 @@ userRoute.get('/:id', (req: Request, res: Response) => {
 });
 
 //update a user
-userRoute.put('/:id', (req: Request, res: Response) => {
+//TODO: understude if passport.authenticate("jwt", { session: false }) is correct
+userRoute.put('/:id', passport.authenticate("jwt", { session: false }), (req: Request, res: Response) => {
 	const result: User=UserSchema.findByIdAndUpdate(req.params.id, req.body.user);
 	if(!result) res.status(404).json({ msg: 'User not found' });
 	else res.status(200).json({ msg: 'User updated' });
@@ -36,3 +38,6 @@ userRoute.delete('/:id', (req: Request, res: Response) => {
 
 //register a user
 userRoute.use('/register', registerRouter);
+
+//login a user
+userRoute.use('/login', loginRouter);

@@ -1,13 +1,15 @@
 import mongoose from 'mongoose';
 
-import "..env";
+import "../env";
 
 const UserSchema: mongoose.Schema=new mongoose.Schema({
 	u_name: {type: String, required: true},
 	name: {
 		required: true,
-		first: String,
-		last: String,
+		type: {
+			first: String,
+			last: String,
+		}
 	},
 	email: {type: String, required: true},
 	type: {type: String, required: true, enum: ['vip', 'mod', 'normal', 'smm'], default: 'normal'},
