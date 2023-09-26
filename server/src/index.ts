@@ -6,6 +6,8 @@ import passport from "passport";
 import session from "express-session";
 import MongoStore from "connect-mongo";
 
+import "./env"; //do not move this line and be careful to not import anything or write any code before this line
+
 import { router } from "./view/routers";
 import { postRoute } from "./view/post";
 import { userRoute } from "./view/user";
@@ -13,8 +15,6 @@ import { channelRoute } from "./view/channel";
 import { strategy, userSerializer, userDeserializer } from "./controller/passport-strategy";
 import { checkLogin } from "./controller/userLogin";
 import { PRIV_KEY } from "./controller/pwdUtils";
-
-import "./env";
 
 /*** Configs ***/
 const PORT: number = Number(process.env.PORT) || 8080;
@@ -45,16 +45,16 @@ const app: Express = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-app.use(passport.initialize());
-app.use(passport.session());
 app.use(session({
 	secret: PRIV_KEY,
 	resave: false,
 	saveUninitialized: false,
 }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 //TODO: add checkLogin to all protected routes
-app.use("/router", checkLogin, router);	// This is for testing purposes only. TODO: Remove this line.
+app.use("/router", router);	// This is for testing purposes only. TODO: Remove this line.
 app.use("/post", postRoute);
 app.use("/user", userRoute);
 app.use("/channel", channelRoute);
