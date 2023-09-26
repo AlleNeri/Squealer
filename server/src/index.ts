@@ -4,6 +4,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import passport from "passport";
 import session from "express-session";
+import MongoStore from "connect-mongo";
 
 import { router } from "./view/routers";
 import { postRoute } from "./view/post";
@@ -17,6 +18,15 @@ import "./env";
 
 /*** Configs ***/
 const PORT: number = Number(process.env.PORT) || 8080;
+
+/*** MongoStore initialization ***/
+const MongoStoreFactory = MongoStore.create({
+	mongoUrl: `mongodb://${process.env.DBHOST}:${process.env.DBPORT}`,
+	dbName: process.env.DBNAME,
+	collectionName: process.env.DBCOLLECTION_SESSION,
+	ttl: 60*60*24,	// 1 day
+	touchAfter: 60*30,	// 30 minutes
+});
 
 /*** Mongoose initialization ***/
 mongoose.connect(`mongodb://${process.env.DBHOST}:${process.env.DBPORT}/${process.env.DBNAME}`)

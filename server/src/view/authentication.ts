@@ -29,6 +29,9 @@ registerRouter.post("/", (req: Request, res: Response) => {
 					.then((_: Credentials)=> {
 						//get JWT token and send it to the user
 						const token: object=issueJwt(user);
+						req.login(user, (err: Error)=> {
+							if(err) res.status(500).json({ success: false, msg: "Error creating user.", err: err });
+						});
 						res.status(201).json({ success: true, msg: "Successful created new user.", user: user, token: token })
 					})
 					.catch((err: Error)=> { throw err; });

@@ -5,6 +5,7 @@ const ChannelSchema: mongoose.Schema=new mongoose.Schema({
 	description: String,
 	img: String,
 	importance: Number,
+	private: {type: Boolean, default: false},	//the private channels works like individual chats and groups in whatsapp. They aren't subject to the roles of popularity and controversiality
 	owners: [{type: mongoose.Schema.Types.ObjectId, ref: process.env.DBCOLLECTION_USER}],
 });
 
