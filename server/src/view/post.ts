@@ -2,13 +2,12 @@ import { Router, Request, Response } from "express";
 
 import PostSchema, { Post } from "../model/Post";
 
-if(process.env.CM_COEFFICIENT === undefined) throw new Error("CM_COEFFICIENT not set in config.env file");
-
 export const postRoute: Router=Router();
 
 //get all my posts
 //TODO: test this
 //TODO: find out if the passport middleware helps and put the id in the req
+//		otherwise, ask for the id in the body
 postRoute.get("/my", (req: Request, res: Response) => {
 	PostSchema.find({ author: req.body.user._id })
 		.then((posts: Post[]) => res.status(200).json(posts))
