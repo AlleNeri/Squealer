@@ -14,6 +14,28 @@ postRoute.get("/my", (req: Request, res: Response) => {
 		.catch((err: Error) => res.status(400).json(err));
 });
 
+//get all posts of a channel
+//the channel has to be specified in the query: http ... /post?channel={channelId}
+postRoute.get("", (req: Request, res: Response) => {
+	const { channel }=req.query;
+	PostSchema.find({
+		$or: [
+			{ posted_on: channel },
+			{ appartains_to: channel }
+		]
+	})
+		.then((posts: Post[]) => res.status(200).json(posts))
+		.catch((err: Error) => res.status(400).json({err: err, channel: channel}));
+});
+
+//get all posts
+//only for testing	TODO: remove this
+postRoute.get("", (req: Request, res: Response) => {
+	PostSchema.find()
+		.then((posts: Post[]) => res.status(200).json(posts))
+		.catch((err: Error) => res.status(400).json(err));
+});
+
 //get a specific post
 postRoute.get("/:id", (req: Request, res: Response) => {
 	PostSchema.findById(req.params.id)
@@ -31,10 +53,10 @@ postRoute.post("/", (req: Request, res: Response) => {
 
 //update a post
 postRoute.put("/:id", (req: Request, res: Response) => {
-	PostSchema.findByIdAndUpdate(req.params.id, req.body.post)
+	PostSchema.findByIdAndUpdate(req.params.id, req.body.post, { new: true })
 		.then((post: Post | null) => {
 			if(!post) res.status(404).json({ msg: "Post not found" });
-			else res.status(200).json({ msg: "Post updated" });
+			else res.status(200).json({ msg: "Post updated", post: post });
 		})
 		.catch((err: Error) => res.status(500).json({ msg: "Error updating post", err: err }));
 });
@@ -59,7 +81,7 @@ postRoute.patch("/:id/visualize", (req: Request, res: Response) => {
 				post.addView();
 				const result=post.save();
 				if(!result) res.status(404).json({ msg: "Post not saved" });
-				else res.status(200).json({ msg: "Post updated" });
+				else res.status(200).json({ msg: "Post updated", post: post });
 			}
 		})
 		.catch((err: Error) => {
@@ -78,7 +100,7 @@ postRoute.patch("/:id/react", (req: Request, res: Response) => {
 			else {
 				const result=post.save();
 				if(!result) res.status(404).json({ msg: "Post not saved" });
-				else res.status(200).json({ msg: "Post updated" });
+				else res.status(200).json({ msg: "Post updated", pwhereost: post });
 			}
 		})
 		.catch((err: Error) => res.status(500).json({ msg: "Error updating post", err: err }));
