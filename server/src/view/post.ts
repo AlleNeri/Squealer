@@ -14,23 +14,9 @@ postRoute.get("/my", (req: Request, res: Response) => {
 		.catch((err: Error) => res.status(400).json(err));
 });
 
-//get all posts of a channel
-//the channel has to be specified in the query: http ... /post?channel={channelId}
-postRoute.get("", (req: Request, res: Response) => {
-	const { channel }=req.query;
-	PostSchema.find({
-		$or: [
-			{ posted_on: channel },
-			{ appartains_to: channel }
-		]
-	})
-		.then((posts: Post[]) => res.status(200).json(posts))
-		.catch((err: Error) => res.status(400).json({err: err, channel: channel}));
-});
-
 //get all posts
 //only for testing	TODO: remove this
-postRoute.get("", (req: Request, res: Response) => {
+postRoute.get("", (_: Request, res: Response) => {
 	PostSchema.find()
 		.then((posts: Post[]) => res.status(200).json(posts))
 		.catch((err: Error) => res.status(400).json(err));
@@ -73,6 +59,7 @@ postRoute.delete("/:id", (req: Request, res: Response) => {
 
 //visualize a post
 //automatically add a view to a post
+//TODO: decide if the view should be added only from logged users or not(maybe check in the teacher's requirements)
 postRoute.patch("/:id/visualize", (req: Request, res: Response) => {
 	PostSchema.findById(req.params.id)
 		.then((post: Post | null) => {

@@ -3,8 +3,7 @@ import mongoose from 'mongoose';
 import ChannelSchema, { Channel } from "../model/Channel";
 
 let CM_COEFFICIENT: any | undefined=process.env.CM_COEFFICIENT;
-const CONTROVERSIAL_CHANNEL: string | undefined=process.env.CONTROVERSIAL_CHANNEL;
-const POPULAR_CHANNEL: string | undefined=process.env.POPULAR_CHANNEL;
+const {CONTROVERSIAL_CHANNEL, POPULAR_CHANNEL}=process.env;
 
 if(CM_COEFFICIENT === undefined) throw new Error("CM_COEFFICIENT is not defined in the config.env file.");
 if(CONTROVERSIAL_CHANNEL === undefined) throw new Error("CONTROVERSIAL_CHANNEL is not defined in the config.env file.");

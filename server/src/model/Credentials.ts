@@ -1,7 +1,8 @@
 import mongoose from 'mongoose';
 
-import { HashSalt } from '../controller/pwdUtils';
-import '../env';
+import { HashSalt } from '../controller/Auth';
+
+if(!process.env.DBCOLLECTION_CREDENTIALS) throw new Error("DBCOLLECTION_CREDENTIALS is not defined in the config.env file.");
 
 const CredentialsSchema: mongoose.Schema=new mongoose.Schema({
 	user_id: {
@@ -9,6 +10,7 @@ const CredentialsSchema: mongoose.Schema=new mongoose.Schema({
 		ref: process.env.DBCOLLECTION_USER,
 		immutable: true,
 		required: true,
+		unqiue: true,
 	},
 	hash: {
 		type: String,
@@ -27,7 +29,10 @@ CredentialsSchema.virtual("hashSalt").get(function(): HashSalt {
 	};
 });
 
-if(!process.env.DBCOLLECTION_CREDENTIALS) throw new Error("DBCOLLECTION_CREDENTIALS is not defined in the config.env file.");
+CredentialsSchema.methods.setHashSalt=function(hashSalt: HashSalt): void {
+	this.hash=hashSalt.hash;
+	this.salt=hashSalt.salt;
+};
 
 export default mongoose.model(process.env.DBCOLLECTION_CREDENTIALS, CredentialsSchema);
 

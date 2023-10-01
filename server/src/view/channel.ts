@@ -1,6 +1,8 @@
 import { Router, Request, Response } from "express";
 
 import ChannelSchema, { Channel } from "../model/Channel";
+import PostSchema, { Post } from "../model/Post";
+import Auth from "../controller/Auth";
 
 export const channelRoute: Router=Router();
 
@@ -8,10 +10,25 @@ export const channelRoute: Router=Router();
 //TODO: test this
 //TODO: find out if the passport middleware helps and put the id in the req
 //		otherwise, ask for the id in the body
-channelRoute.get("/my", (req: Request, res: Response) => {
-	ChannelSchema.find({ author: req.body.user._id })
+channelRoute.get("/my", Auth.authorize, (req: Request, res: Response) => {
+	console.log(req.user);
+	ChannelSchema.find({ author: req.user!._id })
 		.then((posts: Channel[]) => res.status(200).json(posts))
 		.catch((err: Error) => res.status(400).json(err));
+});
+
+//get all posts of a channel
+//the channel has to be specified in the query: http ... /channels/{channelId}/posts
+channelRoute.get("/:id/posts", (req: Request, res: Response) => {
+	const channel: string=req.params.id;
+	PostSchema.find({
+		$or: [
+			{ posted_on: channel },
+			{ appartains_to: channel }
+		]
+	})
+		.then((posts: Post[]) => res.status(200).json(posts))
+		.catch((err: Error) => res.status(400).json({err: err, channel: channel}));
 });
 
 //get a specific channel

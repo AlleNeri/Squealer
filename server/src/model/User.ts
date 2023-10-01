@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
 
-import "../env";
+if(!process.env.DBCOLLECTION_USER) throw new Error("DBCOLLECTION_USER is not defined in the config.env file.");
 
 const UserSchema: mongoose.Schema=new mongoose.Schema({
-	u_name: {type: String, required: true},
+	u_name: {type: String, required: true, unique: true},
 	name: {
 		required: true,
 		type: {
@@ -20,8 +20,6 @@ const UserSchema: mongoose.Schema=new mongoose.Schema({
 	appartenence: {type: mongoose.Schema.Types.ObjectId, ref: process.env.DBCOLLECTION_CHANNEL},
 	friends: [{type: mongoose.Schema.Types.ObjectId, ref: process.env.DBCOLLECTION_USER}],
 });
-
-if(!process.env.DBCOLLECTION_USER) throw new Error("DBCOLLECTION_USER is not defined in the config.env file.");
 
 export default mongoose.model(process.env.DBCOLLECTION_USER, UserSchema);
 

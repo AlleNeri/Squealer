@@ -1,5 +1,9 @@
 import mongoose from 'mongoose';
 
+const {DBCOLLECTION_CHANNEL}=process.env;
+
+if(!DBCOLLECTION_CHANNEL) throw new Error("DBCOLLECTION_CHANNEL is not defined in the config.env file.");
+
 const ChannelSchema: mongoose.Schema=new mongoose.Schema({
 	name: {type: String, required: true},
 	description: String,
@@ -27,8 +31,6 @@ ChannelSchema.methods.modifyImportance=function(importance: number): void {
 	if(this.importance==4 && (importance==2 || importance==3)) this.importance=importance;
 }
 
-if(!process.env.DBCOLLECTION_CHANNEL) throw new Error("DBCOLLECTION_CHANNEL is not defined in the config.env file.");
-
-export default mongoose.model(process.env.DBCOLLECTION_CHANNEL, ChannelSchema);
+export default mongoose.model(DBCOLLECTION_CHANNEL, ChannelSchema);
 
 export type Channel=mongoose.InferSchemaType<typeof ChannelSchema>;

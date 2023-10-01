@@ -1,18 +1,10 @@
 import { Router, Request, Response } from 'express';
-import passport from 'passport';
 
 import UserSchema, { User } from '../model/User';
 
-import { registerRouter, loginRouter } from './authentication';
+import { authenticationRoute } from './authentication';
 
 export const userRoute: Router=Router();
-
-//get all users or filter by query params
-userRoute.get('/', (req: Request, res: Response) => {
-	UserSchema.find(req.query)
-		.then((users: User[]) => res.status(200).json(users))
-		.catch(err => res.status(400).json(err));
-});
 
 //get a specific user
 userRoute.get('/:id', (req: Request, res: Response) => {
@@ -22,22 +14,24 @@ userRoute.get('/:id', (req: Request, res: Response) => {
 });
 
 //update a user
-//TODO: understude if passport.authenticate("jwt", { session: false }) is correct
-userRoute.put('/:id', passport.authenticate("jwt", { session: false }), (req: Request, res: Response) => {
-	const result: User=UserSchema.findByIdAndUpdate(req.params.id, req.body.user);
-	if(!result) res.status(404).json({ msg: 'User not found' });
-	else res.status(200).json({ msg: 'User updated' });
+userRoute.put('/:id', (req: Request, res: Response) => {
+	UserSchema.findByIdAndUpdate(req.params.id, req.body.user)
+		.then((user: User | null) => {
+			if(!user) res.status(404).json({ msg: 'User not found' });
+			else res.status(200).json({ msg: 'User updated' });
+		})
+		.catch(err=> res.status(404).json({ msg: 'User not found', err: err }));
 });
 
 //delete a user
 userRoute.delete('/:id', (req: Request, res: Response) => {
-	const result: User=UserSchema.findByIdAndDelete(req.params.id);
-	if(!result) res.status(404).json({ msg: 'User not found' });
-	else res.status(200).json({ msg: 'User deleted' });
+	UserSchema.findByIdAndDelete(req.params.id).
+		then((result: User | null) => {
+			if(!result) res.status(404).json({ msg: 'User not found' });
+			else res.status(200).json({ msg: 'User deleted' });
+		})
+		.catch(err=> res.status(404).json({ msg: 'User not found', err: err }));
 });
 
-//register a user
-userRoute.use('/register', registerRouter);
-
-//login a user
-userRoute.use('/login', loginRouter);
+//authentication routes
+userRoute.use('/', authenticationRoute);
