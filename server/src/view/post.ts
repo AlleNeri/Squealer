@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 
 import PostSchema, { Post } from "../model/Post";
+import Auth from "../controller/Auth";
 
 export const postRoute: Router=Router();
 
@@ -8,16 +9,8 @@ export const postRoute: Router=Router();
 //TODO: test this
 //TODO: find out if the passport middleware helps and put the id in the req
 //		otherwise, ask for the id in the body
-postRoute.get("/my", (req: Request, res: Response) => {
-	PostSchema.find({ author: req.body.user._id })
-		.then((posts: Post[]) => res.status(200).json(posts))
-		.catch((err: Error) => res.status(400).json(err));
-});
-
-//get all posts
-//only for testing	TODO: remove this
-postRoute.get("", (_: Request, res: Response) => {
-	PostSchema.find()
+postRoute.get("/my", Auth.authorize, (req: Request, res: Response) => {
+	PostSchema.find({ author: req.user?._id })
 		.then((posts: Post[]) => res.status(200).json(posts))
 		.catch((err: Error) => res.status(400).json(err));
 });
@@ -38,11 +31,17 @@ postRoute.post("/", (req: Request, res: Response) => {
 });
 
 //update a post
-postRoute.put("/:id", (req: Request, res: Response) => {
-	PostSchema.findByIdAndUpdate(req.params.id, req.body.post, { new: true })
+postRoute.put("/:id", Auth.authorize, (req: Request, res: Response) => {
+	PostSchema.findById(req.params.id)
 		.then((post: Post | null) => {
 			if(!post) res.status(404).json({ msg: "Post not found" });
-			else res.status(200).json({ msg: "Post updated", post: post });
+			else if(post.author!=req.user?._id) res.status(401).json({ msg: "Unauthorized" });
+			else {
+				post=Object.assign(post, req.body.post);
+				post!.save()
+					.then((post: Post) => res.status(200).json({ msg: "Post updated", post: post }))
+					.catch((err: Error) => res.status(500).json({ msg: "Error updating post", err: err }));
+			}
 		})
 		.catch((err: Error) => res.status(500).json({ msg: "Error updating post", err: err }));
 });
@@ -79,7 +78,7 @@ postRoute.patch("/:id/visualize", (req: Request, res: Response) => {
 
 //react to a post
 //a body is neaded with the reaction field: { reaction: -2 | -1 | 1 | 2 }
-postRoute.patch("/:id/react", (req: Request, res: Response) => {
+postRoute.patch("/:id/react", Auth.authorize, (req: Request, res: Response) => {
 	PostSchema.findById(req.params.id)
 		.then((post: Post | null) => {
 			if(!post) res.status(404).json({ msg: "Post not found" });

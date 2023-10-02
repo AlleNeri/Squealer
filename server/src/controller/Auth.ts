@@ -60,7 +60,7 @@ abstract class Auth {
 
 	//generate a Json Web Token
 	private static generateJwt(user: User): object {
-		const expiresIn: string='1d';
+		const expiresIn: string='7d';
 		const payload: object={
 			sub: user._id,
 			iat: Date.now(),
@@ -121,6 +121,25 @@ abstract class Auth {
 				return credentials.save()
 					.then((_: Credentials) => { return true; })
 					.catch((_: any) => { return false; });
+			})
+			.catch((_: any) => { return false; });
+	}
+
+	public static async deleteUserWithUser(user: User): Promise<boolean> {
+		return CredentialsSchema.findOneAndDelete({ user_id: user._id })
+			.then((credentials: Credentials | null) => {
+				if(!credentials) return false;
+				user.remove();
+				return true;
+			})
+			.catch((_: any) => { return false; });
+	}
+
+	public static async deleteUser(id: string): Promise<boolean> {
+		return UserSchema.findById(id)
+			.then((user: User | null) => {
+				if(!user) return false;
+				return Auth.deleteUserWithUser(user);
 			})
 			.catch((_: any) => { return false; });
 	}

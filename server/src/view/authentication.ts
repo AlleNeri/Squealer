@@ -59,3 +59,17 @@ authenticationRoute.post("/login", (req: Request, res: Response) => {
 			.catch((err: Error)=> res.status(500).json({ success: false, msg: "Error accessing user.", err: err }));
 	}
 });
+
+//delete a user
+//the request has to contain the user id in the params
+authenticationRoute.delete("/delete/:id", Auth.authorize, (req: Request, res: Response) => {
+	//check if the user is the same as the one in the params
+	if(req.params.id !== req.user?._id) return res.status(401).json({ success: false, msg: "Unauthorized." });
+	//delete the user
+	Auth.deleteUserWithUser(req.user)
+		.then((result: boolean)=> {
+			if(!result) res.status(500).json({ success: false, msg: "Error deleting user. It's probably a server error." });
+			else res.status(200).json({ success: true, msg: "Successful deleted user." });
+		})
+		.catch((err: Error)=> res.status(500).json({ success: false, msg: "Error deleting user.", err: err }));
+});

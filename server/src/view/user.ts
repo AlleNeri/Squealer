@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 
 import UserSchema, { User } from '../model/User';
+import Auth from "../controller/Auth";
 
 import { authenticationRoute } from './authentication';
 
@@ -14,7 +15,9 @@ userRoute.get('/:id', (req: Request, res: Response) => {
 });
 
 //update a user
-userRoute.put('/:id', (req: Request, res: Response) => {
+userRoute.put('/:id', Auth.authorize, (req: Request, res: Response) => {
+	const id: string = req.params.id || req.user?.id;
+	if(id !== req.user?.id) return res.status(401).json({ msg: 'Unauthorized' });
 	UserSchema.findByIdAndUpdate(req.params.id, req.body.user)
 		.then((user: User | null) => {
 			if(!user) res.status(404).json({ msg: 'User not found' });
@@ -24,7 +27,9 @@ userRoute.put('/:id', (req: Request, res: Response) => {
 });
 
 //delete a user
-userRoute.delete('/:id', (req: Request, res: Response) => {
+userRoute.delete('/:id', Auth.authorize, (req: Request, res: Response) => {
+	const id: string = req.params.id || req.user?.id;
+	if(id !== req.user?.id) return res.status(401).json({ msg: 'Unauthorized' });
 	UserSchema.findByIdAndDelete(req.params.id).
 		then((result: User | null) => {
 			if(!result) res.status(404).json({ msg: 'User not found' });
