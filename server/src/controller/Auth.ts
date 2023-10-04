@@ -21,7 +21,8 @@ const keyLocation : fs.PathLike | string | undefined = process.env.RSA_KEYS_LOCA
 	  pubKey : string | undefined = process.env.PUB_KEY_NAME,
 	  iter : string | undefined = process.env.ITERATIONS,
 	  keyLen : string | undefined = process.env.KEYLEN,
-	  dig : string | undefined = process.env.DIGEST;
+	  dig : string | undefined = process.env.DIGEST,
+	  expiresIn : string | undefined = process.env.JWT_EXPIRES_IN;
 if(keyLocation === undefined) throw new Error("RSA_KEYS_LOCATION is not defined in the config.env file.");
 if(privKey === undefined) throw new Error("PRIV_KEY_NAME is not defined in the config.env file.");
 const PRIV_KEY=fs.readFileSync(`${keyLocation}/${privKey}`, 'utf8');
@@ -37,6 +38,8 @@ const keyLength: number=parseInt(keyLen);
 
 if(dig === undefined) throw new Error("DIGEST is not defined in the config.env file.");
 const digest: string=dig;
+
+if(expiresIn === undefined) throw new Error("JWT_EXPIRES_IN is not defined in the config.env file.");
 
 interface IHashSalt {
 	salt: string;
@@ -60,7 +63,6 @@ abstract class Auth {
 
 	//generate a Json Web Token
 	private static generateJwt(user: User): object {
-		const expiresIn: string='7d';
 		const payload: object={
 			sub: user._id,
 			iat: Date.now(),
@@ -150,6 +152,8 @@ abstract class Auth {
 		Auth.verifyJwt(bearerToken)
 			.then((payload: string | jsonwebtoken.JwtPayload | null) => {
 				if(!payload) return res.status(401).json({ message: 'Invalid token.' });
+				if(typeof payload === 'string' || !payload.sub || !payload.exp) return res.status(401).json({ message: 'Invalid token.' });
+				if(payload.exp < Date.now()) return res.status(401).json({ message: 'Token expired.' });
 				const user_id: string=payload.sub as string;
 				UserSchema.findById(user_id)
 					.then((user: User | null) => {
