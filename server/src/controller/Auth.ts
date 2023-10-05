@@ -40,6 +40,7 @@ if(dig === undefined) throw new Error("DIGEST is not defined in the config.env f
 const digest: string=dig;
 
 if(expiresIn === undefined) throw new Error("JWT_EXPIRES_IN is not defined in the config.env file.");
+console.log(expiresIn);
 
 interface IHashSalt {
 	salt: string;
@@ -70,7 +71,7 @@ abstract class Auth {
 		const signedToken: string=jsonwebtoken.sign(payload, PRIV_KEY, { expiresIn: expiresIn, algorithm: 'RS256' });
 		return {
 			token: `Bearer ${signedToken}`,
-			expires: expiresIn,
+			expires: expiresIn+" ms",
 		}
 	}
 
@@ -153,7 +154,8 @@ abstract class Auth {
 			.then((payload: string | jsonwebtoken.JwtPayload | null) => {
 				if(!payload) return res.status(401).json({ message: 'Invalid token.' });
 				if(typeof payload === 'string' || !payload.sub || !payload.exp) return res.status(401).json({ message: 'Invalid token.' });
-				if(payload.exp < Date.now()) return res.status(401).json({ message: 'Token expired.' });
+				console.log(payload.exp, (new Date()).getTime());
+				if(payload.exp < (new Date()).getTime()) return res.status(401).json({ message: 'Token expired.' });
 				const user_id: string=payload.sub as string;
 				UserSchema.findById(user_id)
 					.then((user: User | null) => {
