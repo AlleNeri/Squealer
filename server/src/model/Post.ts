@@ -27,21 +27,30 @@ const PostSchema: mongoose.Schema=new mongoose.Schema({
 			position: String,
 		}
 	},
-	views: {type: Number, default: 0, required: true},
 	keywords: [String],
 	date: {type: Date, default: Date.now, required: true, immutable: true},
 	reactions: {
-		type: {
-			pos: Number,
-			neg: Number,
-		},
-		required: true,
-		default: {pos: 0, neg: 0}
-	},
+		type: [
+			{
+				user_id: {
+					type: mongoose.Schema.Types.ObjectId,
+					ref: process.env.DBCOLLECTION_USER,
+					required: true
+				},
+				value: {
+					type: Number,
+					min: -2,
+					max: 2,
+					required: true
+				}
+			}
+		],
+		required: true
+	},	// the reactions have the double meaning of opinion and visualisation; this is the reason why the reactions contain the 0 value witch means that the user has seen the post but has no opinion about it
 	popular: Boolean,	// If the post is popular and also unpopular
 	unpopular: Boolean,	// it means that the post is controversial
 	posted_by: {type: mongoose.Schema.Types.ObjectId, ref: process.env.DBCOLLECTION_USER, required: true},
-	posted_on: {type: mongoose.Schema.Types.ObjectId, ref: process.env.DBCOLLECTION_CHANNEL, required: true, immutable: true},
+	posted_on: {type: mongoose.Schema.Types.ObjectId, ref: process.env.DBCOLLECTION_CHANNEL, /* TODO: decommentare => required: true ,*/ immutable: true},
 	appartains_to: [{type: mongoose.Schema.Types.ObjectId, ref: process.env.DBCOLLECTION_CHANNEL}],	//the user posts it on the channel he wants, but squealer can make it to be seen bay all in the popular or controversial channels for example(only if the post is posted on an open channel)
 	tagged: [{type: mongoose.Schema.Types.ObjectId, ref: process.env.DBCOLLECTION_USER}],
 });
@@ -78,21 +87,39 @@ PostSchema.methods.removeUnpopular=function(): void {
 	this.unpopular=false;
 };
 
-PostSchema.methods.addView=function(): void {
-	this.views++;
+PostSchema.methods.getPosReactions=function(): number {
+	return this.reactions.filter((reaction: any)=> reaction.value > 0).length;
+};
+
+PostSchema.methods.getNegReactions=function(): number {
+	return this.reactions.filter((reaction: any)=> reaction.value < 0).length;
+};
+
+PostSchema.methods.getViews=function(): number {
+	return this.reactions.length;
+};
+
+PostSchema.methods.addView=function(user_id: string): void {
+	//check if the user has already seen the post
+	if(this.reactions.findIndex((reaction: any)=> reaction.user_id.toString() == user_id) != -1) return;
+	//add the user to the reactions
+	this.addReaction(user_id, 0);
+	//this.reactions.push({ user_id: user_id, value: 0 });
 	//check only if the popular and unpopular values decrease because a view can't increase them
-	if(this.reactions.pos < (this.views * CM_COEFFICIENT)) this.removePopular();
-	if(this.reactions.neg < (this.views * CM_COEFFICIENT)) this.removeUnpopular();
+	if(this.getPosReactions() < (this.getViews() * CM_COEFFICIENT)) this.removePopular();
+	if(this.getNegReactions() < (this.getViews() * CM_COEFFICIENT)) this.removeUnpopular();
 	if(!this.isControversial()) this.removeControversial();
 };
 
-PostSchema.methods.addReaction=function(reaction: number): boolean {
-	if(Math.abs(reaction) > 2 || reaction==0) return false;
-	if(reaction < 0) this.reactions.neg+=Math.abs(reaction);
-	else if(reaction > 0) this.reactions.pos+=reaction;
+PostSchema.methods.addReaction=function(user_id: string, reaction: number): boolean {
+	//check if the user has already reacted to the post
+	let index: number=this.reactions.findIndex((reaction: any)=> reaction.user_id.toString() == user_id);
+	if(index != -1) this.reactions[index].value=reaction;
+	else this.reactions.push({user_id: user_id, value: reaction});
+	if(Math.abs(reaction) > 2) return false;
 	//check only if the popular and unpopular values increase because a reaction can't decrease them
-	if(this.reactions.pos > (this.views * CM_COEFFICIENT)) this.addPopular();
-	if(this.reactions.neg > (this.views * CM_COEFFICIENT)) this.removePopular();
+	if(this.getPosReactions() > (this.getViews() * CM_COEFFICIENT)) this.addPopular();
+	if(this.getNegReactions() > (this.getViews() * CM_COEFFICIENT)) this.removePopular();
 	const channel: Channel=ChannelSchema.findById(this.posted_on);
 	if(!channel.private && this.isControversial()) this.addControversial();
 	return true;

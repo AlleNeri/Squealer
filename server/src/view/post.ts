@@ -6,9 +6,6 @@ import Auth from "../controller/Auth";
 export const postRoute: Router=Router();
 
 //get all my posts
-//TODO: test this
-//TODO: find out if the passport middleware helps and put the id in the req
-//		otherwise, ask for the id in the body
 postRoute.get("/my", Auth.authorize, (req: Request, res: Response) => {
 	PostSchema.find({ author: req.user?._id })
 		.then((posts: Post[]) => res.status(200).json(posts))
@@ -23,7 +20,9 @@ postRoute.get("/:id", (req: Request, res: Response) => {
 });
 
 //create a post
-postRoute.post("/", (req: Request, res: Response) => {
+//it isn't required the posted_by field in the request body
+postRoute.post("/", Auth.authorize, (req: Request, res: Response) => {
+	req.body.post.posted_by=req.user?._id;
 	const newPost: Post=new PostSchema(req.body.post);
 	newPost.save()
 		.then((post: Post) => res.status(200).json(post))
@@ -59,12 +58,12 @@ postRoute.delete("/:id", (req: Request, res: Response) => {
 //visualize a post
 //automatically add a view to a post
 //TODO: decide if the view should be added only from logged users or not(maybe check in the teacher's requirements)
-postRoute.patch("/:id/visualize", (req: Request, res: Response) => {
+postRoute.patch("/:id/visualize", Auth.authorize, (req: Request, res: Response) => {
 	PostSchema.findById(req.params.id)
 		.then((post: Post | null) => {
 			if(!post) res.status(404).json({ msg: "Post not found" });
 			else {
-				post.addView();
+				post.addView(req.user?._id);
 				const result=post.save();
 				if(!result) res.status(404).json({ msg: "Post not saved" });
 				else res.status(200).json({ msg: "Post updated", post: post });
@@ -82,7 +81,7 @@ postRoute.patch("/:id/react", Auth.authorize, (req: Request, res: Response) => {
 	PostSchema.findById(req.params.id)
 		.then((post: Post | null) => {
 			if(!post) res.status(404).json({ msg: "Post not found" });
-			else if(!post.addReaction(req.body.reaction)) res.status(400).json({ msg: "Reaction not valid" });
+			else if(!post.addReaction(req.user?._id, req.body.reaction)) res.status(400).json({ msg: "Reaction not valid" });
 			else {
 				const result=post.save();
 				if(!result) res.status(404).json({ msg: "Post not saved" });

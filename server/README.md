@@ -7,9 +7,18 @@ Il model è formato da un insieme di schemi creati tramite la libreria `mongoose
 ## View
 La view è formata da un insieme di router relativi alla libreria `express` che permettono di contattare il server e scambiare dati.
 
-## Autenticazione
-L'autenticazione degli utenti viene effettuata tramite Passport.js tramite la JWT strategy.
+## Controller
+I controller sono moduli che implementano la logica del server. Ad esempio esiste un modulo per l'autenticazione.
+
+### Autenticazione
+L'autenticazione degli utenti viene effettuata tramite token JWT.
 Per questa implementazion si necessita di creare una coppia di chiavi asimmetriche; per fare ciò esiste lo screept:
 ```bash
 $ node dist/createKey.js
 ```
+
+## TODO
+- [X] modificare la gestione di visualizzazioni e delle reazioni.
+- [ ] fix token expiration.
+- [ ] implementare lo storage di immagini e video.
+- [ ] opzionalmente implementare il refresh token.
