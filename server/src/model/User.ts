@@ -24,8 +24,8 @@ const UserSchema: mongoose.Schema=new mongoose.Schema({
 	img: String,
 	b_date: Date,
 	creation_date: {type: Date, immutable: true, default: Date.now},
-	appartenence: {type: mongoose.Schema.Types.ObjectId, ref: process.env.DBCOLLECTION_CHANNEL},
-	friends: [{type: mongoose.Schema.Types.ObjectId, ref: process.env.DBCOLLECTION_USER}],	//the smm uses the friends as clients
+	appartenence: [{type: mongoose.Schema.Types.ObjectId, ref: process.env.DBCOLLECTION_CHANNEL}],
+	friends: [{type: mongoose.Schema.Types.ObjectId, ref: process.env.DBCOLLECTION_USER}],	//the smm uses the friends list as clients list
 });
 
 UserSchema.virtual('isSMM').get(function() {

@@ -40,7 +40,6 @@ if(dig === undefined) throw new Error("DIGEST is not defined in the config.env f
 const digest: string=dig;
 
 if(expiresIn === undefined) throw new Error("JWT_EXPIRES_IN is not defined in the config.env file.");
-console.log(expiresIn);
 
 interface IHashSalt {
 	salt: string;
@@ -82,17 +81,28 @@ abstract class Auth {
 		return jsonwebtoken.verify(token, PUB_KEY, { algorithms: ['RS256'] });
 	}
 
-	public static async signUp(user_id: string, password: string): Promise<boolean> {
-		const hashSalt: IHashSalt=Auth.generateHashSalt(password);
-		const c: Credentials = { user_id: user_id };
-		c.setHashSalt(hashSalt);
-		const newCredentials: Credentials=new CredentialsSchema(c);
-		return newCredentials.save()
-			.then((credentials: Credentials) => {
-				if(credentials) return true;
-				else return false;
+	public static async signUp(userObj: object, password: string): Promise<User | null> {
+		const newUser: User = new UserSchema(userObj);
+		return newUser.save()
+			.then((user: User)=> {
+				const hashSalt: IHashSalt=Auth.generateHashSalt(password);
+				const c: Credentials=new CredentialsSchema({ user_id: user._id });
+				c.setHashSalt(hashSalt);
+				const newCredentials: Credentials=new CredentialsSchema(c);
+				return newCredentials.save()
+					.then((credentials: Credentials) => {
+						if(credentials) return user;
+						else {
+							//the user is saved but the credentials are not
+							//delete the user
+							return UserSchema.findByIdAndDelete(user._id)
+								.then((_: User | null) => { return null; })
+								.catch((_: any) => { return null; });//this must create an inconsistency in the database: user created but no credentials
+						}
+					})
+					.catch((_: any) => { return null; });
 			})
-			.catch((_: any) => { return false; });
+			.catch((_: any) => { return null; });
 	}
 
 	public static async signInWithUser(user: User, password: string): Promise<object | null> {
@@ -128,21 +138,13 @@ abstract class Auth {
 			.catch((_: any) => { return false; });
 	}
 
-	public static async deleteUserWithUser(user: User): Promise<boolean> {
-		return CredentialsSchema.findOneAndDelete({ user_id: user._id })
+	public static async deleteUser(user_id: string): Promise<boolean> {
+		return CredentialsSchema.findOneAndDelete({ user_id: user_id })
 			.then((credentials: Credentials | null) => {
 				if(!credentials) return false;
-				user.remove();
-				return true;
-			})
-			.catch((_: any) => { return false; });
-	}
-
-	public static async deleteUser(id: string): Promise<boolean> {
-		return UserSchema.findById(id)
-			.then((user: User | null) => {
-				if(!user) return false;
-				return Auth.deleteUserWithUser(user);
+				return UserSchema.findByIdAndDelete(user_id)
+					.then((_: User | null) => { return true; })
+					.catch((_: any) => { return false; });	//this must create an inconsistency in the database: user deleted but not the credentials
 			})
 			.catch((_: any) => { return false; });
 	}
@@ -154,7 +156,6 @@ abstract class Auth {
 			.then((payload: string | jsonwebtoken.JwtPayload | null) => {
 				if(!payload) return res.status(401).json({ message: 'Invalid token.' });
 				if(typeof payload === 'string' || !payload.sub || !payload.exp) return res.status(401).json({ message: 'Invalid token.' });
-				console.log(payload.exp, (new Date()).getTime());
 				if(payload.exp < (new Date()).getTime()) return res.status(401).json({ message: 'Token expired.' });
 				const user_id: string=payload.sub as string;
 				UserSchema.findById(user_id)

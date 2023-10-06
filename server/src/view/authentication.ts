@@ -18,23 +18,19 @@ authenticationRoute.post("/register", (req: Request, res: Response) => {
 	if(!req.body.user) res.status(400).json({ success: false, msg: "Please pass user data." });
 	//if yes, create new user
 	else {
-		//create and save a new user
-		const newUser: User = new UserSchema(req.body.user);
-		newUser.save()
-			.then((user: User)=> {
-				//create and save credentials of the new user
-				const newCredentials: Credentials = Auth.signUp(user._id, req.body.password);
-				newCredentials.save()
-					.then((_: Credentials)=> {
-						//get JWT token and send it to the user
-						Auth.signInWithUser(user, req.body.password)
-							.then((token: object | null)=> {
-								if(!token) res.status(500).json({ success: false, msg: "Error accessing user. It's probably a server error." });
-								else res.status(201).json({ success: true, msg: "Successful created new user.", user: user, jwt: token });
-							})
-							.catch((err: Error)=> res.status(500).json({ success: false, msg: "Error creating user.", err: err }));
-					})
-					.catch((err: Error)=> res.status(500).json({ success: false, msg: "Error accessing user.", err: err }));
+		//create a new user
+		Auth.signUp(req.body.user, req.body.password)
+			.then((user: User | null)=> {
+				if(!user) res.status(500).json({ success: false, msg: "Error creating user. It's probably a server error." });
+				else {
+					//get JWT token and send it to the user
+					Auth.signInWithUser(user, req.body.password)
+						.then((token: object | null)=> {
+							if(!token) res.status(500).json({ success: false, msg: "Error accessing user. It's probably a server error." });
+							else res.status(201).json({ success: true, msg: "Successful created new user.", user: user, jwt: token });
+						})
+						.catch((err: Error)=> res.status(500).json({ success: false, msg: "Error creating user.", err: err }));
+				}
 			})
 			.catch((err: Error)=> res.status(500).json({ success: false, msg: "Error creating user.", err: err }));
 	}
@@ -62,11 +58,11 @@ authenticationRoute.post("/login", (req: Request, res: Response) => {
 
 //delete a user
 //the request has to contain the user id in the params
-authenticationRoute.delete("/delete/:id", Auth.authorize, (req: Request, res: Response) => {
+authenticationRoute.delete("/:id/delete", Auth.authorize, (req: Request, res: Response) => {
 	//check if the user is the same as the one in the params
-	if(req.params.id !== req.user?._id) return res.status(401).json({ success: false, msg: "Unauthorized." });
+	if(req.params.id !== req.user?._id.toString()) return res.status(401).json({ success: false, msg: "Unauthorized." });
 	//delete the user
-	Auth.deleteUserWithUser(req.user)
+	Auth.deleteUser(req.user?._id.toString())
 		.then((result: boolean)=> {
 			if(!result) res.status(500).json({ success: false, msg: "Error deleting user. It's probably a server error." });
 			else res.status(200).json({ success: true, msg: "Successful deleted user." });

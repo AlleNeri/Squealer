@@ -6,7 +6,7 @@ if(!process.env.DBCOLLECTION_CREDENTIALS) throw new Error("DBCOLLECTION_CREDENTI
 
 const CredentialsSchema: mongoose.Schema=new mongoose.Schema({
 	user_id: {
-		type: mongoose.Types.ObjectId,
+		type: mongoose.Schema.Types.ObjectId,
 		ref: process.env.DBCOLLECTION_USER,
 		immutable: true,
 		required: true,

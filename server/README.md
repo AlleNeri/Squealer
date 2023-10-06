@@ -24,6 +24,7 @@ $ node dist/createKey.js
     - [ ] debug.
 - [X] agigungere i clienti ai social media manager.
     - [ ] debug.
+- [ ] sottoscrizione ai canali.
 - [ ] aggiungere le route per il moderator.
 - [ ] implementare lo storage di immagini e video.
 - [ ] opzionalmente implementare il refresh token.

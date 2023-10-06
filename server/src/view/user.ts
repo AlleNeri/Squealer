@@ -26,18 +26,6 @@ userRoute.put('/:id', Auth.authorize, (req: Request, res: Response) => {
 		.catch(err=> res.status(404).json({ msg: 'User not found', err: err }));
 });
 
-//delete a user
-userRoute.delete('/:id', Auth.authorize, (req: Request, res: Response) => {
-	const id: string = req.params.id || req.user?.id;
-	if(id !== req.user?.id) return res.status(401).json({ msg: 'Unauthorized' });
-	UserSchema.findByIdAndDelete(req.params.id).
-		then((result: User | null) => {
-			if(!result) res.status(404).json({ msg: 'User not found' });
-			else res.status(200).json({ msg: 'User deleted' });
-		})
-		.catch(err=> res.status(404).json({ msg: 'User not found', err: err }));
-});
-
 //get char availability
 //only a social media manager can do this
 userRoute.get('/:id/char', Auth.authorize, Auth.isSMM, (req: Request, res: Response) => {
