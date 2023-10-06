@@ -71,7 +71,7 @@ abstract class Auth {
 		const signedToken: string=jsonwebtoken.sign(payload, PRIV_KEY, { expiresIn: expiresIn, algorithm: 'RS256' });
 		return {
 			token: `Bearer ${signedToken}`,
-			expires: expiresIn+" ms",
+			expires: expiresIn,
 		}
 	}
 
@@ -166,6 +166,24 @@ abstract class Auth {
 					.catch((_: any) => { return res.status(401).json({ message: 'Invalid token.' }); });
 			})
 			.catch((_: any) => { return res.status(401).json({ message: 'Invalid token.' }); });
+	}
+
+	public static isSMM(req: Request, res: Response, next: NextFunction): Response | void {
+		if(!req.user) return res.status(401).json({ message: 'Unauthorized' });
+		if(!req.user.isSMM) return res.status(401).json({ message: 'Unauthorized' });
+		return next();
+	}
+
+	public static isVip(req: Request, res: Response, next: NextFunction): Response | void {
+		if(!req.user) return res.status(401).json({ message: 'Unauthorized' });
+		if(!req.user.isVip) return res.status(401).json({ message: 'Unauthorized' });
+		return next();
+	}
+
+	public static isMod(req: Request, res: Response, next: NextFunction): Response | void {
+		if(!req.user) return res.status(401).json({ message: 'Unauthorized' });
+		if(!req.user.isMod) return res.status(401).json({ message: 'Unauthorized' });
+		return next();
 	}
 }
 

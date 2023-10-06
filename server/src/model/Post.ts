@@ -50,7 +50,7 @@ const PostSchema: mongoose.Schema=new mongoose.Schema({
 	popular: Boolean,	// If the post is popular and also unpopular
 	unpopular: Boolean,	// it means that the post is controversial
 	posted_by: {type: mongoose.Schema.Types.ObjectId, ref: process.env.DBCOLLECTION_USER, required: true},
-	posted_on: {type: mongoose.Schema.Types.ObjectId, ref: process.env.DBCOLLECTION_CHANNEL, /* TODO: decommentare => required: true ,*/ immutable: true},
+	posted_on: {type: mongoose.Schema.Types.ObjectId, ref: process.env.DBCOLLECTION_CHANNEL, required: true, immutable: true},
 	appartains_to: [{type: mongoose.Schema.Types.ObjectId, ref: process.env.DBCOLLECTION_CHANNEL}],	//the user posts it on the channel he wants, but squealer can make it to be seen bay all in the popular or controversial channels for example(only if the post is posted on an open channel)
 	tagged: [{type: mongoose.Schema.Types.ObjectId, ref: process.env.DBCOLLECTION_USER}],
 });
@@ -87,17 +87,17 @@ PostSchema.methods.removeUnpopular=function(): void {
 	this.unpopular=false;
 };
 
-PostSchema.methods.getPosReactions=function(): number {
+PostSchema.virtual("posReaction").get(function(): number {
 	return this.reactions.filter((reaction: any)=> reaction.value > 0).length;
-};
+});
 
-PostSchema.methods.getNegReactions=function(): number {
+PostSchema.virtual("negReaction").get(function(): number {
 	return this.reactions.filter((reaction: any)=> reaction.value < 0).length;
-};
+});
 
-PostSchema.methods.getViews=function(): number {
+PostSchema.virtual("views").get(function(): number {
 	return this.reactions.length;
-};
+});
 
 PostSchema.methods.addView=function(user_id: string): void {
 	//check if the user has already seen the post

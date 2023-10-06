@@ -90,3 +90,21 @@ postRoute.patch("/:id/react", Auth.authorize, (req: Request, res: Response) => {
 		})
 		.catch((err: Error) => res.status(500).json({ msg: "Error updating post", err: err }));
 });
+
+//get post statistics
+//only a social media manager can see the statistics
+//TODO: check if the social media manager has the owner of the post as a client
+postRoute.get("/:id/statistics", Auth.authorize, Auth.isSMM, (req: Request, res: Response) => {
+	PostSchema.findById(req.params.id)
+		.then((post: Post | null) => {
+			if(!post) res.status(404).json({ msg: "Post not found" });
+			else return {
+				views: post.views,
+				posReactions: post.posReactions,
+				negReactions: post.negReactions,
+				isPopular: post.popular,
+				isUnpopular: post.unpopular,
+			};
+		})
+		.catch((err: Error) => res.status(500).json({ msg: "Error getting post statistics", err: err }));
+});

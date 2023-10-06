@@ -38,5 +38,17 @@ userRoute.delete('/:id', Auth.authorize, (req: Request, res: Response) => {
 		.catch(err=> res.status(404).json({ msg: 'User not found', err: err }));
 });
 
+//get char availability
+//only a social media manager can do this
+//TODO: check if the social media manager has the user as a client
+userRoute.get('/:id/char', Auth.authorize, Auth.isSMM, (req: Request, res: Response) => {
+	UserSchema.findById(req.params.id)
+		.then((user: User | null) => {
+			if(!user) res.status(404).json({ msg: 'User not found' });
+			else res.status(200).json({ msg: 'Char availability', char_availablity: user.char_availablity });
+		})
+		.catch(err=> res.status(404).json({ msg: 'User not found', err: err }));
+});
+
 //authentication routes
 userRoute.use('/', authenticationRoute);
