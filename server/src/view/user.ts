@@ -40,8 +40,8 @@ userRoute.delete('/:id', Auth.authorize, (req: Request, res: Response) => {
 
 //get char availability
 //only a social media manager can do this
-//TODO: check if the social media manager has the user as a client
 userRoute.get('/:id/char', Auth.authorize, Auth.isSMM, (req: Request, res: Response) => {
+	if(!req.user?.isClient(req.params.id)) return res.status(401).json({ msg: 'Unauthorized' });
 	UserSchema.findById(req.params.id)
 		.then((user: User | null) => {
 			if(!user) res.status(404).json({ msg: 'User not found' });

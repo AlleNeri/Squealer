@@ -44,6 +44,22 @@ UserSchema.virtual('isNormal').get(function() {
 	return this.type===UserType.NORMAL;
 });
 
+UserSchema.methods.isFriend=function(user_id: string): boolean {
+	return this.friends.includes(user_id);
+};
+
+UserSchema.methods.addFriend=function(user_id: string): void {
+	if(!this.isFriend(user_id)) this.friends.push(user_id);
+};
+
+UserSchema.methods.isClient=function(user_id: string): boolean {
+	return (this.isSMM && this.isFriend(user_id));
+};
+
+UserSchema.methods.addClient=function(user_id: string): void {
+	if(this.isSMM && !this.isFriend(user_id)) this.friends.push(user_id);
+};
+
 export default mongoose.model(process.env.DBCOLLECTION_USER, UserSchema);
 
 export type User=mongoose.InferSchemaType<typeof UserSchema>;
