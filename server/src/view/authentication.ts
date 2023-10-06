@@ -69,3 +69,17 @@ authenticationRoute.delete("/:id/delete", Auth.authorize, (req: Request, res: Re
 		})
 		.catch((err: Error)=> res.status(500).json({ success: false, msg: "Error deleting user.", err: err }));
 });
+
+//change password
+//the request has to contain the user id in the params
+//and the old and new password in the body with the new password
+//the format is: { oldPassword: string; newPassword: string }
+//this route isn't authenticated because the user has to insert the old password to change it
+authenticationRoute.put("/:id/changePassword", (req: Request, res: Response) => {
+	Auth.changePassword(req.params.id, req.body.oldPassword, req.body.newPassword)
+		.then((result: boolean)=> {
+			if(!result) res.status(500).json({ success: false, msg: "Error changing password." });
+			else res.status(200).json({ success: true, msg: "Successful changed password." });
+		})
+		.catch((err: Error)=> res.status(500).json({ success: false, msg: "Error changing password.", err: err }));
+});
