@@ -20,7 +20,7 @@ const UserSchema: mongoose.Schema=new mongoose.Schema({
 	},
 	email: {type: String, required: true},
 	type: {type: String, required: true, enum: Object.values(UserType), default: UserType.NORMAL},
-	char_availablity: {type: Number, min: 0},
+	char_availability: {type: Number, min: 0},
 	img: String,
 	b_date: Date,
 	creation_date: {type: Date, immutable: true, default: Date.now},
@@ -45,7 +45,10 @@ UserSchema.virtual('isNormal').get(function() {
 });
 
 UserSchema.methods.isFriend=function(user_id: string): boolean {
-	return this.friends.includes(user_id);
+	return this.friends.reduce((accumulator: boolean, currVal: mongoose.Types.ObjectId)=> {
+		if(accumulator) return true;
+		else return currVal.toString()==user_id;
+	}, false);
 };
 
 UserSchema.methods.addFriend=function(user_id: string): void {

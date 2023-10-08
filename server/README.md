@@ -21,10 +21,12 @@ $ node dist/createKey.js
 - [X] modificare la gestione di visualizzazioni e delle reazioni.
 - [X] fix token expiration.
 - [X] aggiungere le route per il social media manager.
-    - [ ] debug.
+    - [X] debug.
 - [X] agigungere i clienti ai social media manager.
-    - [ ] debug.
 - [X] aggiungere la route per il cambio password.
+- [ ] aggiungere gestione clienti per social media manager.
+    - [ ] decidere funzionamento.
+    - [ ] aggiungere routes.
 - [ ] sottoscrizione ai canali.
 - [ ] aggiungere le route per il moderator.
 - [ ] implementare lo storage di immagini e video.

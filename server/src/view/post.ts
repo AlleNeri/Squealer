@@ -97,14 +97,18 @@ postRoute.get("/:id/statistics", Auth.authorize, Auth.isSMM, (req: Request, res:
 	PostSchema.findById(req.params.id)
 		.then((post: Post | null) => {
 			if(!post) res.status(404).json({ msg: "Post not found" });
-			else if(!req.user?.isClient(post.author)) res.status(401).json({ msg: "Unauthorized" });
-			else return {
-				views: post.views,
-				posReactions: post.posReactions,
-				negReactions: post.negReactions,
-				isPopular: post.popular,
-				isUnpopular: post.unpopular,
-			};
+			else if(!req.user?.isClient(post.posted_by.toString())) res.status(401).json({ msg: "Unauthorized, the owner of the post is not a client" });
+			else {
+				let tmp: object={
+					views: post.views,
+					posReactions: post.posReaction,
+					negReactions: post.negReaction,
+					isPopular: post.popular,
+					isUnpopular: post.unpopular,
+				};
+				console.log(tmp);
+				res.status(200).json(tmp);
+			}
 		})
 		.catch((err: Error) => res.status(500).json({ msg: "Error getting post statistics", err: err }));
 });

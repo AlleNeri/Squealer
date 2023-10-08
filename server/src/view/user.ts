@@ -33,7 +33,7 @@ userRoute.get('/:id/char', Auth.authorize, Auth.isSMM, (req: Request, res: Respo
 	UserSchema.findById(req.params.id)
 		.then((user: User | null) => {
 			if(!user) res.status(404).json({ msg: 'User not found' });
-			else res.status(200).json({ msg: 'Char availability', char_availablity: user.char_availablity });
+			else res.status(200).json({ char_availability: user.char_availability });
 		})
 		.catch(err=> res.status(404).json({ msg: 'User not found', err: err }));
 });
