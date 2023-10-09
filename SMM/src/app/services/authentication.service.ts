@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BackendComunicationService } from './backend-comunication.service';
 
-//TODO: definire l'oggetto di tipo utente per questo tipo di dato
+//TODO: definire l'oggetto di tipo utente vedere più avanti
 
 @Injectable({
   providedIn: 'root'

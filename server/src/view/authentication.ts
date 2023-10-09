@@ -2,8 +2,7 @@ import { Router, Request, Response } from "express";
 
 import Auth from "../controller/Auth";
 
-import UserSchema, { User } from "../model/User";
-import { Credentials } from "../model/Credentials";
+import { User } from "../model/User";
 
 export const authenticationRoute: Router = Router();
 
