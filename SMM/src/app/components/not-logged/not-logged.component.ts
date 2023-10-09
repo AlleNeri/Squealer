@@ -5,6 +5,4 @@ import { Component } from '@angular/core';
   templateUrl: './not-logged.component.html',
   styleUrls: ['./not-logged.component.css']
 })
-export class NotLoggedComponent {
-
-}
+export class NotLoggedComponent { }
