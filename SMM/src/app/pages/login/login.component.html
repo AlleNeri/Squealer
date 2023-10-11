@@ -1,7 +1,14 @@
 <div *ngIf="this.auth.isLoggedIn(); then thenBlock else elseBlock"></div>
+
 <ng-template #thenBlock>
-  <div>Switch profile</div>
+  <!-- maybe visualize a popup with the choice:
+    - log out
+    - go to the profile dashboard
+  -->
+  <div>Popup: view the comment above</div>
 </ng-template>
+
 <ng-template #elseBlock>
   <div>Log in form</div>
+  <app-login-card></app-login-card>
 </ng-template>

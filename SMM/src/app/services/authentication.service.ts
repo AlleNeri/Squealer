@@ -29,24 +29,24 @@ export class AuthenticationService {
   }
 
   register(data: Object) {
-    this.backendComunication.post("/register", data)  //TODO: modificar l'endpoint in maniera coerente col backend
-    .subscribe((d: Object)=> {
-      console.log(d);
-      //TODO: controllare se la registrazione è valida
-      this.logUser=d;
-    });
+    this.backendComunication.post("users/register", data)  //TODO: modificar l'endpoint in maniera coerente col backend
+      .subscribe((d: Object)=> {
+        console.log(d);
+        //TODO: controllare se la registrazione è valida
+        this.logUser=d;
+      });
   }
 
   login(data: Object) {
-    this.backendComunication.post("/login", data)  //TODO: modificar l'endpoint in maniera coerente col backend
-    .subscribe((d: Object)=> {
-      console.log(d);
-      //TODO: controllare se il login è valido
-      this.logUser=d;
-    });
+    this.backendComunication.post("users/login", data)  //TODO: modificar l'endpoint in maniera coerente col backend
+      .subscribe((d: Object)=> {
+        console.log(d);
+        //TODO: controllare se il login è valido
+        this.logUser=d;
+      });
   }
 
-  logout() {
+  logout(): void {
     this.logUser=undefined;
   }
 

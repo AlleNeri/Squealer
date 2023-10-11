@@ -1,9 +1,13 @@
 # Squealer SMM
 
 ## TODO
-- [ ] collegamento al server backend.
-- [ ] creare login page.
+- [X] collegamento al server backend.
+- [X] creare login page.
 - [ ] autenticazione degli utenti.
+  - [X] login.
+  - [ ] logout.
+  - [ ] registrazione.
+  - [ ] cancellazione utenti.
 - [ ] visualizzazione di info.
   - [ ] visualizzazione semplice.
   - [ ] visualizzazione grafica.
