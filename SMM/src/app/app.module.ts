@@ -15,7 +15,6 @@ import { HomeComponent } from './pages/home/home.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatButtonModule } from '@angular/material/button';
 
-import { NotLoggedComponent } from './components/not-logged/not-logged.component';
 import { HomeHeaderComponent } from './components/home-header/home-header.component';
 import { HomeFooterComponent } from './components/home-footer/home-footer.component';
 import { CardComponent } from './components/card/card.component';
@@ -28,7 +27,6 @@ import { LayoutComponent } from './components/layout/layout.component';
     LoginComponent,
     RegisterComponent,
     HomeComponent,
-    NotLoggedComponent,
     HomeHeaderComponent,
     HomeFooterComponent,
     CardComponent,

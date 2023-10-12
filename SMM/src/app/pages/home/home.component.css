@@ -1,0 +1,23 @@
+.hero-container {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.3)), url("../../../assets/hero-bg.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.hero {
+  text-align: center;
+  padding: 5% 0%;
+}
+
+.hero > h1,
+.hero > h2 {
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.1;
+  font-size: 3.5em;
+}
+
+.hero > h2 {
+  font-size: 2em;
+}
