@@ -1,5 +1,6 @@
 # Squealer
 Progetto di tecnologie web A.A. 2023
+
 ## Da fare
 - [X] Creare il database.
 - [ ] Sviluppare un back-end.
@@ -12,3 +13,4 @@ Progetto di tecnologie web A.A. 2023
     - [ ] Sviluppare il social.
     - [ ] Sviluppare la dashboard di un social media manager.
     - [ ] Sviluppare una piattaforma per l'admin.
+- [ ] Token in cookies.

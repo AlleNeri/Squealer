@@ -20,6 +20,7 @@ import { HomeHeaderComponent } from './components/home-header/home-header.compon
 import { HomeFooterComponent } from './components/home-footer/home-footer.component';
 import { CardComponent } from './components/card/card.component';
 import { LoginCardComponent } from './components/login-card/login-card.component';
+import { LayoutComponent } from './components/layout/layout.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { LoginCardComponent } from './components/login-card/login-card.component
     HomeFooterComponent,
     CardComponent,
     LoginCardComponent,
+    LayoutComponent,
   ],
   imports: [
     BrowserModule,
