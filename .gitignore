@@ -1,0 +1,9 @@
+# server
+server/node_modules
+server/dist
+server/rsa-keys
+
+# SMM
+SMM/node_modules
+SMM/dist
+SMM/.angular

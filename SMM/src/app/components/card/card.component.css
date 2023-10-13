@@ -1,0 +1,44 @@
+.card {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  margin-top: 3%;
+  align-items: center;
+}
+
+.card > div {
+  width: 35%;
+  min-width: 250px;
+  text-align: center;
+}
+
+.img-container {
+  /* reduce container size */
+  width: 30%;
+}
+
+.img-container > img {
+  /* rounded corners */
+  border-radius: 5%;
+}
+
+.right-img > div:nth-child(odd) {
+  text-align: right;
+  padding-right: 2%;
+}
+
+.right-img > div:nth-child(even) {
+  text-align: left;
+  padding-left: 2%;
+}
+
+.left-img > div:nth-child(even) {
+  text-align: right;
+  padding-right: 2%;
+}
+
+.left-img > div:nth-child(odd) {
+  text-align: left;
+  padding-left: 2%;
+}

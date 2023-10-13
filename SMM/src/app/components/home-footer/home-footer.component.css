@@ -1,0 +1,44 @@
+.footer {
+  background-color: #24262b;
+  color: white;
+  width: 100%;
+  margin-top: 2rem;
+  padding-top: 3rem;
+  padding-bottom: 2rem;
+}
+
+.container {
+  max-width: 1170px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.coll > h3 {
+  color: white;
+  text-transform: capitalize;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  font-size: 1.2rem;
+  border-bottom: 2px solid tomato;
+}
+
+.coll > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.coll > ul > li {
+  margin-bottom: 1rem;
+}
+
+.coll > ul > li > a {
+  color: white;
+  text-decoration: none;
+}
+
+.coll > ul > li > a:hover {
+  color: #4180C5;
+}

@@ -1,0 +1,7 @@
+<div *ngIf="this.auth.isLoggedIn(); then thenBlock else elseBlock"></div>
+<ng-template #thenBlock>
+  <div>Switch profile</div>
+</ng-template>
+<ng-template #elseBlock>
+  <div>Log in form</div>
+</ng-template>

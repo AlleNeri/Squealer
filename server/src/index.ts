@@ -3,9 +3,12 @@ import express, { Express, Request, Response } from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 
+import "./env"; //do not move this line and be careful to not import anything or write any code before this line
+
 import { router } from "./view/routers";
 import { postRoute } from "./view/post";
-import "./env";
+import { userRoute } from "./view/user";
+import { channelRoute } from "./view/channel";
 
 /*** Configs ***/
 const PORT: number = Number(process.env.PORT) || 8080;
@@ -23,13 +26,16 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-app.use("/router", router);
-app.use("/post", postRoute);
+//TODO: add checkLogin to all protected routes
+app.use("/router", router);	// This is for testing purposes only. TODO: Remove this line.
+app.use("/posts", postRoute);
+app.use("/users", userRoute);
+app.use("/channels", channelRoute);
 
+//TODO: remove this route, it's only for testing purposes
 app.get('/', (_: Request, res: Response)=>{
-	console.log(`\tRequest detected: /`);
-	res.send(`The server seams to run correctly.`);
+	res.status(200).send(`The server seams to run correctly.`);
 });
 
 /*** Server start ***/
-app.listen(PORT, ()=>console.log(`Listening on port: ${PORT}`))
+app.listen(PORT, ()=>console.log(`The server responds at: http://localhost:${PORT}`));
