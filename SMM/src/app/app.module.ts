@@ -20,6 +20,9 @@ import { HomeFooterComponent } from './components/home-footer/home-footer.compon
 import { CardComponent } from './components/card/card.component';
 import { LoginCardComponent } from './components/login-card/login-card.component';
 import { LayoutComponent } from './components/layout/layout.component';
+import { DashboardLayoutComponent } from './components/dashboard-layout/dashboard-layout.component';
+import { DashboardSidebarComponent } from './components/dashboard-sidebar/dashboard-sidebar.component';
+import { GeneralComponent } from './pages/general/general.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +35,9 @@ import { LayoutComponent } from './components/layout/layout.component';
     CardComponent,
     LoginCardComponent,
     LayoutComponent,
+    DashboardLayoutComponent,
+    DashboardSidebarComponent,
+    GeneralComponent,
   ],
   imports: [
     BrowserModule,

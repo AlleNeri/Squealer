@@ -2,12 +2,22 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { LayoutComponent } from './components/layout/layout.component';
+import { DashboardLayoutComponent } from './components/dashboard-layout/dashboard-layout.component';
 
 import { HomeComponent } from './pages/home/home.component';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
+import { GeneralComponent } from './pages/general/general.component';
 
 const routes: Routes = [
+  { path: 'smm', redirectTo: '/smm/general', pathMatch: 'full' }, // to make unreachable "smm" path
+  {
+    path: 'smm',
+    component: DashboardLayoutComponent,
+    children: [
+      { path: 'general', component: GeneralComponent },
+    ]
+  },
   { path: '', redirectTo: '/home', pathMatch: 'full' }, // to make unreachable empty path
   {
     path: '',

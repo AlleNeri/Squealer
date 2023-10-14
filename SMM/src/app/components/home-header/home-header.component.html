@@ -2,13 +2,18 @@
   <ul>
     <!-- TODO: add routerLinkActive to the links -->
     <li>
-      <a routerLink="home">Home</a>
+      <a routerLink="/home">Home</a>
     </li>
     <li>
-      <a routerLink="login">LogIn</a>
+      <a routerLink="/register">Register</a>
     </li>
     <li>
-      <a routerLink="register">Register</a>
+      <a routerLink="/login">
+        <ng-template *ngIf="this.auth.isLoggedIn(); then logOutBlock else logInBlock" />
+      </a>
+    </li>
+    <li *ngIf="this.auth.isLoggedIn()">
+      <a routerLink="/smm">Dashboard</a>
     </li>
     <li>
       <!-- TODO: insert a link to the Squealer page -->
@@ -16,3 +21,11 @@
     </li>
   </ul>
 </nav>
+
+<ng-template #logInBlock>
+  Log In
+</ng-template>
+
+<ng-template #logOutBlock>
+  Log Out
+</ng-template>

@@ -1,6 +1,6 @@
 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-card">
-  <h2 class="form-title">Log in</h2>
+  <h2 class="form-title">Autenticati con le tue credenziali</h2>
   <input type="text" formControlName="username" placeholder="Username" />
   <input type="password" formControlName="password" placeholder="Password" />
-  <input type="submit" value="Log in" [disabled]="!loginForm.valid" />
+  <input type="submit" value="Log In" [disabled]="!loginForm.valid" />
 </form>

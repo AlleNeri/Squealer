@@ -38,11 +38,12 @@ export class AuthenticationService {
   }
 
   login(data: Object) {
-    this.backendComunication.post("users/login", data)  //TODO: modificar l'endpoint in maniera coerente col backend
+    return this.backendComunication.post("users/login", data)  //TODO: modificar l'endpoint in maniera coerente col backend
       .subscribe((d: Object)=> {
         console.log(d);
         //TODO: controllare se il login è valido
         this.logUser=d;
+        return true;
       });
   }
 
@@ -52,6 +53,7 @@ export class AuthenticationService {
 
   isLoggedIn(): boolean {
     this.checkCredentials();
+    console.log(this.loggedUser);
     if(this.loggedUser) return true;
     else return false;
   }

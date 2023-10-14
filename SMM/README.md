@@ -5,7 +5,7 @@
 - [X] creare login page.
 - [ ] autenticazione degli utenti.
   - [X] login.
-  - [ ] logout.
+  - [X] logout.
   - [ ] registrazione.
   - [ ] cancellazione utenti.
 - [ ] visualizzazione di info.

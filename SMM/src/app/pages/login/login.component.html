@@ -1,17 +1,6 @@
-<div *ngIf="this.auth.isLoggedIn(); then thenBlock else elseBlock"></div>
-
-<ng-template #thenBlock>
-  <!-- maybe visualize a popup with the choice:
-    - log out
-    - go to the profile dashboard
-  -->
-  <div>Popup: view the comment above</div>
-  <button (click)="this.auth.logout()">Log out</button>
-</ng-template>
-
-<ng-template #elseBlock>
+<div>
   <app-login-card></app-login-card>
   <div class="registerSuggestion">
     <p>Se non ti sei ancora registrato puo farlo <a routerLink="/register">qui</a></p>
   </div>
-</ng-template>
+</div>

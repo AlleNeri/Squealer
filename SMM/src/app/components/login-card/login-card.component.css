@@ -6,6 +6,10 @@ form.login-card {
   background-color: #fff;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  /* flex */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 @media (max-width: 768px) {
@@ -34,6 +38,7 @@ form.login-card input[type=submit] {
   border: none;
   border-radius: 2px;
   cursor: pointer;
+  width: 40%;
 }
 
 form.login-card input[type=submit]:hover {
