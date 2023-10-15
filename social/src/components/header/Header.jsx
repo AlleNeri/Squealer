@@ -7,16 +7,16 @@ import './header.css';
 
 export default function ButtonAppBar() {
   return (
-    <div id="header">
-        <Toolbar>
-          <Link to="/" class="link">
-            <Button variant="light">HOME</Button>
+    <div className="header">
+        <Toolbar className="Toolbar">
+          <Link to="/" className="Link">
+            <Button >HOME</Button>
           </Link>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          <Typography className="Typography">
             SQUEALER
           </Typography>
-          <Link to='../../login' class="link">
-            <Button variant="light">LOGIN</Button>
+          <Link to='../../login' className="Link">
+            <Button>LOGIN</Button>
           </Link>
         </Toolbar>
     </div>

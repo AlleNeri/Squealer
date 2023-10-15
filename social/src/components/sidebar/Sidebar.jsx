@@ -9,6 +9,7 @@ import {
 } from 'cdbreact';
 import { NavLink } from 'react-router-dom';
 
+
 const Sidebar = () => {
     return (
         <div style={{ display: 'flex', height: '100vh', overflow: 'scroll initial' }}>
@@ -42,7 +43,6 @@ const Sidebar = () => {
                   padding: '20px 5px',
                 }}
               >
-                Sidebar Footer
               </div>
             </CDBSidebarFooter>
           </CDBSidebar>
