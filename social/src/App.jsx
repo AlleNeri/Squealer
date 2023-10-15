@@ -2,7 +2,7 @@ import React from 'react';
 import { createBrowserRouter,  RouterProvider } from 'react-router-dom';
 import './app.css';
 import Home from './pages/Home';
-import LoginPage from '../Login';
+import LoginPage from './pages/Login';
 
 const routes = createBrowserRouter([
 	{
