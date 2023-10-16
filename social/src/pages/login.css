@@ -3,6 +3,7 @@
   margin: 2rem auto;
   padding: 1rem;
   border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
 .login-form input {
@@ -18,4 +19,6 @@
   background: #007bff;
   color: #fff;
   border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }

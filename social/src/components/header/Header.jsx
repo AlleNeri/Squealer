@@ -15,8 +15,11 @@ export default function ButtonAppBar() {
           <Typography className="Typography">
             SQUEALER
           </Typography>
+          <Link to='../../register' className="Link">
+            <Button>REGISTER</Button>
+          </Link>
           <Link to='../../login' className="Link">
-            <Button>LOGIN</Button>
+            <Button >LOGIN</Button>
           </Link>
         </Toolbar>
     </div>
