@@ -13,7 +13,7 @@
   padding: 0.5rem;
 }
 
-.login-form button {
+.login-button {
   width: 100%;
   padding: 1rem;
   background: #007bff;
@@ -21,4 +21,8 @@
   border: none;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.login-button[disabled] {
+  opacity: 0.5; 
 }

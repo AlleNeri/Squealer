@@ -37,7 +37,9 @@ function Register() {
       console.log('Registration failed!'); 
     }
   }
-
+  const isDisabled = user.u_name.length === 0 || user.email.length === 0 ||user.name.first.length === 0 || 
+  user.name.last.length === 0 || user.u_name.length === 0 || password.length === 0;
+  
   return (
     <form className="register-form" onSubmit={handleSubmit}>
       
@@ -91,7 +93,13 @@ function Register() {
         <option value="smm">Social Media Manager</option>
       </select>
 
-      <button className="register-form button" type="submit">Register</button>
+      <button 
+        className="register-button"
+        type="submit"
+        disabled={isDisabled}   
+      >
+        Register
+      </button>
 
     </form>
   );

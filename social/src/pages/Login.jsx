@@ -7,6 +7,7 @@ function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+
     const response = await fetch("http://localhost:8080/users/login", {
       method: 'POST',
       headers: {
@@ -19,7 +20,7 @@ function Login() {
     });
 
     const data = await response.json();
-
+    
     if (data.success) {
       console.log("login success!");
     } else {
@@ -27,6 +28,7 @@ function Login() {
     }
   }
 
+  const isDisabled = username.length === 0 || password.length === 0;
   return (
     <form className='login-form' onSubmit={handleSubmit}>
       <input
@@ -45,7 +47,13 @@ function Login() {
         onChange={(e) => setPassword(e.target.value)}  
       />
 
-      <button className='login-form button' type="submit">Login</button>
+      <button 
+        className="login-button"
+        type="submit"
+        disabled={isDisabled}
+      >
+        Login
+      </button>
     </form>
   );
 }
