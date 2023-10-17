@@ -9,18 +9,25 @@ export default function ButtonAppBar() {
   return (
     <div className="header">
         <Toolbar className="Toolbar">
-          <Link to="/" className="Link">
-            <Button >HOME</Button>
-          </Link>
-          <Typography className="Typography">
-            SQUEALER
-          </Typography>
-          <Link to='../../register' className="Link">
-            <Button>REGISTER</Button>
-          </Link>
-          <Link to='../../login' className="Link">
-            <Button >LOGIN</Button>
-          </Link>
+          <div>
+            <Link to="/" className="Link">
+              <Button className='button'>HOME</Button>
+            </Link>
+          </div>
+          <div>
+            <Typography className="Typography">
+              SQUEALER
+            </Typography>
+          </div>     
+          <div className='regLog'>
+            <Link to='../../register' className="Link">
+              <Button className='button'>REGISTER</Button>
+            </Link>
+            <Link to='../../login' className="Link">
+              <Button className='button'>LOGIN</Button>
+            </Link>
+          </div>
+          
         </Toolbar>
     </div>
   );

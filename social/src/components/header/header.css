@@ -1,6 +1,7 @@
 .header {
-    background-color: #333;
+    background-color: #333; 
     color: #fff;
+    text-align: center;
 }
   
 .Toolbar {
@@ -15,5 +16,22 @@
 }
   
 .Typography {
-    font-size: 1.5rem;
+    font-size: 1.5rem;  
+}
+  
+button {
+    background-color: #007bff;
+    border: none;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    cursor: pointer; 
+}
+  
+button:hover {
+    background-color: #0062cc;
+}
+
+.regLog {
+    display: flex; 
+    gap: 10px; /* adds gap between flex items */
 }
