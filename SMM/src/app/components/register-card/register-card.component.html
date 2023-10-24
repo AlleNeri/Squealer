@@ -1,0 +1,27 @@
+<form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-card">
+  <h2 class="form-title">Registrati come social media manager</h2>
+  <input type="text" formControlName="username" placeholder="Username" />
+  <input type="password" formControlName="password" placeholder="Password" />
+  <input type="password" formControlName="confirmPassword" placeholder="Conferma la password" />
+  <div class="split">
+    <input type="text" formControlName="name" placeholder="Nome" />
+    <input type="text" formControlName="surname" placeholder="Cognome" />
+  </div>
+  <div class="split">
+    <input type="date" formControlName="birthDate" placeholder="Data di nascita" />
+    <input type="text" formControlName="email" placeholder="Email" />
+  </div>
+  <!-- TODO: capire come funziona -->
+  <!-- max="{{new Date().toISOString().split('T')[0]; | date:\'yyyy-MM-dd\'}}"  -->
+  <div class="explanation">
+    <p>I campi sono tutti richiesti. Sono previsti alcuni vincoli:</p>
+    <ul>
+      <li>L'username deve essere lungo almeno {{nameMinLength}} caratteri.</li>
+      <li>La password deve essere lunga almeno {{passwordMinLength}} caratteri.</li>
+      <li>La password deve contenere almeno una cifra, una lettera maiuscola e una minuscola.</li>
+      <li>Nome e cognome devono essere lunghi almeno {{nameMinLength}} caratteri.</li>
+      <li>La data di nascita deve essere antecedente a quella odierna.</li>
+    </ul>
+  </div>
+  <input type="submit" value="Registrati" [disabled]="!registerForm.valid" />
+</form>

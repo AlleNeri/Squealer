@@ -15,7 +15,7 @@ interface ILoginBody {
   styleUrls: ['./login-card.component.css']
 })
 export class LoginCardComponent {
-  loginForm: FormGroup;
+  public loginForm: FormGroup;
 
   constructor(private auth: AuthenticationService, private router: Router) {
     this.loginForm = new FormGroup({

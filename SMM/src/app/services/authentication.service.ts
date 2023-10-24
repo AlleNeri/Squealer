@@ -1,13 +1,32 @@
 import { Injectable } from '@angular/core';
 import { BackendComunicationService } from './backend-comunication.service';
 
-//TODO: definire l'oggetto di tipo utente vedere più avanti
+//TODO: spostare in un file apposito le definizioni tipi e interfacce
+export interface IUser {
+  u_name: string;
+  name: {
+    first: string;
+    last: string;
+  };
+  email: string;
+  type: string;
+  chat_availablility?: number;
+  img?: string; //TODO: look how to handle images
+  b_date?: Date;
+  appartenence?: string;
+  friends?: string[];
+};
+
+interface ILoggedUser {
+  user: IUser;
+  jwt: Object;
+};
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
-  private loggedUser?: Object;  //TODO: definire l'oggetto di tipo utente per questo tipo di dato
+  private loggedUser?: Object;  //TODO: chenge this type to ILoggedUser and adjust all the related problems
   private logKey: string;
 
   constructor(private backendComunication: BackendComunicationService) {
@@ -28,8 +47,8 @@ export class AuthenticationService {
     else this.loggedUser=JSON.parse(tmp); //TODO: controllare se ci sono i campi utili
   }
 
-  register(data: Object) {
-    this.backendComunication.post("users/register", data)  //TODO: modificar l'endpoint in maniera coerente col backend
+  register(data: { user: IUser, password: string }) {
+    return this.backendComunication.post("users/register", data)
       .subscribe((d: Object)=> {
         console.log(d);
         //TODO: controllare se la registrazione è valida
@@ -53,7 +72,6 @@ export class AuthenticationService {
 
   isLoggedIn(): boolean {
     this.checkCredentials();
-    console.log(this.loggedUser);
     if(this.loggedUser) return true;
     else return false;
   }

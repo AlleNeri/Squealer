@@ -12,4 +12,3 @@
   - [ ] visualizzazione semplice.
   - [ ] visualizzazione grafica.
 - [ ] terminare home page.
-- [ ] creare register page.

@@ -23,6 +23,7 @@ import { LayoutComponent } from './components/layout/layout.component';
 import { DashboardLayoutComponent } from './components/dashboard-layout/dashboard-layout.component';
 import { DashboardSidebarComponent } from './components/dashboard-sidebar/dashboard-sidebar.component';
 import { GeneralComponent } from './pages/general/general.component';
+import { RegisterCardComponent } from './components/register-card/register-card.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { GeneralComponent } from './pages/general/general.component';
     DashboardLayoutComponent,
     DashboardSidebarComponent,
     GeneralComponent,
+    RegisterCardComponent,
   ],
   imports: [
     BrowserModule,

@@ -18,7 +18,7 @@ const UserSchema: mongoose.Schema=new mongoose.Schema({
 			last: String,
 		}
 	},
-	email: {type: String, required: true},
+	email: {type: String, required: true, unique: true},
 	type: {type: String, required: true, enum: Object.values(UserType), default: UserType.NORMAL},
 	char_availability: {type: Number, min: 0},
 	img: String,
