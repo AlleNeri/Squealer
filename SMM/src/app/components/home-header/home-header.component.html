@@ -1,7 +1,31 @@
 <nav class="navbar">
   <ul>
-    <li>LogIn</li>
-    <li>Register</li>
-    <li>Squealer</li>
+    <!-- TODO: add routerLinkActive to the links -->
+    <li>
+      <a routerLink="/home">Home</a>
+    </li>
+    <li *ngIf="!this.auth.isLoggedIn()">
+      <a routerLink="/register">Register</a>
+    </li>
+    <li *ngIf="this.auth.isLoggedIn()">
+      <a routerLink="/smm">Dashboard</a>
+    </li>
+    <li>
+      <a routerLink="/login">
+        <ng-template *ngIf="this.auth.isLoggedIn(); then logOutBlock else logInBlock" />
+      </a>
+    </li>
+    <li>
+      <!-- TODO: insert a link to the Squealer page -->
+      <a href="">Squealer</a>
+    </li>
   </ul>
 </nav>
+
+<ng-template #logInBlock>
+  Log In
+</ng-template>
+
+<ng-template #logOutBlock>
+  Log Out
+</ng-template>

@@ -1,7 +1,6 @@
-<div *ngIf="this.auth.isLoggedIn(); then thenBlock else elseBlock"></div>
-<ng-template #thenBlock>
-  <div>Switch profile</div>
-</ng-template>
-<ng-template #elseBlock>
-  <div>Log in form</div>
-</ng-template>
+<div>
+  <app-login-card></app-login-card>
+  <div class="authSuggestion">
+    <p>Se non ti sei ancora registrato puoi farlo <a routerLink="/register">qui</a></p>
+  </div>
+</div>

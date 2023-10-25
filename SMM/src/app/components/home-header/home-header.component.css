@@ -16,3 +16,16 @@
 .navbar > ul > li:hover {
   color: black;
 }
+
+.navbar > ul > li > a {
+  color: gray;
+  text-decoration: none;
+}
+
+.navbar > ul > li > a:hover {
+  color: black;
+}
+
+.navbar > ul > li > a:active {
+  color: black;
+}

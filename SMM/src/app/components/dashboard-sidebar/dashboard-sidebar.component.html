@@ -1,0 +1,20 @@
+<!-- sidebar component -->
+<div class="sidenav">
+  <!-- sidebar links -->
+  <a routerLink="/smm/general">General</a>
+  <a routerLink="/smm">Profilo 1</a>
+  <a routerLink="/smm">Profilo 2</a>
+  <a routerLink="/smm">...</a>
+</div>
+
+<!-- main content -->
+<div class="main">
+  <ng-content></ng-content>
+</div>
+
+<!-- TODO: add toggle button
+  <div class="sidenav" [ngClass]="{ 'hidden': isCollapsed }">
+    <button class="open-remove-btn" (click)="toggleSidebar()">
+      <span *ngIf="isCollapsed">Open</span>
+    </button>
+-->

@@ -1,0 +1,43 @@
+div.sidenav {
+  height: 100%;
+  width: 160px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  padding-top: 20px;
+  transition: transform 0.5s ease-in-out;
+}
+
+/* hidden sidebar */
+div.sidenav.hidden {
+  transform: translateX(-100%);
+}
+
+/* sidenav links */
+div.sidenav a {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 15px;
+  color: #818181;
+  display: block;
+}
+
+/* sidenav links on mouse-over */
+div.sidenav a:hover {
+  color: #f1f1f1;
+}
+
+/* main content */
+div.main {
+  margin-left: 160px; /* Same as the width of the sidenav */
+  padding: 0px 10px;
+}
+
+/* on small screens, set height to 'auto' for the grid */
+@media screen and (max-width: 450px) {
+  div.sidenav { padding-top: 15px; }
+  div.sidenav a { font-size: 11px; }
+}

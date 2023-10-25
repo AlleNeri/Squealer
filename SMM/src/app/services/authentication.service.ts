@@ -1,24 +1,48 @@
 import { Injectable } from '@angular/core';
-import { BackendComunicationService } from './backend-comunication.service';
+import { Observable, Subject } from 'rxjs';
 
-//TODO: definire l'oggetto di tipo utente per questo tipo di dato
+import { BackendComunicationService } from './backend-comunication.service';
+import { IUser } from './user-information.service';
+
+interface ILoggedUser {
+  user: IUser;
+  jwt: Object;
+};
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
-  private loggedUser?: Object;  //TODO: definire l'oggetto di tipo utente per questo tipo di dato
+  private loggedUser?: Object;  //TODO: chenge this type to ILoggedUser and adjust all the related problems
   private logKey: string;
+  private logInSubject: Subject<boolean>;
 
   constructor(private backendComunication: BackendComunicationService) {
     this.checkCredentials();
     this.logKey="user";
+    this.logInSubject=new Subject<boolean>();
+  }
+
+  get logInObservable(): Observable<boolean> {
+    return this.logInSubject.asObservable();
+  }
+
+  get userId(): string | null {
+    if(this.loggedUser) return (this.loggedUser as any).id;
+    else return null;
   }
 
   //undefined argument to remove the user from the local storage(logout)
   private set logUser(obj: Object | undefined) {
-    if(obj===undefined) localStorage.removeItem(this.logKey);
-    else localStorage.setItem(this.logKey, JSON.stringify(obj));
+    //this code emit also a new value to the observable
+    if(obj===undefined) {
+      localStorage.removeItem(this.logKey);
+      this.logInSubject.next(false);
+    }
+    else {
+      localStorage.setItem(this.logKey, JSON.stringify(obj));
+      this.logInSubject.next(true);
+    }
     this.loggedUser=obj;
   }
 
@@ -28,25 +52,26 @@ export class AuthenticationService {
     else this.loggedUser=JSON.parse(tmp); //TODO: controllare se ci sono i campi utili
   }
 
-  register(data: Object) {
-    this.backendComunication.post("/register", data)  //TODO: modificar l'endpoint in maniera coerente col backend
-    .subscribe((d: Object)=> {
-      console.log(d);
-      //TODO: controllare se la registrazione è valida
-      this.logUser=d;
-    });
+  register(data: { user: IUser, password: string }) {
+    return this.backendComunication.post("users/register", data)
+      .subscribe((d: Object)=> {
+        console.log(d);
+        //TODO: controllare se la registrazione è valida
+        this.logUser=d;
+      });
   }
 
   login(data: Object) {
-    this.backendComunication.post("/login", data)  //TODO: modificar l'endpoint in maniera coerente col backend
-    .subscribe((d: Object)=> {
-      console.log(d);
-      //TODO: controllare se il login è valido
-      this.logUser=d;
-    });
+    return this.backendComunication.post("users/login", data)  //TODO: modificar l'endpoint in maniera coerente col backend
+      .subscribe((d: Object)=> {
+        console.log(d);
+        //TODO: controllare se il login è valido
+        this.logUser=d;
+        return true;
+      });
   }
 
-  logout() {
+  logout(): void {
     this.logUser=undefined;
   }
 
