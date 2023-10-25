@@ -8,9 +8,17 @@ import { authenticationRoute } from './authentication';
 export const userRoute: Router=Router();
 
 //get a specific user
-userRoute.get('/:id', (req: Request, res: Response) => {
+userRoute.get('/:id', Auth.softAuthorize, (req: Request, res: Response) => {
+	//TODO: check if the user is authorized to see this user
+	//if it's not, return only the public info
 	UserSchema.findById(req.params.id)
-		.then((user: User | null) => res.status(200).json(user))
+		.then((user: User | null) => {
+			//check if the authenticated user is authorized to see this user
+			if(!req.user) return res.status(200).json(user?.publicInfo());
+			else if(req.user?.isClient(req.params.id)) return res.status(200).json(user);
+			else if(req.user?.id === req.params.id) return res.status(200).json(user);
+			else return res.status(200).json(user?.publicInfo());
+		})
 		.catch(err=> res.status(404).json({ msg: 'User not found', err: err }));
 });
 

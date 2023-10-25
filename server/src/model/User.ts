@@ -44,6 +44,14 @@ UserSchema.virtual('isNormal').get(function() {
 	return this.type===UserType.NORMAL;
 });
 
+UserSchema.virtual('publicInfo').get(function() {
+	return {
+		u_name: this.u_name,
+		name: this.name,
+		img: this.img,
+	};
+});
+
 UserSchema.methods.isFriend=function(user_id: string): boolean {
 	return this.friends.reduce((accumulator: boolean, currVal: mongoose.Types.ObjectId)=> {
 		if(accumulator) return true;

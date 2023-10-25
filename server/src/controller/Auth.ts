@@ -105,17 +105,17 @@ abstract class Auth {
 			.catch((_: any) => { return null; });
 	}
 
-	public static async signInWithUser(user: User, password: string): Promise<object | null> {
+	public static async signInWithUser(user: User, password: string): Promise<any | null> {
 		return CredentialsSchema.findOne({ user_id: user._id })
 			.then((credentials: Credentials | null) => {
 				if(!credentials) return null;
 				if(!Auth.validatePassword(password, credentials.hash, credentials.salt)) return null;
-				return Auth.generateJwt(user);
+				return { authToken: Auth.generateJwt(user), userId: credentials.user_id };
 			})
 			.catch((_: any) => { return null; });
 	}
 
-	public static async signIn(u_name: string, password: string): Promise<object | null> {
+	public static async signIn(u_name: string, password: string): Promise<any | null> {
 		return UserSchema.findOne({ u_name: u_name })
 			.then((user: User | null) => {
 				if(!user) return null;
@@ -149,24 +149,37 @@ abstract class Auth {
 			.catch((_: any) => { return false; });
 	}
 
-	public static authorize(req: Request, res: Response, next: NextFunction): Response | void {
-		if(!req.headers.authorization) return res.status(401).json({ message: 'Unauthorized' });
+	private static async setAuthenticationInRequest(req: Request): Promise<{ status: boolean, msg?: string }> {
+		if(!req.headers.authorization) return { status: false, msg: 'Unauthorized' };
 		const bearerToken: string=req.headers.authorization;
-		Auth.verifyJwt(bearerToken)
+		return Auth.verifyJwt(bearerToken)
 			.then((payload: string | jsonwebtoken.JwtPayload | null) => {
-				if(!payload) return res.status(401).json({ message: 'Invalid token.' });
-				if(typeof payload === 'string' || !payload.sub || !payload.exp) return res.status(401).json({ message: 'Invalid token.' });
-				if(payload.exp < (new Date()).getTime()) return res.status(401).json({ message: 'Token expired.' });
+				if(!payload) return { status: false, msg: 'Invalid token.' };
+				if(typeof payload === 'string' || !payload.sub || !payload.exp) return { status: false, msg: 'Invalid token.' };
+				if(payload.exp < (new Date()).getTime()) return { status: false, msg: 'Token expired.' };
 				const user_id: string=payload.sub as string;
-				UserSchema.findById(user_id)
+				return UserSchema.findById(user_id)
 					.then((user: User | null) => {
-						if(!user) return res.status(401).json({ message: 'Invalid token.' });
+						if(!user) return { status: false, msg: 'Invalid token.' };
 						req.user=user;
-						return next();
+						return { status: true };
 					})
-					.catch((_: any) => { return res.status(401).json({ message: 'Invalid token.' }); });
+					.catch((_: any) => { return { status: true, msg: 'Invalid token.' }; });
 			})
-			.catch((_: any) => { return res.status(401).json({ message: 'Invalid token.' }); });
+			.catch((_: any) => { return { status: true, msg: 'Invalid token.' }; });
+	}
+
+	public static async authorize(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+		return Auth.setAuthenticationInRequest(req)
+			.then((auth: { status: boolean, msg?: string }) => {
+				if(!auth.status) return res.status(401).json({ message: auth.msg });
+				return next();
+			});
+	}
+
+	public static async softAuthorize(req: Request, _: Response, next: NextFunction): Promise<Response | void> {
+		return Auth.setAuthenticationInRequest(req)
+			.then((_: { status: boolean, msg?: string }) => next() );	//Unauthorized requests are allowed to pass
 	}
 
 	public static isSMM(req: Request, res: Response, next: NextFunction): Response | void {
