@@ -12,8 +12,14 @@
 
 .hero > h1,
 .hero > h2 {
+  /* hero text font */
+  font-family: Open sans, sans-serif !important;
+}
+
+.hero > h1,
+.hero > h2 {
   color: white;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: arial, helvetica, sans-serif;
   line-height: 1.1;
   font-size: 3.5em;
 }

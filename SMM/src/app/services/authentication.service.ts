@@ -1,21 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BackendComunicationService } from './backend-comunication.service';
+import { Observable, Subject } from 'rxjs';
 
-//TODO: spostare in un file apposito le definizioni tipi e interfacce
-export interface IUser {
-  u_name: string;
-  name: {
-    first: string;
-    last: string;
-  };
-  email: string;
-  type: string;
-  chat_availablility?: number;
-  img?: string; //TODO: look how to handle images
-  b_date?: Date;
-  appartenence?: string;
-  friends?: string[];
-};
+import { BackendComunicationService } from './backend-comunication.service';
+import { IUser } from './user-information.service';
 
 interface ILoggedUser {
   user: IUser;
@@ -28,16 +15,34 @@ interface ILoggedUser {
 export class AuthenticationService {
   private loggedUser?: Object;  //TODO: chenge this type to ILoggedUser and adjust all the related problems
   private logKey: string;
+  private logInSubject: Subject<boolean>;
 
   constructor(private backendComunication: BackendComunicationService) {
     this.checkCredentials();
     this.logKey="user";
+    this.logInSubject=new Subject<boolean>();
+  }
+
+  get logInObservable(): Observable<boolean> {
+    return this.logInSubject.asObservable();
+  }
+
+  get userId(): string | null {
+    if(this.loggedUser) return (this.loggedUser as any).id;
+    else return null;
   }
 
   //undefined argument to remove the user from the local storage(logout)
   private set logUser(obj: Object | undefined) {
-    if(obj===undefined) localStorage.removeItem(this.logKey);
-    else localStorage.setItem(this.logKey, JSON.stringify(obj));
+    //this code emit also a new value to the observable
+    if(obj===undefined) {
+      localStorage.removeItem(this.logKey);
+      this.logInSubject.next(false);
+    }
+    else {
+      localStorage.setItem(this.logKey, JSON.stringify(obj));
+      this.logInSubject.next(true);
+    }
     this.loggedUser=obj;
   }
 

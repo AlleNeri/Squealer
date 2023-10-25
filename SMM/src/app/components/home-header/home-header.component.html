@@ -4,16 +4,16 @@
     <li>
       <a routerLink="/home">Home</a>
     </li>
-    <li>
+    <li *ngIf="!this.auth.isLoggedIn()">
       <a routerLink="/register">Register</a>
+    </li>
+    <li *ngIf="this.auth.isLoggedIn()">
+      <a routerLink="/smm">Dashboard</a>
     </li>
     <li>
       <a routerLink="/login">
         <ng-template *ngIf="this.auth.isLoggedIn(); then logOutBlock else logInBlock" />
       </a>
-    </li>
-    <li *ngIf="this.auth.isLoggedIn()">
-      <a routerLink="/smm">Dashboard</a>
     </li>
     <li>
       <!-- TODO: insert a link to the Squealer page -->
