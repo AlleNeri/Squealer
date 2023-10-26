@@ -5,13 +5,14 @@ import { BackendComunicationService } from './backend-comunication.service';
 
 //TODO: spostare in un file apposito le definizioni tipi e interfacce
 export interface IUser {
+  id?: string;
   u_name: string;
   name: {
     first: string;
     last: string;
   };
-  email: string;
-  type: string;
+  email?: string;
+  type?: string;
   chat_availablility?: number;
   img?: string; //TODO: look how to handle images
   b_date?: Date;
@@ -32,10 +33,13 @@ export class UserInformationService {
     });
   }
 
+  public get user(): IUser | undefined {
+    return this.userInformation;
+  }
+
   private getUserInfo(): void {
-    this.backendComunication.get(this.auth.userId!)
+    this.backendComunication.get(`users/${this.auth.userId!}`, this.auth.token!)
       .subscribe((d: Object)=> {
-        console.log(d);
         this.userInformation=d as IUser;
       });
   }

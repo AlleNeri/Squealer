@@ -32,9 +32,15 @@ export class AuthenticationService {
     else return null;
   }
 
+  get token(): string | null {
+    if(this.loggedUser) return (this.loggedUser as any).jwt.token;
+    else return null;
+  }
+
   //undefined argument to remove the user from the local storage(logout)
   private set logUser(obj: Object | undefined) {
     //this code emit also a new value to the observable
+    this.loggedUser=obj;
     if(obj===undefined) {
       localStorage.removeItem(this.logKey);
       this.logInSubject.next(false);
@@ -43,7 +49,6 @@ export class AuthenticationService {
       localStorage.setItem(this.logKey, JSON.stringify(obj));
       this.logInSubject.next(true);
     }
-    this.loggedUser=obj;
   }
 
   checkCredentials() {
@@ -55,7 +60,6 @@ export class AuthenticationService {
   register(data: { user: IUser, password: string }) {
     return this.backendComunication.post("users/register", data)
       .subscribe((d: Object)=> {
-        console.log(d);
         //TODO: controllare se la registrazione è valida
         this.logUser=d;
       });
@@ -64,7 +68,6 @@ export class AuthenticationService {
   login(data: Object) {
     return this.backendComunication.post("users/login", data)  //TODO: modificar l'endpoint in maniera coerente col backend
       .subscribe((d: Object)=> {
-        console.log(d);
         //TODO: controllare se il login è valido
         this.logUser=d;
         return true;

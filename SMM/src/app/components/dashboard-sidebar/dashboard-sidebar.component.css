@@ -16,8 +16,10 @@ div.sidenav.hidden {
   transform: translateX(-100%);
 }
 
-/* sidenav links */
-div.sidenav a {
+/* sidenav links and subsection title */
+div.sidenav a,
+div.sidenav p,
+div.sidenav div.subsection a {
   padding: 6px 8px 6px 16px;
   text-decoration: none;
   font-size: 15px;
@@ -25,9 +27,18 @@ div.sidenav a {
   display: block;
 }
 
+div.sidenav p {
+  color: white;
+}
+
 /* sidenav links on mouse-over */
-div.sidenav a:hover {
-  color: #f1f1f1;
+div.sidenav a:hover,
+div.sidenav div.subsection a:hover {
+  color: white;
+}
+
+div.sidenav div.subsection {
+  margin-left: 5%;
 }
 
 /* main content */

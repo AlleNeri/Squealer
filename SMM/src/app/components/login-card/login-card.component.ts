@@ -31,7 +31,7 @@ export class LoginCardComponent {
     //authenticate the user and redirect to the dashboard if the login is successful
     this.auth.login(body)
       .add(() => {
-        if(this.auth.isLoggedIn()) this.router.navigate(['/smm']);
+        if(this.auth.isLoggedIn()) this.router.navigate(['/home']);
         else {
           this.loginForm.reset();
           alert("Login fallito");

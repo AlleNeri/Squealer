@@ -13,9 +13,6 @@
   display: inline;
   padding: 0% 2%;
 }
-.navbar > ul > li:hover {
-  color: black;
-}
 
 .navbar > ul > li > a {
   color: gray;
@@ -24,8 +21,9 @@
 
 .navbar > ul > li > a:hover {
   color: black;
+  text-shadow: 0px 0px 8px #00b8eb;
 }
 
-.navbar > ul > li > a:active {
+.navbar > ul > li > a.actual {
   color: black;
 }
