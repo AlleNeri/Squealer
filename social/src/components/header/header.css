@@ -35,3 +35,8 @@ button:hover {
     display: flex; 
     gap: 10px; /* adds gap between flex items */
 }
+
+.newLog {
+    display: flex; 
+    gap: 10px; /* adds gap between flex items */
+}

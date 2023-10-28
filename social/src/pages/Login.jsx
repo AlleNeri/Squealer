@@ -44,10 +44,12 @@ function Login() {
   const isDisabled = username.length === 0 || password.length === 0;
   return (
     <>
-      {loggedIn ? (
-        <p>You are logged in!</p>
-      ) : (
-      <form className='login-form' onSubmit={handleSubmit}>
+      {loggedIn &&
+        <p>Welcome {username}</p>
+      }
+      {!loggedIn && 
+
+        <form className='login-form' onSubmit={handleSubmit}>
         <input
         className="login-form input"
         type="text"
@@ -71,8 +73,9 @@ function Login() {
       >
         Login
       </button>
-    </form>
-      )}
+    </form> 
+        
+      }  
     </>
   );
 }

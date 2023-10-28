@@ -43,10 +43,17 @@ export default function ButtonAppBar() {
           </div>
           
           }
-          {loggedIn && <Link to='#' className="Link">
-            <Button className='button'>NEW POST</Button>
-            <Button className='button' onClick={handleLogout}>LOGOUT</Button>
-          </Link>}
+          {loggedIn && 
+          <div className='newLog'>
+            <Link to='#' className="Link">
+              <Button className='button'>NEW POST</Button>
+            </Link>
+          
+            <Link to="../../login" className='Link'>
+              <Button className='button' onClick={handleLogout}>LOGOUT</Button>
+            </Link>
+          </div>}
+          
         </Toolbar>
     </div>
   );
