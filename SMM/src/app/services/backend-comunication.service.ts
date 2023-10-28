@@ -7,7 +7,7 @@ import { environment } from 'src/environments/environment.development';
   providedIn: 'root'
 })
 export class BackendComunicationService {
-  private baseUrl: string=environment.apiUrl;
+  private readonly baseUrl: string=environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 

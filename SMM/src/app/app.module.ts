@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
@@ -21,6 +21,8 @@ import { DashboardLayoutComponent } from './components/dashboard-layout/dashboar
 import { DashboardSidebarComponent } from './components/dashboard-sidebar/dashboard-sidebar.component';
 import { GeneralComponent } from './pages/general/general.component';
 import { RegisterCardComponent } from './components/register-card/register-card.component';
+
+import { UserInformationService, factoryUserInformationService } from './services/user-information.service';
 
 @NgModule({
   declarations: [
@@ -45,7 +47,15 @@ import { RegisterCardComponent } from './components/register-card/register-card.
     HttpClientModule,
     ReactiveFormsModule,
   ],
-  providers: [],
+  providers: [
+    UserInformationService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: factoryUserInformationService,
+      deps: [UserInformationService],
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,30 +1,30 @@
-import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Injectable, Output, EventEmitter } from '@angular/core';
 
 import { BackendComunicationService } from './backend-comunication.service';
-import { IUser } from './user-information.service';
+import { IRegisterBody } from '../components/register-card/register-card.component';
 
-interface ILoggedUser {
-  user: IUser;
-  jwt: Object;
+interface IJWT {
+  token: string;
+  expires: string;
+};
+
+export interface ILoggedUser {
+  id: string;
+  jwt: IJWT;
 };
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
-  private loggedUser?: Object;  //TODO: chenge this type to ILoggedUser and adjust all the related problems
+  private loggedUser?: ILoggedUser;
   private logKey: string;
-  private logInSubject: Subject<boolean>;
+  @Output() public logInEvent: EventEmitter<ILoggedUser>;
 
   constructor(private backendComunication: BackendComunicationService) {
     this.checkCredentials();
     this.logKey="user";
-    this.logInSubject=new Subject<boolean>();
-  }
-
-  get logInObservable(): Observable<boolean> {
-    return this.logInSubject.asObservable();
+    this.logInEvent=new EventEmitter<ILoggedUser>();
   }
 
   get userId(): string | null {
@@ -38,16 +38,14 @@ export class AuthenticationService {
   }
 
   //undefined argument to remove the user from the local storage(logout)
-  private set logUser(obj: Object | undefined) {
-    //this code emit also a new value to the observable
+  private set logUser(obj: ILoggedUser | undefined) {
     this.loggedUser=obj;
-    if(obj===undefined) {
-      localStorage.removeItem(this.logKey);
-      this.logInSubject.next(false);
-    }
+    //set the local storage for persistency
+    //this code emit also the event for the other components
+    if(obj===undefined) localStorage.removeItem(this.logKey);
     else {
       localStorage.setItem(this.logKey, JSON.stringify(obj));
-      this.logInSubject.next(true);
+      this.logInEvent.emit(obj);
     }
   }
 
@@ -57,11 +55,11 @@ export class AuthenticationService {
     else this.loggedUser=JSON.parse(tmp); //TODO: controllare se ci sono i campi utili
   }
 
-  register(data: { user: IUser, password: string }) {
+  register(data: IRegisterBody) {
     return this.backendComunication.post("users/register", data)
       .subscribe((d: Object)=> {
         //TODO: controllare se la registrazione è valida
-        this.logUser=d;
+        this.logUser=d as ILoggedUser | undefined;
       });
   }
 
@@ -69,7 +67,7 @@ export class AuthenticationService {
     return this.backendComunication.post("users/login", data)  //TODO: modificar l'endpoint in maniera coerente col backend
       .subscribe((d: Object)=> {
         //TODO: controllare se il login è valido
-        this.logUser=d;
+        this.logUser=d as ILoggedUser | undefined;
         return true;
       });
   }

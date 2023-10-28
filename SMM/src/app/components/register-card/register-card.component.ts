@@ -3,8 +3,12 @@ import { Router } from '@angular/router';
 import { FormGroup, Validators, ValidatorFn, ValidationErrors, AbstractControl, FormBuilder } from '@angular/forms';
 
 import { AuthenticationService } from '../../services/authentication.service';
+import { IUser } from 'src/app/services/user-information.service';
 
-//TODO terminate the registration form, in particular the onSubmit method, the html and the validation of the confirm password
+export interface IRegisterBody {
+  user: IUser,
+  password: string
+};
 
 @Component({
   selector: 'app-register-card',
@@ -81,7 +85,7 @@ export class RegisterCardComponent {
   onSubmit() {
     //get the data to sent to the server
     const body: any = this.registerForm.value;
-    const registerUser = {
+    const registerUser: IRegisterBody= {
       user: {
         u_name: body.username,
         name: {
@@ -96,7 +100,7 @@ export class RegisterCardComponent {
     console.log(registerUser);
     this.auth.register(registerUser)
       .add(() => {
-        //redirect to login page
+        //redirect to the dashboard if the registration is successful(because the user is logged in)
         if(this.auth.isLoggedIn()) this.router.navigate(['/smm']);
         //TODO: the username is unique, so if the registration fails because of the username, the user should be notified
         //TODO: the email is unique, so if the registration fails because of the email, the user should be notified
