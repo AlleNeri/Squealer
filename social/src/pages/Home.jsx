@@ -9,13 +9,13 @@ function Home() {
         <>
             <div>
                 <Header />
-                
-                <div class="main">
+
+                <div className="main">
                     <Sidebar />
                     <Outlet />
                 </div>
             </div>
-        </>   
+        </>
     );
 };
 

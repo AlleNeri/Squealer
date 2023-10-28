@@ -1,9 +1,11 @@
-import React from 'react';
+import {React, useState} from 'react';
 import { createBrowserRouter,  RouterProvider } from 'react-router-dom';
 import './app.css';
 import Home from './pages/Home';
 import LoginPage from './pages/Login';
 import RegisterPage from './pages/Register';
+import { LoginContext } from "./pages/LoginContext";
+
 const routes = createBrowserRouter([
 	{
 		path: '/',
@@ -22,10 +24,14 @@ const routes = createBrowserRouter([
 ]);
 
 function App() {
+	const [loggedIn, setLoggedIn] = useState(false);
 	return (
-	<>
-		<RouterProvider router={routes} />
-	</>		
+	<LoginContext.Provider value={{loggedIn, setLoggedIn}}>
+      	<>
+			<RouterProvider router={routes} />
+		</>	
+    </LoginContext.Provider>
+		
 	);
 }
 
