@@ -23,6 +23,7 @@ import { GeneralComponent } from './pages/general/general.component';
 import { RegisterCardComponent } from './components/register-card/register-card.component';
 
 import { UserInformationService, factoryUserInformationService } from './services/user-information.service';
+import { ClientComponent } from './components/client/client.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { UserInformationService, factoryUserInformationService } from './service
     DashboardSidebarComponent,
     GeneralComponent,
     RegisterCardComponent,
+    ClientComponent,
   ],
   imports: [
     BrowserModule,

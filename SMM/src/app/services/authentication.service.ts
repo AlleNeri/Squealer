@@ -1,17 +1,8 @@
 import { Injectable, Output, EventEmitter } from '@angular/core';
 
+import { ILoggedUser, IRegisterBody } from '../interfaces/auth-user';
+
 import { BackendComunicationService } from './backend-comunication.service';
-import { IRegisterBody } from '../components/register-card/register-card.component';
-
-interface IJWT {
-  token: string;
-  expires: string;
-};
-
-export interface ILoggedUser {
-  id: string;
-  jwt: IJWT;
-};
 
 @Injectable({
   providedIn: 'root'

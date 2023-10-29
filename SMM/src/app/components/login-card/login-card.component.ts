@@ -2,12 +2,9 @@ import { Component } from '@angular/core';
 import{ Router } from '@angular/router';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
-import { AuthenticationService } from '../../services/authentication.service';
+import { ILoginBody } from 'src/app/interfaces/auth-user';
 
-interface ILoginBody {
-  username: string,
-  password: string
-};
+import { AuthenticationService } from '../../services/authentication.service';
 
 @Component({
   selector: 'app-login-card',

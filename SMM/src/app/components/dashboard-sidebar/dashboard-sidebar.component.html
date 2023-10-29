@@ -4,7 +4,7 @@
   <a routerLink="/smm/general">General</a>
   <p>Clienti</p>
   <div class="subsection">
-    <a *ngFor="let client of this.clients" routerLink="/smm/client/{{client.id}}">{{client.u_name}}</a>
+    <a *ngFor="let client of this.clients" routerLink="/smm/client/{{client.id}}">{{client.username}}</a>
   </div>
 </div>
 

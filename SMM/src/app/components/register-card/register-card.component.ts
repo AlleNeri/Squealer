@@ -2,13 +2,9 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormGroup, Validators, ValidatorFn, ValidationErrors, AbstractControl, FormBuilder } from '@angular/forms';
 
-import { AuthenticationService } from '../../services/authentication.service';
-import { IUser } from 'src/app/services/user-information.service';
+import { IRegisterBody } from 'src/app/interfaces/auth-user';
 
-export interface IRegisterBody {
-  user: IUser,
-  password: string
-};
+import { AuthenticationService } from '../../services/authentication.service';
 
 @Component({
   selector: 'app-register-card',
