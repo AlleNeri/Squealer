@@ -27,8 +27,8 @@ div.sidenav div.subsection a {
   display: block;
 }
 
-div.sidenav p {
-  color: white;
+div.sidenav a.noHrefLink {
+  cursor: default;
 }
 
 /* sidenav links on mouse-over */

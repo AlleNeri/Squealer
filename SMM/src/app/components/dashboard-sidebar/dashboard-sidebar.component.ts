@@ -13,11 +13,12 @@ import { UserInformationService } from '../../services/user-information.service'
 })
 export class DashboardSidebarComponent implements OnChanges, OnInit {
   public clients: Client[];
+  public showClients: boolean;
 
   constructor(private userInfo: UserInformationService) {
     this.clients = [];
     this.userInfo.userInformationEvent.subscribe((_: IUser)=> this.clients=this.userInfo.clients);
-    console.log(this.clients);
+    this.showClients = false;
   }
 
   ngOnInit() {
@@ -26,6 +27,10 @@ export class DashboardSidebarComponent implements OnChanges, OnInit {
 
   ngOnChanges() {
     this.clients = this.userInfo.clients;
+  }
+
+  public toggleClients() {
+    this.showClients = !this.showClients;
   }
   /* TODO: add sidebar toggle functionality
   public isCollapsed=false;

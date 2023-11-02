@@ -1,7 +1,7 @@
 <nav class="navbar">
   <ul>
     <!-- TODO: add routerLinkActive to the links -->
-    <li>
+    <li *ngIf="!this.auth.isLoggedIn()">
       <a routerLink="/home" routerLinkActive="actual">Home</a>
     </li>
     <li *ngIf="!this.auth.isLoggedIn()">
