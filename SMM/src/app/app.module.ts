@@ -24,6 +24,9 @@ import { RegisterCardComponent } from './components/register-card/register-card.
 
 import { UserInformationService, factoryUserInformationService } from './services/user-information.service';
 import { ClientComponent } from './components/client/client.component';
+import { UserCardComponent } from './components/user-card/user-card.component';
+import { ScreenDimensionDirective } from './directives/screen-dimension.directive';
+import { MyErrorMessageComponent } from './components/my-error-message/my-error-message.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +44,9 @@ import { ClientComponent } from './components/client/client.component';
     GeneralComponent,
     RegisterCardComponent,
     ClientComponent,
+    UserCardComponent,
+    ScreenDimensionDirective,
+    MyErrorMessageComponent,
   ],
   imports: [
     BrowserModule,

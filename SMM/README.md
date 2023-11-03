@@ -17,3 +17,4 @@
 - [ ] creare "interface" per spostare nel punto giusto tutte le strutture dati che ho lasciato in giro per il codice.
 - [ ] revisione dell'inserimento dei token nelle richieste HTTP tramite "interceptor".
 - [ ] revisione della protezione delle rotte protette tramite "gurad".
+- [X] risolvere i problemi di visualizzazione.
