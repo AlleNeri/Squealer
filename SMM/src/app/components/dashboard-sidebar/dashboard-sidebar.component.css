@@ -1,6 +1,6 @@
 div.sidenav {
   height: 100%;
-  width: 160px;
+  width: 10%;
   position: fixed;
   z-index: 1;
   top: 0;
@@ -18,11 +18,9 @@ div.sidenav.hidden {
 
 /* sidenav links and subsection title */
 div.sidenav a,
-div.sidenav p,
 div.sidenav div.subsection a {
   padding: 6px 8px 6px 16px;
   text-decoration: none;
-  font-size: 15px;
   color: #818181;
   display: block;
 }
@@ -43,12 +41,21 @@ div.sidenav div.subsection {
 
 /* main content */
 div.main {
-  margin-left: 160px; /* Same as the width of the sidenav */
+  margin-left: 10%; /* Same as the width of the sidenav */
   padding: 0px 10px;
 }
 
-/* on small screens, set height to 'auto' for the grid */
-@media screen and (max-width: 450px) {
-  div.sidenav { padding-top: 15px; }
-  div.sidenav a { font-size: 11px; }
+@media screen and (max-width: 750px) {
+  div.sidenav {
+    width: 20%;
+    padding-top: 15px;
+  }
+  div.main { margin-left: 20%; }
+}
+
+@media screen and (max-width: 1000px) {
+  div.sidenav {
+    width: 15%;
+    padding-top: 15px;
+  }
 }

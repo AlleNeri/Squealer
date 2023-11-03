@@ -9,7 +9,7 @@
   - [X] registrazione.
   - [ ] cancellazione utenti.
 - [ ] visualizzazione di info.
-  - [ ] visualizzazione delle informazioni generali dell'utente stesso.
+  - [X] visualizzazione delle informazioni generali dell'utente stesso.
   - [ ] presentazione dei clienti nella sidebar.
   - [ ] visualizzazione semplice.
   - [ ] visualizzazione grafica.

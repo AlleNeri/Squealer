@@ -1,0 +1,17 @@
+<div class="user-card-container">
+  <div class="user-card">
+    <h3>{{ user.u_name }}</h3>
+    <div class="same-line">
+      <p>{{ user.name.first }} {{ user.name.last }}</p>
+      <p>{{ user.email }}</p>
+    </div>
+    <div *ngIf="this.clients" class="clients">
+      <h5>Clienti:</h5>
+      <ul>
+        <li *ngFor="let client of this.clients">
+          <a [routerLink]="['/client', client.id]">{{ client.username }}</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
