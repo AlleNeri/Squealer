@@ -14,4 +14,16 @@ export default class Client {
   public get username(): string | undefined {
     return this.user?.u_name;
   }
+
+  public get completeName(): string | undefined {
+    return this.user?.name.first + " " + this.user?.name.last;
+  }
+
+  public get email(): string | undefined {
+    return this.user?.email;
+  }
+
+  public get friendsNumber(): number | undefined {
+    return this.user?.friends?.length;
+  }
 }

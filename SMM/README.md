@@ -10,8 +10,8 @@
   - [ ] cancellazione utenti.
 - [ ] visualizzazione di info.
   - [X] visualizzazione delle informazioni generali dell'utente stesso.
-  - [ ] presentazione dei clienti nella sidebar.
-  - [ ] visualizzazione semplice.
+  - [X] presentazione dei clienti nella sidebar.
+  - [X] visualizzazione semplice.
   - [ ] visualizzazione grafica.
 - [ ] terminare home page.
 - [ ] creare "interface" per spostare nel punto giusto tutte le strutture dati che ho lasciato in giro per il codice.

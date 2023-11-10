@@ -11,6 +11,8 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { HomeComponent } from './pages/home/home.component';
+import { GeneralComponent } from './pages/general/general.component';
+import { ClientComponent } from './pages/client/client.component';
 
 import { HomeHeaderComponent } from './components/home-header/home-header.component';
 import { HomeFooterComponent } from './components/home-footer/home-footer.component';
@@ -19,14 +21,14 @@ import { LoginCardComponent } from './components/login-card/login-card.component
 import { LayoutComponent } from './components/layout/layout.component';
 import { DashboardLayoutComponent } from './components/dashboard-layout/dashboard-layout.component';
 import { DashboardSidebarComponent } from './components/dashboard-sidebar/dashboard-sidebar.component';
-import { GeneralComponent } from './pages/general/general.component';
 import { RegisterCardComponent } from './components/register-card/register-card.component';
+import { UserCardComponent } from './components/user-card/user-card.component';
+import { MyErrorMessageComponent } from './components/my-error-message/my-error-message.component';
+import { ClientCardComponent } from './components/client-card/client-card.component';
 
 import { UserInformationService, factoryUserInformationService } from './services/user-information.service';
-import { ClientComponent } from './components/client/client.component';
-import { UserCardComponent } from './components/user-card/user-card.component';
+
 import { ScreenDimensionDirective } from './directives/screen-dimension.directive';
-import { MyErrorMessageComponent } from './components/my-error-message/my-error-message.component';
 
 @NgModule({
   declarations: [
@@ -47,6 +49,7 @@ import { MyErrorMessageComponent } from './components/my-error-message/my-error-
     UserCardComponent,
     ScreenDimensionDirective,
     MyErrorMessageComponent,
+    ClientCardComponent,
   ],
   imports: [
     BrowserModule,

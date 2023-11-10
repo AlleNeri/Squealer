@@ -8,7 +8,7 @@ import { HomeComponent } from './pages/home/home.component';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { GeneralComponent } from './pages/general/general.component';
-import { ClientComponent } from './components/client/client.component';
+import { ClientComponent } from './pages/client/client.component';
 
 const routes: Routes = [
   { path: 'smm', redirectTo: '/smm/general', pathMatch: 'full' }, // to make unreachable "smm" path
