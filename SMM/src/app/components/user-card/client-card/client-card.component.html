@@ -1,6 +1,6 @@
-<div class="user-card-container">
+<div *ngIf="client.isThere" class="user-card-container">
   <div class="user-card">
-    <h3>{{ client.username }}</h3>
+    <app-user-card-header [username]="client.username!" [imgSrc]="client.image" />
     <div class="same-line">
       <p>{{ client.completeName }}</p>
       <p>{{ client.email }}</p>

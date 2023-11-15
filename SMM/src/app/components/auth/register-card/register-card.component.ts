@@ -4,7 +4,7 @@ import { FormGroup, Validators, ValidatorFn, ValidationErrors, AbstractControl, 
 
 import { IRegisterBody } from 'src/app/interfaces/auth-user';
 
-import { AuthenticationService } from '../../services/authentication.service';
+import { AuthenticationService } from '../../../services/authentication.service';
 
 @Component({
   selector: 'app-register-card',

@@ -1,6 +1,6 @@
 import { Directive, HostListener, TemplateRef, ViewContainerRef, OnInit } from '@angular/core';
 
-import { MyErrorMessageComponent } from '../components/my-error-message/my-error-message.component';
+import { MyErrorMessageComponent } from '../components/miscellaneous/my-error-message/my-error-message.component';
 
 @Directive({
   selector: '[appScreenDimension]'

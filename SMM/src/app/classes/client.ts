@@ -7,6 +7,10 @@ export default class Client {
     this.user=user;
   }
 
+  public get isThere(): boolean {
+    return this.user !== undefined;
+  }
+
   public get id(): string | undefined {
     return this.user?._id;
   }
@@ -25,5 +29,9 @@ export default class Client {
 
   public get friendsNumber(): number | undefined {
     return this.user?.friends?.length;
+  }
+
+  public get image(): string | undefined {
+    return this.user?.img;
   }
 }

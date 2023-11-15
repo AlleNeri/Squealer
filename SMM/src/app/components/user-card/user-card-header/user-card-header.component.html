@@ -1,0 +1,6 @@
+<div class="user-card-header">
+  <div *ngIf="imgSrc" class="img-container">
+    <app-img-base64 [src]="imgSrc" />
+  </div>
+  <h3 class="user-name">{{ username }}</h3>
+</div>

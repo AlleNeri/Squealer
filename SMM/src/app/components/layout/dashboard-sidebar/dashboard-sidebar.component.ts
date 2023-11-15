@@ -4,7 +4,7 @@ import IUser from 'src/app/interfaces/user';
 
 import Client from 'src/app/classes/client';
 
-import { UserInformationService } from '../../services/user-information.service';
+import { UserInformationService } from '../../../services/user-information.service';
 
 @Component({
   selector: 'app-dashboard-sidebar',
