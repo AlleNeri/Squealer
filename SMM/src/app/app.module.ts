@@ -25,6 +25,7 @@ import { RegisterCardComponent } from './components/register-card/register-card.
 import { UserCardComponent } from './components/user-card/user-card.component';
 import { MyErrorMessageComponent } from './components/my-error-message/my-error-message.component';
 import { ClientCardComponent } from './components/client-card/client-card.component';
+import { ImgBase64Component } from './components/img-base64/img-base64.component';
 
 import { UserInformationService, factoryUserInformationService } from './services/user-information.service';
 
@@ -50,6 +51,7 @@ import { ScreenDimensionDirective } from './directives/screen-dimension.directiv
     ScreenDimensionDirective,
     MyErrorMessageComponent,
     ClientCardComponent,
+    ImgBase64Component,
   ],
   imports: [
     BrowserModule,
