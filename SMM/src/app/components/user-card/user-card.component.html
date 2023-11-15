@@ -1,6 +1,11 @@
 <div class="user-card-container">
   <div class="user-card">
-    <h3>{{ user.u_name }}</h3>
+    <div class="user-card-header">
+      <div *ngIf="user.img" class="img-container">
+        <app-img-base64 [src]="user.img!" />
+      </div>
+      <h3 class="user-name">{{ user.u_name }}</h3>
+    </div>
     <div class="same-line">
       <p>{{ user.name.first }} {{ user.name.last }}</p>
       <p>{{ user.email }}</p>

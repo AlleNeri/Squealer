@@ -7,7 +7,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
   styleUrls: ['./img-base64.component.css']
 })
 export class ImgBase64Component implements OnInit {
-  @Input({ required: true }) base64!: string;
+  @Input({ required: true }) src!: string;
   public imgSrc: SafeUrl;
 
   constructor(private sanitizer: DomSanitizer) {
@@ -16,7 +16,7 @@ export class ImgBase64Component implements OnInit {
 
   ngOnInit() {
     this.imgSrc = this.sanitizer.bypassSecurityTrustResourceUrl(
-      'data:image/png;base64,' + this.base64
+      'data:image/png;base64,' + this.src
     );
   }
 }
