@@ -19,7 +19,7 @@ export class ScreenDimensionDirective implements OnInit {
 
   private showContentOrErrorMessage(): void {
     this.viewContainer.clear();
-    if(this.isTooSmall(window.screen.width)) this.viewContainer.createComponent(MyErrorMessageComponent).instance.message=this.tooSmallMessage;
+    if(this.isTooSmall(window.innerWidth)) this.viewContainer.createComponent(MyErrorMessageComponent).instance.message=this.tooSmallMessage;
     else this.viewContainer.createEmbeddedView(this.templateRef);
   }
 
