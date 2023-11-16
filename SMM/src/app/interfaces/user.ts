@@ -8,7 +8,7 @@ export default interface IUser {
   };
   email?: string;
   type?: string;
-  chat_availablility?: number;
+  char_availability?: number;
   img?: string; //TODO: look how to handle images
   b_date?: Date;
   appartenence?: string;

@@ -105,7 +105,16 @@ div.user-card {
 }
 
 div.same-line {
-  white-space: unset;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 2%;
+}
+
+div.same-line p {
+  padding-right: 1%;
+  padding-left: 1%;
 }
 
 @media (max-width: 768px) {
