@@ -9,8 +9,9 @@
   </div>
   <div class="split">
     <input type="date" formControlName="birthDate" placeholder="Data di nascita" />
-    <input type="text" formControlName="email" placeholder="Email" />
+    <input type="email" formControlName="email" placeholder="Email" />
   </div>
+  <input type="file" formControlName="img" accept="image/*" (change)="onImageSelected($event)" />
   <!-- TODO: capire come funziona -->
   <!-- max="{{new Date().toISOString().split('T')[0]; | date:\'yyyy-MM-dd\'}}"  -->
   <div class="explanation">
