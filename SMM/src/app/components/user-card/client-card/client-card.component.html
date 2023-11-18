@@ -1,13 +1,9 @@
-<div *ngIf="client.isThere" class="user-card-container">
+<div *ngIf="client.isThere" class="user-card-container margin-rl">
   <div class="user-card">
     <app-user-card-header [username]="client.username!" [imgSrc]="client.image" />
     <div class="same-line">
       <p>{{ client.completeName }}</p>
       <p>{{ client.email }}</p>
-    </div>
-    <div class="same-line">
-      <p>Amici: {{ client.friendsNumber }}</p>
-      <p>Numero di caratteri rimanenti: {{ client.charNumber }}</p>
     </div>
   </div>
 </div>

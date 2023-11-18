@@ -11,6 +11,12 @@ div.sidenav {
   transition: transform 0.5s ease-in-out;
 }
 
+@media screen and (max-width: 1150px) {
+  div.sidenav {
+    width: 15%;
+  }
+}
+
 /* hidden sidebar */
 div.sidenav.hidden {
   transform: translateX(-100%);
@@ -31,7 +37,8 @@ div.sidenav a.noHrefLink {
 
 /* sidenav links on mouse-over */
 div.sidenav a:hover,
-div.sidenav div.subsection a:hover {
+div.sidenav div.subsection a:hover,
+div.sidenav a.active {
   color: white;
 }
 
@@ -43,19 +50,4 @@ div.sidenav div.subsection {
 div.main {
   margin-left: 10%; /* Same as the width of the sidenav */
   padding: 0px 10px;
-}
-
-@media screen and (max-width: 750px) {
-  div.sidenav {
-    width: 20%;
-    padding-top: 15px;
-  }
-  div.main { margin-left: 20%; }
-}
-
-@media screen and (max-width: 1000px) {
-  div.sidenav {
-    width: 15%;
-    padding-top: 15px;
-  }
 }

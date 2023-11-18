@@ -1,10 +1,10 @@
 <!-- sidebar component -->
 <div class="sidenav">
   <!-- sidebar links -->
-  <a routerLink="/smm/general">General</a>
+  <a routerLink="/smm/general" routerLinkActive="active" >General</a>
   <a (click)="toggleClients()" class="noHrefLink">Clienti</a>
   <div class="subsection" *ngIf="showClients">
-    <a *ngFor="let client of this.clients" routerLink="/smm/clients/{{client.id}}">{{client.username}}</a>
+    <a *ngFor="let client of this.clients" [routerLink]="['/smm', 'clients', client.id]" >{{client.username}}</a>
   </div>
 </div>
 

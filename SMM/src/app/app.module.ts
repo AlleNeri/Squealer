@@ -30,6 +30,7 @@ import { RegisterCardComponent } from './components/auth/register-card/register-
 import { UserCardComponent } from './components/user-card/user-card/user-card.component';
 import { ClientCardComponent } from './components/user-card/client-card/client-card.component';
 import { UserCardHeaderComponent } from './components/user-card/user-card-header/user-card-header.component';
+import { UserInfoCardComponent } from './components/user-card/user-info-card/user-info-card.component';
 
 import { UserInformationService, factoryUserInformationService } from './services/user-information.service';
 
@@ -57,6 +58,7 @@ import { ScreenDimensionDirective } from './directives/screen-dimension.directiv
     ClientCardComponent,
     ImgBase64Component,
     UserCardHeaderComponent,
+    UserInfoCardComponent,
   ],
   imports: [
     BrowserModule,
