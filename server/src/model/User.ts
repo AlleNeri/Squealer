@@ -29,6 +29,7 @@ const UserSchema: mongoose.Schema=new mongoose.Schema({
 		monthly: { type: Number, min: 0, default: process.env.START_M_QUOTE },
 	},
 	char_availability: {
+		last_update: Date,
 		dayly: { type: Number, min: 0 },
 		weekly: { type: Number, min: 0 },
 		monthly: { type: Number, min: 0 },
@@ -82,6 +83,55 @@ UserSchema.methods.isClient=function(user_id: string): boolean {
 UserSchema.methods.addClient=function(user_id: string): void {
 	if(this.isSMM && !this.isFriend(user_id)) this.friends.push(user_id);
 };
+
+UserSchema.methods.isAMidnightPassed=function(): boolean | undefined {
+	const now: Date=new Date();
+	if(this.char_availability.last_update) {
+		if(this.char_availability.last_update.getFullYear()!==now.getFullYear()) return true;
+		else if(this.char_availability.last_update.getMonth()!==now.getMonth()) return true;
+		else if(this.char_availability.last_update.getDate()!==now.getDate()) return true;
+		else return false;
+	}
+	this.char_availability.last_update=now;
+};
+
+UserSchema.methods.isAMondayPassed=function(): boolean | undefined {
+	const now: Date=new Date();
+	if(this.char_availability.last_update) {
+		if(this.char_availability.last_update.getFullYear()!==now.getFullYear()) return true;
+		else if(this.char_availability.last_update.getMonth()!==now.getMonth()) return true;
+		else if(this.char_availability.last_update.getDate()<(now.getDate()-now.getDay())) return true;	//check if the last update was before the last monday
+		else return false;
+	}
+	this.char_availability.last_update=now;
+};
+
+UserSchema.methods.isAMonthPassed=function(): boolean | undefined {
+	const now: Date=new Date();
+	if(this.char_availability.last_update) {
+		if(this.char_availability.last_update.getFullYear()!==now.getFullYear()) return true;
+		else if(this.char_availability.last_update.getMonth()!==now.getMonth()) return true;
+		else return false;
+	}
+	this.char_availability.last_update=now;
+};
+
+UserSchema.methods.updateCharAvailability=function(): void {
+	if(this.isAMidnightPassed()) this.char_availability.dayly=this.quote.dayly;
+	if(this.isAMondayPassed()) this.char_availability.weekly=this.quote.weekly;
+	if(this.isAMonthPassed()) this.char_availability.monthly=this.quote.monthly;
+};
+
+UserSchema.pre('save', function(next) {
+	this.updateCharAvailability();
+	next();
+});
+
+UserSchema.post(/find/, function(docs: any[] | any, next) {
+	if(Array.isArray(docs)) docs.forEach((doc: any) => doc.updateCharAvailability() );
+	else docs.updateCharAvailability();
+	next();
+});
 
 export default mongoose.model(process.env.DBCOLLECTION_USER, UserSchema);
 
