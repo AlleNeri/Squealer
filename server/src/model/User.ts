@@ -1,6 +1,9 @@
 import mongoose from 'mongoose';
 
 if(!process.env.DBCOLLECTION_USER) throw new Error("DBCOLLECTION_USER is not defined in the config.env file.");
+if(!process.env.START_D_QUOTE) throw new Error("START_D_QUOTE is not defined in the config.env file.");
+if(!process.env.START_W_QUOTE) throw new Error("START_W_QUOTE is not defined in the config.env file.");
+if(!process.env.START_M_QUOTE) throw new Error("START_M_QUOTE is not defined in the config.env file.");
 
 enum UserType {
 	VIP='vip',
@@ -20,7 +23,16 @@ const UserSchema: mongoose.Schema=new mongoose.Schema({
 	},
 	email: {type: String, required: true},
 	type: {type: String, required: true, enum: Object.values(UserType), default: UserType.NORMAL},
-	char_availability: {type: Number, min: 0},
+	quote: {
+		dayly: { type: Number, min: 0, default: process.env.START_D_QUOTE },
+		weekly: { type: Number, min: 0, default: process.env.START_W_QUOTE },
+		monthly: { type: Number, min: 0, default: process.env.START_M_QUOTE },
+	},
+	char_availability: {
+		dayly: { type: Number, min: 0 },
+		weekly: { type: Number, min: 0 },
+		monthly: { type: Number, min: 0 },
+	},
 	img: String,
 	b_date: Date,
 	creation_date: {type: Date, immutable: true, default: Date.now},
