@@ -122,6 +122,18 @@ UserSchema.methods.updateCharAvailability=function(): void {
 	if(this.isAMonthPassed()) this.char_availability.monthly=this.quote.monthly;
 };
 
+UserSchema.methods.canPost=function(amount: number): boolean {
+	if(this.char_availability.dayly < amount) return false;
+	else if(this.char_availability.weekly < amount) return false;
+	else if(this.char_availability.monthly < amount) return false;
+	else {
+		this.char_availability.dayly-=amount;
+		this.char_availability.weekly-=amount;
+		this.char_availability.monthly-=amount;
+		return true;
+	}
+};
+
 UserSchema.pre('save', function(next) {
 	this.updateCharAvailability();
 	next();

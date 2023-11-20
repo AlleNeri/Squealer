@@ -23,7 +23,6 @@ const PostSchema: mongoose.Schema=new mongoose.Schema({
 		type: {
 			text: String,
 			img: String,
-			video: String,
 			position: String,
 		}
 	},
