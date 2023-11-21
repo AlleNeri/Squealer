@@ -5,7 +5,7 @@ const {DBCOLLECTION_CHANNEL}=process.env;
 if(!DBCOLLECTION_CHANNEL) throw new Error("DBCOLLECTION_CHANNEL is not defined in the config.env file.");
 
 const ChannelSchema: mongoose.Schema=new mongoose.Schema({
-	name: {type: String, required: true},
+	name: {type: String, required: true},	//if the name of the channel is "__direct__", a reserved noun, the channel is a direct message channel between two users
 	description: String,
 	img: String,
 	//the importance is an integer from 0 to 4:
@@ -18,6 +18,18 @@ const ChannelSchema: mongoose.Schema=new mongoose.Schema({
 	//the private channels works like individual chats and groups in whatsapp. They aren't subject to the roles of popularity and controversiality
 	private: {type: Boolean, default: false},
 	owners: [{type: mongoose.Schema.Types.ObjectId, ref: process.env.DBCOLLECTION_USER}],
+});
+
+//prevent to change the name of a direct message channel
+ChannelSchema.pre('save', function(next) {
+	if(this.name=="__direct__") return next(new Error("Can't change the name of a direct message channel"));
+	next();
+});
+
+//prevent to change the value of private
+ChannelSchema.pre('save', function(next) {
+	if(this.isModified('private')) return next(new Error("Can't change the value of private"));
+	next();
 });
 
 ChannelSchema.methods.modifyImportance=function(importance: number): void {
