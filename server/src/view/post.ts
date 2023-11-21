@@ -2,6 +2,7 @@ import { Router, Request, Response } from "express";
 
 import PostSchema, { Post } from "../model/Post";
 import UserSchema, { User } from '../model/User';
+import ChannelSchema, { Channel } from "../model/Channel";
 import Auth from "../controller/Auth";
 
 export const postRoute: Router=Router();
@@ -24,19 +25,32 @@ postRoute.get("/:id", (req: Request, res: Response) => {
 //it isn't required the posted_by field in the request body
 postRoute.post("/", Auth.authorize, (req: Request, res: Response) => {
 	req.body.post.posted_by=req.user?._id;
-	UserSchema.findById(req.params.id)
-		.then((user: User | null) => {
-			if(!user) return res.status(404).json({ msg: "User not found" });
-			const content=req.body.post.content;
-			//TODO: non è attualmente previstio e gestito il poter postare contenuti di diverso tipo(testo/immagini/posizione)
-			if(content.text && !user.canPost(content.text.length)) return res.status(500).json({ msg: "User can't post" });
-			else if((content.img || content.position) && !user.canPost(100)) return res.status(500).json({ msg: "User can't post" });
-			const newPost: Post=new PostSchema(req.body.post);
-			newPost.save()
-				.then((post: Post) => res.status(200).json(post))
-				.catch((err: Error) => res.status(500).json({ msg: "Error creating post", err: err }));
+	ChannelSchema.findById(req.body.post.posted_on)
+		.then((channel: Channel | null) => {
+			if(!channel) return res.status(404).json({ msg: "Channel not found" });
+			else if(!channel.private) {
+				UserSchema.findById(req.params.id)
+					.then((user: User | null) => {
+						if(!user) return res.status(404).json({ msg: "User not found" });
+						const content=req.body.post.content;
+						//TODO: non è attualmente previstio e gestito il poter postare contenuti di diverso tipo(testo/immagini/posizione)
+						if(content.text && !user.canPost(content.text.length)) return res.status(500).json({ msg: "User can't post" });
+						else if((content.img || content.position) && !user.canPost(100)) return res.status(500).json({ msg: "User can't post" });
+						const newPost: Post=new PostSchema(req.body.post);
+						newPost.save()
+							.then((post: Post) => res.status(200).json(post))
+							.catch((err: Error) => res.status(500).json({ msg: "Error creating post", err: err }));
+					})
+					.catch((err: Error) => res.status(500).json({ msg: "Error while find the user", err: err }));
+			}
+			else {
+				const newPost: Post=new PostSchema(req.body.post);
+				newPost.save()
+					.then((post: Post) => res.status(200).json(post))
+					.catch((err: Error) => res.status(500).json({ msg: "Error creating post", err: err }));
+			}
 		})
-		.catch((err: Error) => res.status(500).json({ msg: "Error while find the user", err: err }));
+		.catch((err: Error) => res.status(500).json({ msg: "Error while find the channel", err: err }));
 });
 
 //update a post
