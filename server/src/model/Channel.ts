@@ -5,7 +5,8 @@ const {DBCOLLECTION_CHANNEL}=process.env;
 if(!DBCOLLECTION_CHANNEL) throw new Error("DBCOLLECTION_CHANNEL is not defined in the config.env file.");
 
 const ChannelSchema: mongoose.Schema=new mongoose.Schema({
-	name: {type: String, required: true},	//if the name of the channel is "__direct__", a reserved noun, the channel is a direct message channel between two users
+	//if the name of the channel starts with "__direct__", the channel is a direct message channel between two users and ends with the two usernames
+	name: {type: String, required: true, unique: true},
 	description: String,
 	img: String,
 	//the importance is an integer from 0 to 4:
@@ -13,7 +14,7 @@ const ChannelSchema: mongoose.Schema=new mongoose.Schema({
 	//	1: the channel is created by a user and an admin approved it as a popular channel
 	//	2: the channel is created by an admin for a specific topic(events, news, actuality, etc.)
 	//	3: the channel is predefined by the app
-	//	4: the channel is a level 2 or 3 but requires a high level attention(covid news during the pandemic, war news in an hyped moment, etc.)
+	//	4: the channel is a level 2 or 3 but requires a high level attention(covid news during the pandemic, war news in an hyped moment, elections, etc.)
 	importance: {type: Number, default: 0, min: 0, max: 4},
 	//the private channels works like individual chats and groups in whatsapp. They aren't subject to the roles of popularity and controversiality
 	private: {type: Boolean, default: false},
@@ -22,7 +23,7 @@ const ChannelSchema: mongoose.Schema=new mongoose.Schema({
 
 //prevent to change the name of a direct message channel
 ChannelSchema.pre('save', function(next) {
-	if(this.name=="__direct__") return next(new Error("Can't change the name of a direct message channel"));
+	if(this.name.startsWith("__direct__") && this.isModified('name')) return next(new Error("Can't change the name of a direct message channel"));
 	next();
 });
 

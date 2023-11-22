@@ -10,6 +10,7 @@ enum UserType {
 	MOD='mod',
 	NORMAL='normal',
 	SMM='smm',
+	BOT='bot',
 };
 
 const UserSchema: mongoose.Schema=new mongoose.Schema({
@@ -136,12 +137,6 @@ UserSchema.methods.canPost=function(amount: number): boolean {
 
 UserSchema.pre('save', function(next) {
 	this.updateCharAvailability();
-	next();
-});
-
-UserSchema.post(/find/, function(docs: any[] | any, next) {
-	if(Array.isArray(docs)) docs.forEach((doc: any) => doc.updateCharAvailability() );
-	else docs.updateCharAvailability();
 	next();
 });
 

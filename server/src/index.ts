@@ -18,6 +18,9 @@ mongoose.connect(`mongodb://${process.env.DBHOST}:${process.env.DBPORT}/${proces
 	.then(()=>console.log(`Connected to database: ${process.env.DBNAME}`))
 	.catch(err=>console.log(`Error connecting to database: ${err}`));
 
+/*** Creating Squealer bot ***/
+import "./nasaBot";	//TODO: test the frequency of the nasa bot posts
+
 /*** Express initialization ***/
 const app: Express = express();
 

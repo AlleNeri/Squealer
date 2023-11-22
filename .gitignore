@@ -2,6 +2,7 @@
 server/node_modules
 server/dist
 server/rsa-keys
+server/config.env
 
 # SMM
 SMM/node_modules
