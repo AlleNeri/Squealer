@@ -4,6 +4,8 @@ if(!process.env.DBCOLLECTION_USER) throw new Error("DBCOLLECTION_USER is not def
 if(!process.env.START_D_QUOTE) throw new Error("START_D_QUOTE is not defined in the config.env file.");
 if(!process.env.START_W_QUOTE) throw new Error("START_W_QUOTE is not defined in the config.env file.");
 if(!process.env.START_M_QUOTE) throw new Error("START_M_QUOTE is not defined in the config.env file.");
+if(!process.env.POPULAR_POSTS_LIMIT_POS) throw new Error("POPULAR_POSTS_LIMIT_POS is not defined in the config.env file.");
+if(!process.env.POPULAR_POSTS_LIMIT_NEG) throw new Error("POPULAR_POSTS_LIMIT_NEG is not defined in the config.env file.");
 
 enum UserType {
 	VIP='vip',
@@ -40,6 +42,13 @@ const UserSchema: mongoose.Schema=new mongoose.Schema({
 	creation_date: {type: Date, immutable: true, default: Date.now},
 	appartenence: [{type: mongoose.Schema.Types.ObjectId, ref: process.env.DBCOLLECTION_CHANNEL}],
 	friends: [{type: mongoose.Schema.Types.ObjectId, ref: process.env.DBCOLLECTION_USER}],	//the smm uses the friends list as clients list
+	messagePopularity: {
+		type: {
+			positive: Number,
+			negative: Number,
+		},
+		default: { positive: 0, negative: 0 },
+	},
 });
 
 UserSchema.virtual('isSMM').get(function() {
@@ -133,6 +142,42 @@ UserSchema.methods.canPost=function(amount: number): boolean {
 		this.char_availability.monthly-=amount;
 		return true;
 	}
+};
+
+UserSchema.methods.addQoute=function(percent: number=1): void {
+	this.quote.dayly+=Math.round(this.quote.dayly*percent);
+	this.quote.weekly+=Math.round(this.quote.weekly*percent);
+	this.quote.monthly+=Math.round(this.quote.monthly*percent);
+};
+
+UserSchema.methods.removeQoute=function(percent: number=1): void {
+	this.quote.dayly-=Math.round(this.quote.dayly*percent);
+	this.quote.weekly-=Math.round(this.quote.weekly*percent);
+	this.quote.monthly-=Math.round(this.quote.monthly*percent);
+};
+
+UserSchema.methods.addPopular=function(): void {
+	this.messagePopularity.positive++;
+	if(this.messagePopularity.positive >= process.env.POPULAR_POSTS_LIMIT_POS!) {
+		this.messagePopularity.positive=0;
+		this.addQoute();
+	}
+};
+
+UserSchema.methods.removePopular=function(): void {
+	this.messagePopularity.positive--;
+}
+
+UserSchema.methods.addUnpopular=function(): void {
+	this.messagePopularity.negative++;
+	if(this.messagePopularity.negative >= process.env.POPULAR_POSTS_LIMIT_NEG!) {
+		this.messagePopularity.negative=0;
+		this.removeQoute();
+	}
+};
+
+UserSchema.methods.removeUnpopular=function(): void {
+	this.messagePopularity.negative--;
 };
 
 UserSchema.pre('save', function(next) {
