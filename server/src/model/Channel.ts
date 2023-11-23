@@ -44,6 +44,16 @@ ChannelSchema.methods.modifyImportance=function(importance: number): void {
 	if(this.importance==4 && (importance==2 || importance==3)) this.importance=importance;
 }
 
+ChannelSchema.methods.addOwner=function(owner: mongoose.Schema.Types.ObjectId): void {
+	if(this.owners.includes(owner)) return;
+	this.owners.push(owner);
+}
+
+ChannelSchema.methods.removeOwner=function(owner: mongoose.Schema.Types.ObjectId): void {
+	if(!this.owners.includes(owner)) return;
+	this.owners.splice(this.owners.indexOf(owner), 1);
+}
+
 export default mongoose.model(DBCOLLECTION_CHANNEL, ChannelSchema);
 
 export type Channel=mongoose.InferSchemaType<typeof ChannelSchema>;

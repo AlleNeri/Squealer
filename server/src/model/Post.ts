@@ -163,6 +163,10 @@ PostSchema.methods.addReaction=function(user_id: string, reaction: number): bool
 	return true;
 };
 
+PostSchema.methods.moveOwnership=function(user_id: mongoose.Schema.Types.ObjectId): void {
+	this.posted_by=user_id;
+};
+
 export default mongoose.model(process.env.DBCOLLECTION_POST, PostSchema);
 
 export type Post=mongoose.InferSchemaType<typeof PostSchema>;
