@@ -15,3 +15,4 @@ Progetto di tecnologie web A.A. 2023
     - [ ] il bot della NASA.
     - [ ] meccanismi di penalizzazione quota.
     - [ ] meccanismo di cancellazione utente(e relativo spostamento dei post e canali all'utente cimitero).
+    - [ ] meccanismo di geolocalizzaione.

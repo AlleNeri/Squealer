@@ -24,7 +24,10 @@ const PostSchema: mongoose.Schema=new mongoose.Schema({
 		type: {
 			text: String,
 			img: String,
-			position: String,
+			position: {
+				latitude: Number,
+				longitude: Number
+			}
 		}
 	},
 	keywords: [String],
