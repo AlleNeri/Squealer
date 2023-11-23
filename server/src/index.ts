@@ -20,6 +20,7 @@ mongoose.connect(`mongodb://${process.env.DBHOST}:${process.env.DBPORT}/${proces
 
 /*** Creating Squealer bot ***/
 import "./nasaBot";	//TODO: test the frequency of the nasa bot posts
+import "./cemetery";
 
 /*** Express initialization ***/
 const app: Express = express();
