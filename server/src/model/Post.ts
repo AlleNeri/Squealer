@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
-import ChannelSchema, { Channel } from "../model/Channel";
+import ChannelSchema, { Channel } from "./Channel";
+import UserSchema, { User } from "./User";
 
 let CM_COEFFICIENT: any | undefined=process.env.CM_COEFFICIENT;
 const {CONTROVERSIAL_CHANNEL, POPULAR_CHANNEL}=process.env;
@@ -23,8 +24,10 @@ const PostSchema: mongoose.Schema=new mongoose.Schema({
 		type: {
 			text: String,
 			img: String,
-			video: String,
-			position: String,
+			position: {
+				latitude: Number,
+				longitude: Number
+			}
 		}
 	},
 	keywords: [String],
@@ -60,30 +63,68 @@ PostSchema.methods.isControversial=function(): boolean {
 };
 
 PostSchema.methods.addControversial=function(): void {
+	UserSchema.findById(this.posted_by)
+		.then((user: User | null)=> {
+			if(!user) return;
+			user.removePopular();
+			user.removeUnpopular();
+			user.save();
+		});
 	this.appartains_to.push(controversialChannel._id);
 };
 
 PostSchema.methods.removeControversial=function(): void {
 	let index: number=this.appartains_to.indexOf(controversialChannel._id);
+	UserSchema.findById(this.posted_by)
+		.then((user: User | null)=> {
+			if(!user) return;
+			user.addPopular();
+			user.addUnpopular();
+			user.save();
+		});
 	if(index != -1) this.appartains_to.splice(index, 1);
 };
 
 PostSchema.methods.addPopular=function(): void {
+	UserSchema.findById(this.posted_by)
+		.then((user: User | null)=> {
+			if(!user) return;
+			user.addPopular();
+			user.save();
+		});
 	this.popular=true;
 	this.appartains_to.push(popularChannel._id);
 };
 
 PostSchema.methods.removePopular=function(): void {
+	UserSchema.findById(this.posted_by)
+		.then((user: User | null)=> {
+			if(!user) return;
+			user.removePopular();
+			user.save();
+		});
 	this.popular=false;
 	let index: number=this.appartains_to.indexOf(popularChannel._id);
 	if(index != -1) this.appartains_to.splice(index, 1);
 };
 
 PostSchema.methods.addUnpopular=function(): void {
+	UserSchema.findById(this.posted_by)
+		.then((user: User | null)=> {
+			if(!user) return;
+			user.addUnpopular();
+			user.save();
+		});
 	this.unpopular=true;
 };
 
 PostSchema.methods.removeUnpopular=function(): void {
+	UserSchema.findById(this.posted_by)
+		.then((user: User | null)=> {
+			if(!user) return;
+			user.removeUnpopular();
+			user.save();
+		});
 	this.unpopular=false;
 };
 
@@ -123,6 +164,10 @@ PostSchema.methods.addReaction=function(user_id: string, reaction: number): bool
 	const channel: Channel=ChannelSchema.findById(this.posted_on);
 	if(!channel.private && this.isControversial()) this.addControversial();
 	return true;
+};
+
+PostSchema.methods.moveOwnership=function(user_id: mongoose.Schema.Types.ObjectId): void {
+	this.posted_by=user_id;
 };
 
 export default mongoose.model(process.env.DBCOLLECTION_POST, PostSchema);

@@ -2,7 +2,9 @@ import { Router, Request, Response } from "express";
 
 import Auth from "../controller/Auth";
 
-import { User } from "../model/User";
+import UserSchema, { User } from "../model/User";
+import PostSchema, { Post } from "../model/Post";
+import ChannelSchema, { Channel } from "../model/Channel";
 
 export const authenticationRoute: Router = Router();
 
@@ -60,6 +62,24 @@ authenticationRoute.post("/login", (req: Request, res: Response) => {
 authenticationRoute.delete("/:id/delete", Auth.authorize, (req: Request, res: Response) => {
 	//check if the user is the same as the one in the params
 	if(req.params.id !== req.user?._id.toString()) return res.status(401).json({ success: false, msg: "Unauthorized." });
+	//move all the posts and channels to the cemetery "bot" user
+	if(!process.env.CEMETERY_NAME) console.log("Error deleting user. It's probably a server error.");
+	else {
+		UserSchema.findOne({ u_name: process.env.CEMENTERY_NAME })
+			.then((user: User | null)=> {
+				if(!user) return;
+				//move all the posts to the cemetery
+				PostSchema.find({ posted_by: req.params.id })
+					.then((posts: Post[])=> posts.forEach((post: Post)=> post.moveOwnership(user._id)));
+				//move all the channels to the cemetery
+				//the owners field is an array, so we have to check if the user is in the array
+				ChannelSchema.find({ owners: req.params.id })
+					.then((channels: Channel[])=> channels.forEach((channel: Channel)=> {
+						channel.removeOwner(req.params.id);
+						channel.addOwner(user._id);
+					}));
+			});
+	}
 	//delete the user
 	Auth.deleteUser(req.user?._id.toString())
 		.then((result: boolean)=> {
