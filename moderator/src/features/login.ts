@@ -8,6 +8,7 @@ const loginFormId = 'loginForm',
 	passwordInputId = 'password';
 
 export function showLogin():void {
+	if(localStorage.getItem(env.TOKEN_NAME)) return showDashboard();
 	document.querySelector<HTMLDivElement>('#content')!.innerHTML = `
 		<h2>Login</h2>
 		<form id="${loginFormId}">
@@ -39,7 +40,13 @@ function login(username:string, password:string) {
 	})
 		.then(response => response.json())
 		.then(data => {
-			if(data.success) showDashboard();
+			if(data.success) {
+				if(data.userType !== "mod") alert('You are not a moderator');
+				else {
+					localStorage.setItem(env.TOKEN_NAME, data.jwt.token);
+					showDashboard();
+				}
+			}
 		})
 		.catch(error => console.error(error));
 }

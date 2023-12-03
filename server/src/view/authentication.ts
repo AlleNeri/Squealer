@@ -51,7 +51,7 @@ authenticationRoute.post("/login", (req: Request, res: Response) => {
 		Auth.signIn(req.body.username, req.body.password)
 			.then((token: any | null)=> {
 				if(!token) res.status(500).json({ success: false, msg: "Error accessing user. It's probably a server error." });
-				else res.status(200).json({ success: true, msg: "Successful login.", jwt: token.authToken, id: token.userId });
+				else res.status(200).json({ success: true, msg: "Successful login.", jwt: token.authToken, id: token.userId, userType: token.userType });
 			})
 			.catch((err: Error)=> res.status(500).json({ success: false, msg: "Error accessing user.", err: err }));
 	}
