@@ -7,6 +7,13 @@ import Auth from "../controller/Auth";
 
 export const postRoute: Router=Router();
 
+//get all posts
+postRoute.get("/", Auth.authorize, Auth.isMod, (req: Request, res: Response) => {
+	PostSchema.find()
+		.then((posts: Post[]) => res.status(200).json(posts))
+		.catch((err: Error) => res.status(400).json(err));
+});
+
 //get all my posts
 postRoute.get("/my", Auth.authorize, (req: Request, res: Response) => {
 	PostSchema.find({ author: req.user?._id })

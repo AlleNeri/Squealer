@@ -25,3 +25,18 @@ body {
 	margin-left: 1rem;
 	margin-right: 1rem;
 }
+
+.post {
+	/* post */
+	padding: 1rem;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.post > div {
+	margin-left: 1rem;
+	margin-right: 1rem;
+}
