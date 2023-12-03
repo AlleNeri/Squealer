@@ -10,3 +10,18 @@ body {
 	align-items: center;
 	height: 100vh;
 }
+
+#userInfo {
+	/* top right */
+	position: absolute;
+	top: 0;
+	right: 0;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+#userInfo > div {
+	margin-left: 1rem;
+	margin-right: 1rem;
+}
