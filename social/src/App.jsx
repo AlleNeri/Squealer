@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import LoginPage from './pages/Login';
 import RegisterPage from './pages/Register';
 import { LoginContext } from "./pages/LoginContext";
+import NewPost from './pages/NewPost';
 
 const routes = createBrowserRouter([
 	{
@@ -18,6 +19,10 @@ const routes = createBrowserRouter([
 			{
 				path:'/Register',
 				element: <RegisterPage />
+			},
+			{
+				path: '/NewPost',
+				element: <NewPost />
 			}
 		],
 	},

@@ -1,23 +1,31 @@
-import {React, useState, useContext} from 'react';
+import React, {useState, useContext} from 'react';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from 'react-bootstrap/Button';
+import NewPost from '../../pages/NewPost';
 import './header.css';
 import { LoginContext } from "../../pages/LoginContext";
-import { Link, redirect } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-export default function ButtonAppBar() {
+export default function ButtonAppBar({setModalOpen}) {
+  const navigate = useNavigate();
   const { loggedIn, setLoggedIn } = useContext(LoginContext);
   const [redirect, setRedirect] = useState(false);
+
   const handleLogout = () => {
     setLoggedIn(false);
     localStorage.removeItem('loggedIn');
     setRedirect(true);
+    navigate('/login');
   }
+
+  const handleNewPostClick = () => {
+    setModalOpen(true);
+  };
+
   return (
     
     <div className="header">
-        {redirect && <redirect to='../../login' />}
         <Toolbar className="Toolbar">
           
           {!loggedIn && <div>
@@ -45,9 +53,8 @@ export default function ButtonAppBar() {
           }
           {loggedIn && 
           <div className='newLog'>
-            <Link to='#' className="Link">
-              <Button className='button'>NEW POST</Button>
-            </Link>
+
+            <Button className='button' onClick={handleNewPostClick}>NEW SQUEAL</Button>
           
             <Link to="../../login" className='Link'>
               <Button className='button' onClick={handleLogout}>LOGOUT</Button>
@@ -55,6 +62,8 @@ export default function ButtonAppBar() {
           </div>}
           
         </Toolbar>
+        
     </div>
+
   );
 }

@@ -37,6 +37,8 @@ function Login() {
       setLoggedInState(true);
       setLoggedIn(true);
       localStorage.setItem('loggedIn', true);
+      const token = data.jwt.token;
+      localStorage.setItem('token', token);
     } else {
       console.log("login failed!");
     }

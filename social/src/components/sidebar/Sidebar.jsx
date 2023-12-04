@@ -22,16 +22,16 @@ const Sidebar = () => {
     
             <CDBSidebarContent className="sidebar-content">
               <CDBSidebarMenu>
-                <NavLink exact to="/" activeClassName="activeClicked">
+                <NavLink to="/" activeclassname="activeClicked">
                   <CDBSidebarMenuItem >Channel1</CDBSidebarMenuItem>
                 </NavLink>
-                <NavLink exact to="/tables" activeClassName="activeClicked">
+                <NavLink to="/tables" activeclassname="activeClicked">
                   <CDBSidebarMenuItem >Channel2</CDBSidebarMenuItem>
                 </NavLink>
-                <NavLink exact to="/profile" activeClassName="activeClicked">
+                <NavLink to="/profile" activeclassname="activeClicked">
                   <CDBSidebarMenuItem>Channel3</CDBSidebarMenuItem>
                 </NavLink>
-                <NavLink exact to="/analytics" activeClassName="activeClicked">
+                <NavLink to="/analytics" activeclassname="activeClicked">
                   <CDBSidebarMenuItem >Channel4</CDBSidebarMenuItem>
                 </NavLink>
               </CDBSidebarMenu>

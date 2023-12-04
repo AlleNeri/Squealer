@@ -24,9 +24,13 @@ postRoute.get("/:id", (req: Request, res: Response) => {
 postRoute.post("/", Auth.authorize, (req: Request, res: Response) => {
 	req.body.post.posted_by=req.user?._id;
 	const newPost: Post=new PostSchema(req.body.post);
+	console.log(req.body.post);
 	newPost.save()
 		.then((post: Post) => res.status(200).json(post))
-		.catch((err: Error) => res.status(500).json({ msg: "Error creating post", err: err }));
+		.catch((err: Error) => {
+			console.log(err);
+			res.status(500).json({ msg: "Error creating post", err: err })
+		});
 });
 
 //update a post
