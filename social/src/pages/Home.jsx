@@ -1,7 +1,7 @@
-import React, {useState} from 'react'
+import {useState} from 'react'
 import Header from '../components/header/Header';
 import NewPost from './NewPost';
-import Sidebar from '../components/sidebar/sidebar';
+import Sidebar from '../components/sidebar/Sidebar';
 import { Outlet } from 'react-router-dom';
 import './home.css';
 
@@ -23,6 +23,6 @@ function Home() {
             </div>
         </>
     );
-};
+}
 
 export default Home;

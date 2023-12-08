@@ -1,6 +1,6 @@
-<<<<<<< HEAD
-node_modules
-=======
+# editor
+.vscode
+
 # server
 server/node_modules
 server/dist
@@ -10,4 +10,7 @@ server/rsa-keys
 SMM/node_modules
 SMM/dist
 SMM/.angular
->>>>>>> 68071343956bde7c222e2750eab3d9bc8e65c4a4
+
+# social
+social/node_modules
+social/dist
