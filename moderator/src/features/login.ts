@@ -1,6 +1,6 @@
 import { env } from '../env';
-import { showDashboard } from './dashboard';
 import { storeToken, getToken, removeToken, storeId, getId, removeId } from '../utils/storage';
+import { Navigate } from '../utils/navigate';
 
 if(!env.BACKEND_URL) throw new Error('BACKEND_URL not set');
 
@@ -12,7 +12,7 @@ const loginFormId = 'loginForm',
 export function showLogin():void {
 	if(getToken() && getId()) {
 		showUserInfo(getId()!);
-		showDashboard();
+		Navigate.getInstance().toHomePage();
 		return;
 	}
 	document.querySelector<HTMLDivElement>(`#${env.CONTENT_DIV}`)!.innerHTML = `
@@ -52,7 +52,7 @@ function login(username:string, password:string) {
 					storeToken(data.jwt.token);
 					storeId(data.id);
 					showUserInfo(data.id);
-					showDashboard();
+					Navigate.getInstance().toHomePage();
 				}
 			}
 		})

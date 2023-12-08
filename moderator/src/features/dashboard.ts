@@ -1,5 +1,4 @@
-import { showUsers } from './users';
-import { showPosts } from './posts';
+import { Navigate } from '../utils/navigate';
 import { env } from '../env';
 
 const dashboardId = 'dashboard',
@@ -20,13 +19,9 @@ export function showDashboard() {
 }
 
 function addActionToUserButton() {
-	document.querySelector<HTMLButtonElement>(`#${usersButtonId}`)!.addEventListener('click', () => {
-		showUsers();
-	});
+	document.querySelector<HTMLButtonElement>(`#${usersButtonId}`)!.addEventListener('click', () => Navigate.getInstance().to("users"));
 }
 
 function addActionToPostsButton() {
-	document.querySelector<HTMLButtonElement>(`#${postsButtonId}`)!.addEventListener('click', () => {
-		showPosts();
-	});
+	document.querySelector<HTMLButtonElement>(`#${postsButtonId}`)!.addEventListener('click', () => Navigate.getInstance().to("posts"));
 }
