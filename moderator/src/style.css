@@ -34,6 +34,14 @@ body {
 
 #userInfo > div > * { margin: 0; }
 
+#backHome {
+	position: absolute;
+	top: 0;
+	left: 0;
+	padding: 0.2rem;
+	margin: 0.5rem;
+}
+
 .post {
 	/* post */
 	padding: 0.5rem;
