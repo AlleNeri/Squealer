@@ -42,7 +42,8 @@ body {
 	margin: 0.5rem;
 }
 
-.post {
+.post,
+.user {
 	/* post */
 	padding: 0.5rem;
 	border: 1px solid #ccc;
@@ -55,24 +56,28 @@ body {
 	flex-direction: column;
 }
 
-.post > div {
+.post > div,
+.user > div {
 	margin-left: 1rem;
 	margin-right: 1rem;
 }
 
-.post-header {
+.post-header,
+.user-header {
 	/* post header */
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 }
 
-.post-header > * {
+.post-header > *,
+.user-header > * {
 	margin-left: 0.5rem;
 	margin-right: 0.5rem;
 }
 
-.posts-container {
+.posts-container,
+.users-container {
 	/* posts container */
 	overflow: auto;
 	border: 1px solid #ccc;

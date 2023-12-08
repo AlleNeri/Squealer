@@ -8,10 +8,10 @@ import Auth from "../controller/Auth";
 export const postRoute: Router=Router();
 
 //get all posts
-postRoute.get("/", Auth.authorize, Auth.isMod, (req: Request, res: Response) => {
+postRoute.get("/", Auth.authorize, Auth.isMod, (_: Request, res: Response) => {
 	PostSchema.find()
 		.then((posts: Post[]) => res.status(200).json(posts))
-		.catch((err: Error) => res.status(400).json(err));
+		.catch((err: Error) => res.status(400).json({ msg: 'Posts not found', err: err }));
 });
 
 //get all my posts

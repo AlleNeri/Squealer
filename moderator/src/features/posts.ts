@@ -14,6 +14,7 @@ export function showPosts() {
 
 function populatePosts(): void {
 	const token: string = getToken()!;
+	const postsDiv = document.querySelector<HTMLDivElement>(`#${postsId}`)!;
 	fetch(
 		`${env.BACKEND_URL}/posts`,
 		{
@@ -34,7 +35,6 @@ function populatePosts(): void {
 				)
 					.then(response => response.json())
 					.then(user => {
-						const postsDiv = document.querySelector<HTMLDivElement>(`#${postsId}`)!;
 						postsDiv.innerHTML += `
 							<div class='post'>
 								<div class='post-header'>

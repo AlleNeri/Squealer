@@ -8,6 +8,13 @@ import { authenticationRoute } from './authentication';
 
 export const userRoute: Router=Router();
 
+//get all users
+userRoute.get('/', Auth.softAuthorize, Auth.isMod, (_: Request, res: Response) => {
+	UserSchema.find()
+		.then((users: User[]) => res.status(200).json(users))
+		.catch(err=> res.status(404).json({ msg: 'Users not found', err: err }));
+});
+
 //get a specific user
 userRoute.get('/:id', Auth.softAuthorize, (req: Request, res: Response) => {
 	//if it's not, return only the public info
