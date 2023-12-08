@@ -10,7 +10,6 @@ export const userRoute: Router=Router();
 
 //get a specific user
 userRoute.get('/:id', Auth.softAuthorize, (req: Request, res: Response) => {
-	//TODO: check if the user is authorized to see this user
 	//if it's not, return only the public info
 	UserSchema.findById(req.params.id)
 		.then((user: User | null) => {
