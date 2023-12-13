@@ -46,9 +46,6 @@ function Login() {
   const isDisabled = username.length === 0 || password.length === 0;
   return (
     <>
-      {loggedIn &&
-        <p>Welcome {username}</p>
-      }
       {!loggedIn && 
 
         <form className='login-form' onSubmit={handleSubmit}>

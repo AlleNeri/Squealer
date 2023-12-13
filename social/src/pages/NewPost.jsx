@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { LoginContext } from './LoginContext';
 import { TextField, Button, InputLabel, Grid } from '@material-ui/core';
 import './newPost.css';
+import Post from './Post';
 
 function NewPost({ modalOpen, setModalOpen }) {
   const { loggedIn } = useContext(LoginContext);
@@ -12,8 +13,7 @@ function NewPost({ modalOpen, setModalOpen }) {
   const [charCount, setCharCount] = useState(50);
   const [position, setPosition] = useState('');
   const [keywords, setKeywords] = useState('');
-  console.log('modalOpen:', modalOpen);
-  console.log('setModalOpen:', setModalOpen);
+  const [posts, setPosts] = useState([]);
   const handleSubjectChange = (event) => {
     setSubject(event.target.value);
   };
@@ -39,7 +39,7 @@ function NewPost({ modalOpen, setModalOpen }) {
     setVideo(event.target.files[0]);
   };
 
-const handleSubmit = (event) => {
+const handleSubmit = async (event) => {
   event.preventDefault();
   const token = localStorage.getItem('token');
   const data = {
@@ -57,7 +57,8 @@ const handleSubmit = (event) => {
   console.log(JSON.stringify({ post: data }));
   if (!data.title || !data.content) {
     console.error('Invalid data format: title and content are required');
-  } fetch('http://localhost:8080/posts/', {
+  } 
+  const response = await fetch('http://localhost:8080/posts/', {
   method: 'POST',
   headers: {
     'Authorization': token,
@@ -65,6 +66,9 @@ const handleSubmit = (event) => {
   },
   body: JSON.stringify({ post: data }),
 })
+
+  const newPost = await response.json();
+  setPosts(prevPosts => [...prevPosts, newPost]);
 }
 
   return (
@@ -152,10 +156,15 @@ const handleSubmit = (event) => {
             </div>
             <div className="modal-background" onClick={() => setModalOpen(false)}></div>
           </div>
+            <div className="posts">
+              {posts.map(post => (
+                <Post key={post.id} post={post} />
+              ))}
+            </div>
         </div>
       
       ) : (
-        <p>CIaoooooooooooooooooooo</p>
+        <p></p>
       )}
     
     </div>
