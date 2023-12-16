@@ -92,12 +92,19 @@ div.user-card {
   justify-content: center;
   align-items: center;
   align-content: center;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+div.user-card > div {
+  width: 60%;
 }
 
 div.same-line {
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: space-evenly;
   align-items: center;
   margin-bottom: 2%;
 }
