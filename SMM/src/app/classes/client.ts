@@ -34,4 +34,8 @@ export default class Client {
   public get image(): string | undefined {
     return this.user?.img;
   }
+
+  public get charNumber(): number | undefined {
+    return this.user?.char_availability!;
+  }
 }

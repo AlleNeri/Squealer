@@ -1,5 +1,9 @@
-<form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-card">
-  <h2 class="form-title">Registrati come social media manager</h2>
+<form
+  [formGroup]="registerForm"
+  (ngSubmit)="onSubmit()"
+  class="auth-card"
+>
+  <h2 nz-typography class="form-title">Registrati come social media manager</h2>
   <input type="text" formControlName="username" placeholder="Username" />
   <input type="password" formControlName="password" placeholder="Password" />
   <input type="password" formControlName="confirmPassword" placeholder="Conferma la password" />
@@ -9,8 +13,9 @@
   </div>
   <div class="split">
     <input type="date" formControlName="birthDate" placeholder="Data di nascita" />
-    <input type="text" formControlName="email" placeholder="Email" />
+    <input type="email" formControlName="email" placeholder="Email" />
   </div>
+  <input type="file" formControlName="img" accept="image/*" (change)="onImageSelected($event)" />
   <!-- TODO: capire come funziona -->
   <!-- max="{{new Date().toISOString().split('T')[0]; | date:\'yyyy-MM-dd\'}}"  -->
   <div class="explanation">

@@ -15,6 +15,7 @@ export class RegisterCardComponent {
   public registerForm: FormGroup;
   public nameMinLength: number = 4;
   public passwordMinLength: number = 8;
+  private selectedImage?: string;
 
   constructor(private auth: AuthenticationService, private router: Router, private formBuilder: FormBuilder) {
     this.registerForm = this.formBuilder.group({
@@ -48,6 +49,7 @@ export class RegisterCardComponent {
         Validators.required,
         Validators.email,
       ]],
+      img: [ null ],
     }, { validators: this.confirmPasswordValidator() });
   }
 
@@ -78,6 +80,16 @@ export class RegisterCardComponent {
     else return null;
   }
 
+  onImageSelected(event: any) {
+    //get the image from the event
+    const image = event.target.files[0];
+    //create a file reader
+    const reader = new FileReader();
+    reader.onload = () => this.selectedImage = reader.result as string;
+    //read the image
+    reader.readAsDataURL(image);
+  }
+
   onSubmit() {
     //get the data to sent to the server
     const body: any = this.registerForm.value;
@@ -93,6 +105,7 @@ export class RegisterCardComponent {
       },
       password: body.password
     };
+    if(this.selectedImage) registerUser.user.img = this.selectedImage;
     console.log(registerUser);
     this.auth.register(registerUser)
       .add(() => {

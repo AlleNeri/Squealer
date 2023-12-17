@@ -1,12 +1,25 @@
-<div *ngIf="client.isThere" class="user-card-container">
-  <div class="user-card">
-    <app-user-card-header [username]="client.username!" [imgSrc]="client.image" />
-    <div class="same-line">
-      <p>{{ client.completeName }}</p>
-      <p>{{ client.email }}</p>
-    </div>
-    <div>
-      <p>Amici: {{ client.friendsNumber }}</p>
-    </div>
-  </div>
+<div class="user-card-container">
+  <nz-card
+    class="user-card"
+    style="width: 60%;"
+    [nzActions]="[friends, characters]"
+  >
+    <nz-card-meta
+      [nzAvatar]="avatarTemplate"
+      nzTitle="{{ client.username! }}"
+      nzDescription="{{ client.email! }} - {{ client.completeName! }}"
+    ></nz-card-meta>
+  </nz-card>
 </div>
+
+<ng-template #avatarTemplate>
+  <nz-avatar nzSrc="{{ client.image }}" [nzSize]="'large'"></nz-avatar>
+</ng-template>
+
+<ng-template #friends>
+  <span>Amici: {{ client.friendsNumber }}</span>
+</ng-template>
+
+<ng-template #characters>
+  <span>Personaggi: {{ client.charNumber }}</span>
+</ng-template>

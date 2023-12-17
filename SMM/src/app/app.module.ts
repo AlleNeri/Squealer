@@ -2,7 +2,17 @@ import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+
+import { NzLayoutModule } from 'ng-zorro-antd/layout';
+import { NzMenuModule } from 'ng-zorro-antd/menu';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzTypographyModule } from 'ng-zorro-antd/typography';
+import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
+import { NzImageModule } from 'ng-zorro-antd/image';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
+import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 
 import { AppRoutingModule } from './app-routing.module';
 
@@ -21,7 +31,6 @@ import { DashboardLayoutComponent } from './components/layout/dashboard-layout/d
 import { LayoutComponent } from './components/layout/layout/layout.component';
 
 import { CardComponent } from './components/miscellaneous/card/card.component';
-import { ImgBase64Component } from './components/miscellaneous/img-base64/img-base64.component';
 import { MyErrorMessageComponent } from './components/miscellaneous/my-error-message/my-error-message.component';
 
 import { LoginCardComponent } from './components/auth/login-card/login-card.component';
@@ -29,11 +38,16 @@ import { RegisterCardComponent } from './components/auth/register-card/register-
 
 import { UserCardComponent } from './components/user-card/user-card/user-card.component';
 import { ClientCardComponent } from './components/user-card/client-card/client-card.component';
-import { UserCardHeaderComponent } from './components/user-card/user-card-header/user-card-header.component';
 
 import { UserInformationService, factoryUserInformationService } from './services/user-information.service';
 
 import { ScreenDimensionDirective } from './directives/screen-dimension.directive';
+import { NZ_I18N } from 'ng-zorro-antd/i18n';
+import { it_IT } from 'ng-zorro-antd/i18n';
+import { registerLocaleData } from '@angular/common';
+import it from '@angular/common/locales/it';
+
+registerLocaleData(it);
 
 @NgModule({
   declarations: [
@@ -55,8 +69,6 @@ import { ScreenDimensionDirective } from './directives/screen-dimension.directiv
     ScreenDimensionDirective,
     MyErrorMessageComponent,
     ClientCardComponent,
-    ImgBase64Component,
-    UserCardHeaderComponent,
   ],
   imports: [
     BrowserModule,
@@ -64,6 +76,16 @@ import { ScreenDimensionDirective } from './directives/screen-dimension.directiv
     BrowserAnimationsModule,
     HttpClientModule,
     ReactiveFormsModule,
+    FormsModule,
+    NzLayoutModule,
+    NzMenuModule,
+    NzDividerModule,
+    NzTypographyModule,
+    NzBreadCrumbModule,
+    NzImageModule,
+    NzCardModule,
+    NzAvatarModule,
+    NzSkeletonModule,
   ],
   providers: [
     UserInformationService,
@@ -72,7 +94,8 @@ import { ScreenDimensionDirective } from './directives/screen-dimension.directiv
       useFactory: factoryUserInformationService,
       deps: [UserInformationService],
       multi: true
-    }
+    },
+    { provide: NZ_I18N, useValue: it_IT }
   ],
   bootstrap: [AppComponent]
 })
