@@ -2,14 +2,4 @@
   <app-client-card
     [client]="clientInformation"
   />
-  <div class="user-card-container">
-    <app-user-info-card
-      [title]="'Amici'"
-      [userInfo]="clientInformation.friendsNumber!.toString()"
-    />
-    <app-user-info-card
-      [title]="'Caratteri rimanenti'"
-      [userInfo]="clientInformation.charNumber!.toString()"
-    />
-  </div>
 </div>

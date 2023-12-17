@@ -1,28 +1,11 @@
-.navbar > ul {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  list-style: none;
-  padding: 0;
-  margin-right: 2%;
-  margin-left: 2%;
+.logo {
+  width: 120px;
+  height: 31px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 16px 30px 16px 0;
+  float: left;
 }
 
-.navbar > ul > li {
-  color: gray;
-  display: inline;
-  padding: 0% 2%;
-}
-
-.navbar > ul > li > a {
-  color: gray;
-  text-decoration: none;
-}
-
-.navbar > ul > li > a:hover {
-  text-decoration: underline;
-}
-
-.navbar > ul > li > a.actual {
-  color: black;
+.header-menu {
+  line-height: 64px;
 }

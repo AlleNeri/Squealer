@@ -1,5 +1,9 @@
-<form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-card">
-  <h2 class="form-title">Registrati come social media manager</h2>
+<form
+  [formGroup]="registerForm"
+  (ngSubmit)="onSubmit()"
+  class="auth-card"
+>
+  <h2 nz-typography class="form-title">Registrati come social media manager</h2>
   <input type="text" formControlName="username" placeholder="Username" />
   <input type="password" formControlName="password" placeholder="Password" />
   <input type="password" formControlName="confirmPassword" placeholder="Conferma la password" />

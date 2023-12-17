@@ -3,10 +3,13 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
+/* antd styles */
+@import "~ng-zorro-antd/ng-zorro-antd.css";
+
 /* form for the auth page */
 form.auth-card {
   width: 40%;
-  margin: 0 auto;
+  margin: 2% auto;
   padding: 20px 40px;
   background-color: #fff;
   border-radius: 5px;
@@ -75,6 +78,7 @@ div.authSuggestion a {
 }
 
 div.user-card-container {
+  padding-top: 2%;
   display: flex;
   flex-wrap: nowrap;
   justify-content: center;

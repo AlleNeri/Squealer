@@ -7,16 +7,21 @@
 <ng-template #textBlock>
   <div class="txt-container" [ngClass]="{ 'right-img': rightImg, 'left-img': !rightImg }">
     <div>
-      <h2>{{ title }}</h2>
+      <h2 nz-typography>{{ title }}</h2>
     </div>
     <div>
-      <p>{{ text }}</p>
+      <p nz-typography>{{ text }}</p>
     </div>
   </div>
 </ng-template>
 
 <ng-template #imgBlock>
   <div class="img-container">
-    <img src="{{ img }}" alt="{{ title }}" />
+    <img
+      nz-image
+      nzSrc="{{ img }}"
+      [nzFallback]="fallbackImg"
+      alt="{{ title }}"
+    />
   </div>
 </ng-template>

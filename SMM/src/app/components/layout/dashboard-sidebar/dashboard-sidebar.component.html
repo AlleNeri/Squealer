@@ -1,21 +1,17 @@
 <!-- sidebar component -->
-<div class="sidenav">
-  <!-- sidebar links -->
-  <a routerLink="/smm/general" routerLinkActive="active" >General</a>
-  <a (click)="toggleClients()" class="noHrefLink">Clienti</a>
-  <div class="subsection" *ngIf="showClients">
-    <a *ngFor="let client of this.clients" [routerLink]="['/smm', 'clients', client.id]" >{{client.username}}</a>
-  </div>
-</div>
-
-<!-- main content -->
-<div class="main">
-  <ng-content></ng-content>
-</div>
-
-<!-- TODO: add toggle button
-  <div class="sidenav" [ngClass]="{ 'hidden': isCollapsed }">
-    <button class="open-remove-btn" (click)="toggleSidebar()">
-      <span *ngIf="isCollapsed">Open</span>
-    </button>
--->
+<ul
+  nz-menu
+  nzMode="inline"
+  class="sider-menu"
+>
+  <li nz-menu-item>
+    <a routerLink="/smm/general">General</a>
+  </li>
+  <li nz-submenu nzTitle="Clients">
+    <ul>
+      <li *ngFor="let client of this.clients" nz-menu-item>
+        <a  [routerLink]="['/smm', 'clients', client.id]">{{client.username}}</a>
+      </li>
+    </ul>
+  </li>
+</ul>
