@@ -1,0 +1,17 @@
+<!-- sidebar component -->
+<ul
+  nz-menu
+  nzMode="inline"
+  class="sider-menu"
+>
+  <li nz-menu-item>
+    <a routerLink="/smm/general">General</a>
+  </li>
+  <li nz-submenu nzTitle="Clients">
+    <ul>
+      <li *ngFor="let client of this.clients" nz-menu-item>
+        <a  [routerLink]="['/smm', 'clients', client.id]">{{client.username}}</a>
+      </li>
+    </ul>
+  </li>
+</ul>

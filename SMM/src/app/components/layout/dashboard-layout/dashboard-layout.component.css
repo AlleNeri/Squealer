@@ -1,0 +1,12 @@
+.page-layout,
+.inner-layout {
+  min-height: 100%;
+}
+
+.inner-layout {
+  padding: 0 24px 24px;
+}
+
+nz-content {
+  padding: 24px;
+}

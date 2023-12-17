@@ -6,3 +6,6 @@ dist/
 
 #rsa keys
 rsa-keys/
+
+#.env file
+config.env

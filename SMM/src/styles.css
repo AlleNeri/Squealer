@@ -2,3 +2,151 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/* antd styles */
+@import "~ng-zorro-antd/ng-zorro-antd.css";
+
+/* form for the auth page */
+form.auth-card {
+  width: 40%;
+  margin: 2% auto;
+  padding: 20px 40px;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  /* flex */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+form.auth-card input[type=text],
+form.auth-card input[type=password],
+form.auth-card input[type=date],
+form.auth-card input[type=email],
+form.auth-card input[type=file] {
+  font-size: 16px;
+  width: 94%;
+  margin-bottom: 10px;
+  padding: 10px 3%;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+}
+
+form.auth-card input[type=submit] {
+  font-size: 16px;
+  background-color: #0098cb;
+  color: #fff;
+  margin-top: 10px;
+  padding: 10px 8px;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  width: 40%;
+}
+
+form.auth-card input[type=submit]:hover {
+  background-color: #00b8eb;
+}
+
+form.auth-card input[type=submit]:disabled {
+  background-color: #ccc;
+  cursor: default;
+}
+
+form.auth-card input[type=submit]:disabled:hover {
+  background-color: #ccc;
+}
+
+form.auth-card .form-title {
+  margin-bottom: 20px;
+  font-size: 32px;
+  font-weight: 300;
+  text-align: center;
+  color: #0098cb;
+}
+
+div.authSuggestion {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #999;
+  text-align: center;
+}
+
+div.authSuggestion a {
+  color: #666;
+}
+
+div.user-card-container {
+  padding-top: 2%;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+
+div.user-card {
+  padding: 10px;
+  margin: 10px;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+div.user-card > div {
+  width: 60%;
+}
+
+div.same-line {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  margin-bottom: 2%;
+}
+
+div.same-line p {
+  padding-right: 1%;
+  padding-left: 1%;
+}
+
+@media (max-width: 1150px) {
+  div.user-card-container {
+    margin: 0 5%;
+  }
+  div.user-card {
+    width: 70%;
+  }
+}
+
+div.user-card div.user-card-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 2%;
+}
+
+div.user-card div.user-card-header div.img-container {
+  width: 100px;
+  height: 100px;
+}
+
+div.user-card div.user-card-header div.img-container img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+div.user-card div.user-card-header h3.user-name {
+  margin-left: 2%;
+}

@@ -1,0 +1,14 @@
+div.message {
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  background-color: black;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+}

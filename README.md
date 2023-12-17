@@ -1,14 +1,19 @@
 # Squealer
 Progetto di tecnologie web A.A. 2023
+
 ## Da fare
 - [X] Creare il database.
-- [ ] Sviluppare un back-end.
-    - [X] Creare gli schemi dei dati.
-    - [ ] Creare le route.
-        - [X] Abbozzarle.
-        - [ ] Renderle utili: aggiungere quelle utili, rimuovere quelle inutili.
-    - [ ] Implementare autenticazione.
+- [X] Sviluppare un back-end.
 - [ ] Sviluppare i front-end.
     - [ ] Sviluppare il social.
     - [ ] Sviluppare la dashboard di un social media manager.
     - [ ] Sviluppare una piattaforma per l'admin.
+## Da testare
+- Backend:
+    - [ ] visualizzazioni e reazioni.
+    - [ ] i meccanismi delle reazioni(se con una certa quantità di reazioni e visualizzazioni il post diventa controverso/popolare/impopolare).
+    - [ ] la sottrazione dei caratteri ad ogni post.
+    - [ ] il bot della NASA.
+    - [ ] meccanismi di penalizzazione quota.
+    - [ ] meccanismo di cancellazione utente(e relativo spostamento dei post e canali all'utente cimitero).
+    - [ ] meccanismo di geolocalizzaione.
