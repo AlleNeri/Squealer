@@ -16,7 +16,7 @@ postRoute.get("/", Auth.authorize, Auth.isMod, (_: Request, res: Response) => {
 
 //get all my posts
 postRoute.get("/my", Auth.authorize, (req: Request, res: Response) => {
-	PostSchema.find({ author: req.user?._id })
+	PostSchema.find({ posted_by: req.user?._id })
 		.then((posts: Post[]) => res.status(200).json(posts))
 		.catch((err: Error) => res.status(400).json(err));
 });

@@ -22,6 +22,9 @@ mongoose.connect(`mongodb://${process.env.DBHOST}:${process.env.DBPORT}/${proces
 import "./nasaBot";	//TODO: test the frequency of the nasa bot posts
 import "./cemetery";
 
+/*** Activating the triggers ***/
+import "./controller/triggers";
+
 /*** Express initialization ***/
 const app: Express = express();
 

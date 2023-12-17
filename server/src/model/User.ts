@@ -172,11 +172,6 @@ UserSchema.methods.removeUnpopular=function(): void {
 	this.messagePopularity.negative--;
 };
 
-UserSchema.pre('save', function(next) {
-	this.updateCharAvailability();
-	next();
-});
-
 export default mongoose.model(process.env.DBCOLLECTION_USER, UserSchema);
 
 export type User=mongoose.InferSchemaType<typeof UserSchema>;
