@@ -25,7 +25,6 @@ import { GeneralComponent } from './pages/general/general.component';
 import { ClientComponent } from './pages/client/client.component';
 
 import { HomeHeaderComponent } from './components/layout/home-header/home-header.component';
-import { HomeFooterComponent } from './components/layout/home-footer/home-footer.component';
 import { DashboardSidebarComponent } from './components/layout/dashboard-sidebar/dashboard-sidebar.component';
 import { DashboardLayoutComponent } from './components/layout/dashboard-layout/dashboard-layout.component';
 import { LayoutComponent } from './components/layout/layout/layout.component';
@@ -56,7 +55,6 @@ registerLocaleData(it);
     RegisterComponent,
     HomeComponent,
     HomeHeaderComponent,
-    HomeFooterComponent,
     CardComponent,
     LoginCardComponent,
     LayoutComponent,
