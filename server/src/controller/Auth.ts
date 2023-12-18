@@ -70,7 +70,7 @@ abstract class Auth {
 		const signedToken: string=jsonwebtoken.sign(payload, PRIV_KEY, { expiresIn: expiresIn, algorithm: 'RS256' });
 		return {
 			token: `Bearer ${signedToken}`,
-			expires: expiresIn,
+			expires: new Date(new Date().getTime() + parseInt(expiresIn!)),
 		}
 	}
 
