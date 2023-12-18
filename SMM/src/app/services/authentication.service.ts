@@ -16,6 +16,7 @@ export class AuthenticationService {
     this.checkCredentials();
     this.logKey="user";
     this.logInEvent=new EventEmitter<ILoggedUser>();
+    if(this.isLoggedIn()) this.logInEvent.emit(this.loggedUser!);
   }
 
   get userId(): string | null {
