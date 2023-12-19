@@ -47,17 +47,19 @@ export class AuthenticationService {
     else this.loggedUser=JSON.parse(tmp); //TODO: controllare se ci sono i campi utili
   }
 
-  isTockenExpired(): boolean {
+  isTokenExpired(): boolean {
     if(this.loggedUser===undefined) return true;
     const exp=new Date(this.loggedUser.jwt.expires);
-    return exp.getTime()<(new Date()).getTime();
+    const isExpired = exp.getTime()<(new Date()).getTime();
+    if(isExpired) this.logout();
+    return isExpired;
   }
 
   register(data: IRegisterBody) {
     return this.backendComunication.post("users/register", data)
       .subscribe((d: Object)=> {
-        if(this.isTockenExpired()) return false;
         this.logUser=d as ILoggedUser | undefined;
+        if(this.isTokenExpired()) return false;
         return true;
       });
   }
@@ -65,8 +67,8 @@ export class AuthenticationService {
   login(data: Object) {
     return this.backendComunication.post("users/login", data)
       .subscribe((d: Object)=> {
-        if(this.isTockenExpired()) return false;
         this.logUser=d as ILoggedUser | undefined;
+        if(this.isTokenExpired()) return false;
         return true;
       });
   }
@@ -77,8 +79,8 @@ export class AuthenticationService {
 
   isLoggedIn(): boolean {
     this.checkCredentials();
-    if(this.isTockenExpired()) return false;
-    if(this.loggedUser) return false;
+    if(!this.loggedUser) return false;
+    if(this.isTokenExpired()) return false;
     return true;
   }
 }
