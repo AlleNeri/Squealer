@@ -164,9 +164,9 @@ abstract class Auth {
 						req.user=user;
 						return { status: true };
 					})
-					.catch((_: any) => { return { status: true, msg: 'Invalid token.' }; });
+					.catch((_: any) => { return { status: false, msg: 'Invalid token.' }; });
 			})
-			.catch((_: any) => { return { status: true, msg: 'Invalid token.' }; });
+			.catch((_: any) => { return { status: false, msg: 'Invalid token.' }; });
 	}
 
 	public static async authorize(req: Request, res: Response, next: NextFunction): Promise<Response | void> {

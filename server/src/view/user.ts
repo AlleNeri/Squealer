@@ -53,5 +53,33 @@ userRoute.get('/:id/char', Auth.authorize, Auth.isSMM, (req: Request, res: Respo
 		.catch(err=> res.status(404).json({ msg: 'User not found', err: err }));
 });
 
+//buy char availability
+//body: { period: 'day' | 'week' | 'month', quantity: number }
+userRoute.post('/:id/char', Auth.authorize, (req: Request, res: Response) => {
+	if(req.body.period !== 'day' && req.body.period !== 'week' && req.body.period !== 'month' && !req.body.quantity) return res.status(400).json({ msg: 'Bad request' });
+	if(req.params.id !== req.user?.id && !req.user?.isClient(req.params.id)) return res.status(401).json({ msg: 'Unauthorized' });
+	UserSchema.findById(req.params.id)
+		.then((user: User | null) => {
+			if(!user) res.status(404).json({ msg: 'User not found' });
+			else {
+				switch(req.body.period) {
+					case 'day':
+						user.char_availability.day+=req.body.quantity;
+						break;
+					case 'week':
+						user.char_availability.week+=req.body.quantity;
+						break;
+					case 'month':
+						user.char_availability.month+=req.body.quantity;
+						break;
+				}
+				user.save()
+					.then((_: User) => res.status(200).json({ msg: 'Char availability added' }))
+					.catch((err: any) => res.status(400).json({ msg: 'Bad request', err: err }));
+			}
+		})
+		.catch(err=> res.status(404).json({ msg: 'User not found', err: err }));
+});
+
 //authentication routes
 userRoute.use('/', authenticationRoute);
