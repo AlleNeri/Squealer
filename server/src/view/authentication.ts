@@ -28,7 +28,7 @@ authenticationRoute.post("/register", (req: Request, res: Response) => {
 					Auth.signInWithUser(user, req.body.password)
 						.then((token: any | null)=> {
 							if(!token) res.status(500).json({ success: false, msg: "Error accessing user. It's probably a server error." });
-							else res.status(201).json({ success: true, msg: "Successful created new user.", user: token.userId, jwt: token.authToken });
+							else res.status(201).json({ success: true, msg: "Successful created new user.", userId: token.userId, jwt: token.authToken });
 						})
 						.catch((err: Error)=> res.status(500).json({ success: false, msg: "Error creating user.", err: err }));
 				}
