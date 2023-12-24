@@ -2,7 +2,7 @@
   <nz-card
     class="user-card"
     style="width: 60%;"
-    [nzActions]="[friends, characters]"
+    [nzActions]="[friends, characters, quote]"
   >
     <nz-card-meta
       [nzAvatar]="avatarTemplate"
@@ -25,10 +25,20 @@
     nz-button
     (click)="buyCharModal()"
     nz-tooltip
-    nzTooltipPlacement="bottomRight"
+    nzTooltipPlacement="bottom"
     [nzTooltipTitle]="charTooltip"
     [nzTooltipMouseLeaveDelay]="0.3"
   >
     Caratteri rimanenti: {{ client.charNumber?.dayly }}
   </span>
 </ng-template>
+
+<ng-template #quote>
+  <span
+    nz-tooltip
+    nzTooltipPlacement="bottomRight"
+    [nzTooltipTitle]="quoteTooltip"
+    [nzTooltipMouseLeaveDelay]="0.3"
+  >
+    Quota giornaliera: {{ client.quoteNumber?.dayly }}
+  </span>

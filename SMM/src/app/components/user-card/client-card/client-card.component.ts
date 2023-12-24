@@ -13,6 +13,7 @@ import Client from 'src/app/classes/client';
 export class ClientCardComponent implements OnInit {
   @Input({required: true}) client!: Client;
   protected charTooltip: string = "";
+  protected quoteTooltip: string = "";
 
   constructor(
     private modal: NzModalService,
@@ -20,6 +21,7 @@ export class ClientCardComponent implements OnInit {
 
   ngOnInit(): void {
     this.charTooltip = `Giornalieri: ${this.client.charNumber?.dayly}\nSettimanali: ${this.client.charNumber?.weekly}\nMensili: ${this.client.charNumber?.monthly}`
+    this.quoteTooltip = `Giornalieri: ${this.client.quoteNumber?.dayly}\nSettimanali: ${this.client.quoteNumber?.weekly}\nMensili: ${this.client.quoteNumber?.monthly}`
   }
 
   protected buyCharModal() {

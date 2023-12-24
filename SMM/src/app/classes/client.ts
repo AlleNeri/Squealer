@@ -38,4 +38,8 @@ export default class Client {
   public get charNumber(): IChar | undefined {
     return this.user?.char_availability!;
   }
+
+  public get quoteNumber(): IChar | undefined {
+    return this.user?.quote!;
+  }
 }
