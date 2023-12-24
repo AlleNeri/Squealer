@@ -8,7 +8,7 @@
       [nzAvatar]="avatarTemplate"
       nzTitle="{{ client.username! }}"
       nzDescription="{{ client.email! }} - {{ client.completeName! }}"
-    ></nz-card-meta>
+    />
   </nz-card>
 </div>
 
@@ -21,5 +21,14 @@
 </ng-template>
 
 <ng-template #characters>
-  <span>Personaggi: {{ client.charNumber }}</span>
+  <span
+    nz-button
+    (click)="buyCharModal()"
+    nz-tooltip
+    nzTooltipPlacement="bottomRight"
+    [nzTooltipTitle]="charTooltip"
+    [nzTooltipMouseLeaveDelay]="0.3"
+  >
+    Caratteri rimanenti: {{ client.charNumber?.dayly }}
+  </span>
 </ng-template>

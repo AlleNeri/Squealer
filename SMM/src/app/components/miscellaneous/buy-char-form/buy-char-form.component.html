@@ -1,0 +1,23 @@
+<form [formGroup]="form" (submit)="onSubmit()">
+  <nz-input-number-group
+    nzAddOnBefore="+"
+    [nzAddOnAfter]="suffixPeriod"
+  >
+    <nz-input-number
+      formControlName="quantity"
+      [nzMin]="1"
+    />
+  </nz-input-number-group>
+
+  <ng-template #suffixPeriod>
+    <nz-select
+      formControlName="period"
+    >
+      <nz-option
+        *ngFor="let option of this.periods"
+        [nzValue]="option.value"
+        [nzLabel]="option.label"
+      />
+    </nz-select>
+  </ng-template>
+</form>

@@ -1,4 +1,4 @@
-import IUser from "../interfaces/user"
+import IUser, { IChar } from "../interfaces/user"
 
 export default class Client {
   private user?: IUser;
@@ -35,7 +35,7 @@ export default class Client {
     return this.user?.img;
   }
 
-  public get charNumber(): number | undefined {
+  public get charNumber(): IChar | undefined {
     return this.user?.char_availability!;
   }
 }

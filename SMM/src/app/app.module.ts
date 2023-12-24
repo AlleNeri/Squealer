@@ -13,6 +13,11 @@ import { NzImageModule } from 'ng-zorro-antd/image';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 
 import { AppRoutingModule } from './app-routing.module';
 
@@ -45,6 +50,7 @@ import { NZ_I18N } from 'ng-zorro-antd/i18n';
 import { it_IT } from 'ng-zorro-antd/i18n';
 import { registerLocaleData } from '@angular/common';
 import it from '@angular/common/locales/it';
+import { BuyCharFormComponent } from './components/miscellaneous/buy-char-form/buy-char-form.component';
 
 registerLocaleData(it);
 
@@ -67,6 +73,7 @@ registerLocaleData(it);
     ScreenDimensionDirective,
     MyErrorMessageComponent,
     ClientCardComponent,
+    BuyCharFormComponent,
   ],
   imports: [
     BrowserModule,
@@ -84,6 +91,11 @@ registerLocaleData(it);
     NzCardModule,
     NzAvatarModule,
     NzSkeletonModule,
+    NzModalModule,
+    NzButtonModule,
+    NzInputNumberModule,
+    NzSelectModule,
+    NzToolTipModule ,
   ],
   providers: [
     UserInformationService,

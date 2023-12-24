@@ -55,7 +55,7 @@ userRoute.get('/:id/char', Auth.authorize, Auth.isSMM, (req: Request, res: Respo
 
 //buy char availability
 //body: { period: 'day' | 'week' | 'month', quantity: number }
-userRoute.patch('/:id/char', Auth.authorize, (req: Request, res: Response) => {
+userRoute.patch('/:id/char', Auth.softAuthorize, (req: Request, res: Response) => {
 	if(req.body.period !== 'day' && req.body.period !== 'week' && req.body.period !== 'month' && !req.body.quantity) return res.status(400).json({ msg: 'Bad request' });
 	if(req.params.id !== req.user?.id && !req.user?.isClient(req.params.id)) return res.status(401).json({ msg: 'Unauthorized' });
 	UserSchema.findById(req.params.id)

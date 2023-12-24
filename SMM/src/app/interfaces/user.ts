@@ -8,9 +8,16 @@ export default interface IUser {
   };
   email?: string;
   type?: string;
-  char_availability?: number;
-  img?: string; //TODO: look how to handle images
+  char_availability?: IChar;
+  quote?: IChar;
+  img?: string;
   b_date?: Date;
   appartenence?: string;
   friends?: string[];
 };
+
+export interface IChar {
+  dayly: number;
+  weekly: number;
+  monthly: number;
+}
