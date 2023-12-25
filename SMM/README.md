@@ -18,5 +18,5 @@
 - [ ] revisione dell'inserimento dei token nelle richieste HTTP tramite "interceptor".
 - [ ] revisione della protezione delle rotte protette tramite "gurad".
 - [X] risolvere i problemi di visualizzazione.
-- [ ] sostituire tooltip con popover
+- [X] sostituire tooltip con popover
 - [ ] sostruire action della card dei clienti con statistics(fattibilità)

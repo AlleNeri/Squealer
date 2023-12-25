@@ -17,7 +17,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzSelectModule } from 'ng-zorro-antd/select';
-import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
@@ -104,7 +104,7 @@ registerLocaleData(it);
     NzButtonModule,
     NzInputNumberModule,
     NzSelectModule,
-    NzToolTipModule,
+    NzPopoverModule,
     NzTabsModule,
     NzGridModule,
     NzDrawerModule,

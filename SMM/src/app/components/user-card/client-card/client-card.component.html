@@ -24,10 +24,11 @@
   <span
     nz-button
     (click)="buyCharModal()"
-    nz-tooltip
-    nzTooltipPlacement="bottom"
-    [nzTooltipTitle]="charTooltip"
-    [nzTooltipMouseLeaveDelay]="0.3"
+    nz-popover
+    nzPopoverPlacement="bottom"
+    nzPopoverTitle="Caratteri rimanenti"
+    [nzPopoverMouseLeaveDelay]="0.3"
+    [nzPopoverContent]="charContent"
   >
     Caratteri rimanenti: {{ client.charNumber?.dayly }}
   </span>
@@ -35,10 +36,28 @@
 
 <ng-template #quote>
   <span
-    nz-tooltip
-    nzTooltipPlacement="bottomRight"
-    [nzTooltipTitle]="quoteTooltip"
-    [nzTooltipMouseLeaveDelay]="0.3"
+    nz-popover
+    nzPopoverPlacement="bottomRight"
+    nzPopoverTitle="Quota giornaliera"
+    [nzPopoverMouseLeaveDelay]="0.3"
+    [nzPopoverContent]="quoteContent"
   >
-    Quota giornaliera: {{ client.quoteNumber?.dayly }}
+      Quota giornaliera: {{ client.quoteNumber?.dayly }}
   </span>
+</ng-template>
+
+<ng-template #charContent>
+  <div>
+    <p>Giornaliera: {{ client.charNumber?.dayly }}</p>
+    <p>Settimanale: {{ client.charNumber?.weekly }}</p>
+    <p>Mensile: {{ client.charNumber?.monthly }}</p>
+  </div>
+</ng-template>
+
+<ng-template #quoteContent>
+  <div>
+    <p>Giornaliera: {{ client.quoteNumber?.dayly }}</p>
+    <p>Settimanale: {{ client.quoteNumber?.weekly }}</p>
+    <p>Mensile: {{ client.quoteNumber?.monthly }}</p>
+  </div>
+</ng-template>
