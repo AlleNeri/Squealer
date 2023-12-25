@@ -17,7 +17,10 @@
 </ng-template>
 
 <ng-template #friends>
-  <span>Amici: {{ client.friendsNumber }}</span>
+  <nz-statistic
+    [nzValue]="client.friendsNumber"
+    [nzTitle]="'Amici'"
+  ></nz-statistic>
 </ng-template>
 
 <ng-template #characters>
@@ -30,7 +33,10 @@
     [nzPopoverMouseLeaveDelay]="0.3"
     [nzPopoverContent]="charContent"
   >
-    Caratteri rimanenti: {{ client.charNumber?.dayly }}
+    <nz-statistic
+      [nzValue]="client.charNumber?.dayly"
+      [nzTitle]="'Caratteri giornalieri rimanenti'"
+    ></nz-statistic>
   </span>
 </ng-template>
 
@@ -41,8 +47,12 @@
     nzPopoverTitle="Quota giornaliera"
     [nzPopoverMouseLeaveDelay]="0.3"
     [nzPopoverContent]="quoteContent"
+    [nzPopoverArrowPointAtCenter]="true"
   >
-      Quota giornaliera: {{ client.quoteNumber?.dayly }}
+    <nz-statistic
+      [nzValue]="client.quoteNumber?.dayly"
+      [nzTitle]="'Quota giornaliera'"
+    ></nz-statistic>
   </span>
 </ng-template>
 

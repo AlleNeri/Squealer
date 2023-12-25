@@ -22,6 +22,7 @@ import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
+import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 
 import { AppRoutingModule } from './app-routing.module';
 
@@ -109,6 +110,7 @@ registerLocaleData(it);
     NzGridModule,
     NzDrawerModule,
     NzSpaceModule,
+    NzStatisticModule,
   ],
   providers: [
     UserInformationService,
