@@ -22,7 +22,7 @@ export class BackendComunicationService {
   post(endPoint: string, body: Object, token?: string): Observable<Object> {
     if(!token) return this.http.post(`${this.baseUrl}/${endPoint}`, body);
     const httpHeaders: HttpHeaders = new HttpHeaders({ Authorization: token });
-    return this.http.post(`${this.baseUrl}/${endPoint}`, { headers: httpHeaders });
+    return this.http.post(`${this.baseUrl}/${endPoint}`, body, { headers: httpHeaders });
   }
 
   put(endPoint: string, body: Object, token?: string): Observable<Object> {

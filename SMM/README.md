@@ -13,8 +13,10 @@
   - [X] presentazione dei clienti nella sidebar.
   - [X] visualizzazione semplice.
   - [ ] visualizzazione grafica.
-- [ ] terminare home page.
+- [X] terminare home page.
 - [ ] creare "interface" per spostare nel punto giusto tutte le strutture dati che ho lasciato in giro per il codice.
 - [ ] revisione dell'inserimento dei token nelle richieste HTTP tramite "interceptor".
 - [ ] revisione della protezione delle rotte protette tramite "gurad".
 - [X] risolvere i problemi di visualizzazione.
+- [ ] sostituire tooltip con popover
+- [ ] sostruire action della card dei clienti con statistics(fattibilità)

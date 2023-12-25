@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 
 import PostSchema, { Post } from "../model/Post";
-import UserSchema, { User } from '../model/User';
+import UserSchema, { User, UserType } from '../model/User';
 import ChannelSchema, { Channel } from "../model/Channel";
 import Auth from "../controller/Auth";
 
@@ -30,13 +30,20 @@ postRoute.get("/:id", (req: Request, res: Response) => {
 
 //create a post
 //it isn't required the posted_by field in the request body
+//a SMM can post as a client, the client id is in a query parameter called 'as'
 postRoute.post("/", Auth.authorize, (req: Request, res: Response) => {
-	req.body.post.posted_by=req.user?._id;
-	ChannelSchema.findById(req.body.post.posted_on)
+	//if it's a smm, the post must be posted by one of his clients; the client id is in a query parameter
+	const post: Post=req.body.post;
+	if(req.user?.type === UserType.SMM && req.query.as && req.user?.isClient(req.query.as.toString()))
+		post.posted_by=req.query.as.toString();
+	else if(req.user?.type !== UserType.VIP || req.user?.type !== UserType.NORMAL) 
+		res.status(401).json({ msg: "Unauthorized" });
+	else post.posted_by=req.user?._id;
+	ChannelSchema.findById(post.posted_on)
 		.then((channel: Channel | null) => {
 			if(!channel) return res.status(404).json({ msg: "Channel not found" });
 			else if(!channel.private) {
-				UserSchema.findById(req.params.id)
+				UserSchema.findById(post.posted_by)
 					.then((user: User | null) => {
 						if(!user) return res.status(404).json({ msg: "User not found" });
 						const content=req.body.post.content;

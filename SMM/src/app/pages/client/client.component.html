@@ -1,5 +1,12 @@
-<div *ngIf="clientInformation">
-  <app-client-card
-    [client]="clientInformation"
-  />
+<div nz-row>
+  <div
+    nz-col
+    nzSpan="20"
+    nzOffset="2"
+    *ngIf="clientInformation"
+  >
+    <app-client-card [client]="clientInformation"/>
+    <nz-divider nzText="Squeal"/>
+    <app-post-section [client]="clientInformation" />
+  </div>
 </div>

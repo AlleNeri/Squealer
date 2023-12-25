@@ -1,0 +1,84 @@
+<button
+  nz-button
+  (click)="this.toggleDrawer()"
+>
+  Post
+</button>
+
+<nz-drawer
+  [nzBodyStyle]="{ overflow: 'auto' }"
+  [nzWidth]="500"
+  [nzVisible]="this.isDrawerVisible"
+  nzTitle="Post as {{ this.client.username }}"
+  [nzFooter]="drawerFooter"
+  (nzOnClose)="this.toggleDrawer()"
+>
+  <form
+    nz-form
+    [formGroup]="this.postForm"
+    (ngSubmit)="this.post()"
+    *nzDrawerContent
+  >
+    <nz-form-item>
+      <label nz-form-item-required>Titolo</label>
+      <nz-form-control style="width: 100%;">
+        <input
+          nz-input
+          formControlName="title"
+          placeHolder="Scrivi il titolo del tuo cliente..."
+          class="full-width"
+        />
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <label nz-form-item-required>Testo</label>
+      <nz-form-control style="width: 100%;">
+        <textarea
+          nz-input
+          formControlName="text"
+          nzAutosize="{ minRows: 2, maxRows: 5 }"
+          placeHolder="Scrivi lo squeal del tuo cliente..."
+          class="full-width"
+        ></textarea>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <label nz-form-item-required>Canale</label>
+      <nz-form-control style="width: 100%;">
+        <nz-select
+          formControlName="channel"
+          nzPlaceHolder="Seleziona un canale"
+          nzAllowClear
+        >
+          <nz-option
+            nzLabel="Meme"
+            nzValue="651480a626eac0c997f5bd30"
+          ></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+
+  <!-- Footer -->
+  <ng-template #drawerFooter>
+    <nz-space style="float: right;">
+      <button
+        nz-button
+        nzType="default"
+        (click)="this.toggleDrawer()"
+        *nzSpaceItem
+      >
+        Cancella
+      </button>
+      <button
+        nz-button
+        nzType="primary"
+        (click)="this.post()"
+        *nzSpaceItem
+        [disabled]="!this.postForm.valid"
+      >
+        Post
+      </button>
+    </nz-space>
+  </ng-template>
+</nz-drawer>
