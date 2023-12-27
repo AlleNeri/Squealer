@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { LoginContext } from './LoginContext';
 import { TextField, Button, InputLabel, Grid } from '@material-ui/core';
 import './newPost.css';
@@ -14,6 +14,34 @@ function NewPost({ modalOpen, setModalOpen }) {
   const [position, setPosition] = useState('');
   const [keywords, setKeywords] = useState('');
   const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    fetch('http://localhost:8080/posts/my', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        // Include your authorization token if needed
+        'Authorization': token,
+      },
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.message) {
+        console.error('Error from server:', data.message);
+      } else if (Array.isArray(data)) {
+        setPosts(data);
+      } else {
+        console.error('Unexpected data:', data);
+      }
+    })
+    .catch((error) => console.error('Error:', error));
+  }, []);
+  
+  useEffect(() => {
+    console.log(posts);
+  }, [posts]);
+
   const handleSubjectChange = (event) => {
     setSubject(event.target.value);
   };
@@ -66,19 +94,13 @@ const handleSubmit = async (event) => {
   },
   body: JSON.stringify({ post: data }),
 })
-
-  const newPost = await response.json();
-  setPosts(prevPosts => [...prevPosts, newPost]);
 }
 
   return (
     
     <div className="new-post">
-    
-      {console.log('logged in:' + modalOpen)}
       {loggedIn ? (
         <div>
-          {console.log('open modal:' + modalOpen)}
           <div className="modal" style={{ display: modalOpen ? 'block' : 'none' }}>
             
             <div className="modal-content">
