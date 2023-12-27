@@ -23,6 +23,9 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzStatisticModule } from 'ng-zorro-antd/statistic';
+import { NzUploadModule } from 'ng-zorro-antd/upload';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzFormModule } from 'ng-zorro-antd/form';
 
 import { AppRoutingModule } from './app-routing.module';
 
@@ -111,6 +114,9 @@ registerLocaleData(it);
     NzDrawerModule,
     NzSpaceModule,
     NzStatisticModule,
+    NzUploadModule,
+    NzInputModule,
+    NzFormModule,
   ],
   providers: [
     UserInformationService,

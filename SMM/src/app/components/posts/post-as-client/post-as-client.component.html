@@ -9,7 +9,7 @@
   [nzBodyStyle]="{ overflow: 'auto' }"
   [nzWidth]="500"
   [nzVisible]="this.isDrawerVisible"
-  nzTitle="Post as {{ this.client.username }}"
+  nzTitle="Posta per conto di {{ this.client.username }}"
   [nzFooter]="drawerFooter"
   (nzOnClose)="this.toggleDrawer()"
 >
@@ -19,44 +19,56 @@
     (ngSubmit)="this.post()"
     *nzDrawerContent
   >
-    <nz-form-item>
-      <label nz-form-item-required>Titolo</label>
-      <nz-form-control style="width: 100%;">
-        <input
-          nz-input
-          formControlName="title"
-          placeHolder="Scrivi il titolo del tuo cliente..."
-          class="full-width"
-        />
-      </nz-form-control>
-    </nz-form-item>
-    <nz-form-item>
-      <label nz-form-item-required>Testo</label>
-      <nz-form-control style="width: 100%;">
-        <textarea
-          nz-input
-          formControlName="text"
-          nzAutosize="{ minRows: 2, maxRows: 5 }"
-          placeHolder="Scrivi lo squeal del tuo cliente..."
-          class="full-width"
-        ></textarea>
-      </nz-form-control>
-    </nz-form-item>
-    <nz-form-item>
-      <label nz-form-item-required>Canale</label>
-      <nz-form-control style="width: 100%;">
-        <nz-select
-          formControlName="channel"
-          nzPlaceHolder="Seleziona un canale"
-          nzAllowClear
-        >
-          <nz-option
-            nzLabel="Meme"
-            nzValue="651480a626eac0c997f5bd30"
-          ></nz-option>
-        </nz-select>
-      </nz-form-control>
-    </nz-form-item>
+    <div nz-row nzGutter="8">
+      <div nz-col nzSpan="24">
+        <nz-form-item>
+          <nz-form-label nzRequired>Titolo</nz-form-label>
+          <nz-form-control>
+            <input
+              nz-input
+              formControlName="title"
+              placeHolder="Scrivi il titolo..."
+              required
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row nzGutter="8">
+      <div nz-col nzSpan="24">
+        <nz-form-item>
+          <nz-form-label>Testo</nz-form-label>
+          <nz-form-control style="width: 100%;">
+            <textarea
+            nz-input
+            formControlName="text"
+            [nzAutosize]="{ minRows: 3, maxRows: 4 }"
+            placeHolder="Scrivi lo squeal..."
+            class="full-width"
+            ></textarea>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row nzGutter="8">
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-label nzRequired>Canale</nz-form-label>
+          <nz-form-control style="width: 100%;">
+            <nz-select
+              formControlName="channel"
+              nzPlaceHolder="Seleziona un canale"
+              nzAllowClear
+            >
+              <nz-option
+                nzLabel="Meme"
+                nzValue="651480a626eac0c997f5bd30"
+              ></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
   </form>
 
   <!-- Footer -->
