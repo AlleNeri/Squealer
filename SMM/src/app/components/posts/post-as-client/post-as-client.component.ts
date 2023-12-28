@@ -1,10 +1,13 @@
 import { Component, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NzUploadChangeParam, NzUploadFile } from 'ng-zorro-antd/upload';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 import Client from 'src/app/classes/client';
 
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { BackendComunicationService } from 'src/app/services/backend-comunication.service';
+import {Observable, Observer} from 'rxjs';
 
 @Component({
   selector: 'app-post-as-client',
@@ -19,7 +22,8 @@ export class PostAsClientComponent {
   constructor(
     private fb: FormBuilder,
     private auth: AuthenticationService,
-    private backend: BackendComunicationService
+    private backend: BackendComunicationService,
+    private msgService: NzMessageService
   ) {
     this.isDrawerVisible = false;
     this.postForm = this.fb.group({

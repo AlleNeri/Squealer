@@ -27,6 +27,12 @@ import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzFormModule } from 'ng-zorro-antd/form';
 
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { IconDefinition } from '@ant-design/icons-angular';
+import {
+  InboxOutline
+} from '@ant-design/icons-angular/icons';
+
 import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
@@ -62,8 +68,13 @@ import { it_IT } from 'ng-zorro-antd/i18n';
 import { registerLocaleData } from '@angular/common';
 import it from '@angular/common/locales/it';
 import { PostSectionComponent } from './components/posts/post-section/post-section.component';
+import { UploadImageComponent } from './components/miscellaneous/upload-image/upload-image.component';
 
 registerLocaleData(it);
+
+const icons: IconDefinition[]= [
+  InboxOutline
+];
 
 @NgModule({
   declarations: [
@@ -87,6 +98,7 @@ registerLocaleData(it);
     BuyCharFormComponent,
     PostAsClientComponent,
     PostSectionComponent,
+    UploadImageComponent,
   ],
   imports: [
     BrowserModule,
@@ -117,6 +129,7 @@ registerLocaleData(it);
     NzUploadModule,
     NzInputModule,
     NzFormModule,
+    NzIconModule.forChild(icons),
   ],
   providers: [
     UserInformationService,
