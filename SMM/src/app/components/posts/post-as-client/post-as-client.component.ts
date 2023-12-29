@@ -1,6 +1,8 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd/message';
+
+import { Channel } from 'src/app/interfaces/channel';
 
 import Client from 'src/app/classes/client';
 
@@ -12,10 +14,11 @@ import { BackendComunicationService } from 'src/app/services/backend-comunicatio
   templateUrl: './post-as-client.component.html',
   styleUrls: ['./post-as-client.component.css']
 })
-export class PostAsClientComponent {
+export class PostAsClientComponent implements OnInit {
   @Input({required: true}) client!: Client;
   protected isDrawerVisible: boolean;
   protected postForm: FormGroup;
+  protected channels: Channel[];
 
   constructor(
     private fb: FormBuilder,
@@ -24,12 +27,22 @@ export class PostAsClientComponent {
     private msgService: NzMessageService
   ) {
     this.isDrawerVisible = false;
+    this.channels = [];
     this.postForm = this.fb.group({
       title: ['', [Validators.required]],
       text: [''],
       img: [''],
       channel: ['', [Validators.required]],
     }, { validators: this.contentValidator() });
+  }
+
+  ngOnInit(): void {
+    if(!this.auth.isLoggedIn()) {
+      this.msgService.error("Autenticazione non riuscita");
+      return;
+    }
+    this.backend.get(`channels/all`, this.auth.token!)
+      .subscribe(res => this.channels = res as Channel[]);
   }
 
   private contentValidator(): ValidatorFn {

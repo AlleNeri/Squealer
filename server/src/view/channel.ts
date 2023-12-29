@@ -16,6 +16,14 @@ channelRoute.get("/my", Auth.authorize, (req: Request, res: Response) => {
 		.catch((err: Error) => res.status(400).json(err));
 });
 
+//get all channels
+//TODO: filter by authentication(private, public, etc...)
+channelRoute.get("/all", Auth.authorize, (_: Request, res: Response) => {
+	ChannelSchema.find()
+		.then((channels: Channel[]) => res.status(200).json(channels))
+		.catch((err: Error) => res.status(400).json(err));
+});
+
 //get all posts of a channel
 //the channel has to be specified in the query: http ... /channels/{channelId}/posts
 channelRoute.get("/:id/posts", (req: Request, res: Response) => {

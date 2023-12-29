@@ -67,8 +67,9 @@
               nzAllowClear
             >
               <nz-option
-                nzLabel="Meme"
-                nzValue="651480a626eac0c997f5bd30"
+                *ngFor="let channel of channels"
+                [nzLabel]="channel.name"
+                [nzValue]="channel._id"
               ></nz-option>
             </nz-select>
           </nz-form-control>
