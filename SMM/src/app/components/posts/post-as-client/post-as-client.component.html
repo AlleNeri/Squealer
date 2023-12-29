@@ -53,7 +53,7 @@
     </div>
     <div nz-row nzGutter="8">
       <div nz-col nzSpan="24">
-        <app-upload-image />
+        <app-upload-image (uploadedImg)="getImg($event)" />
       </div>
     </div>
     <div nz-row nzGutter="8">

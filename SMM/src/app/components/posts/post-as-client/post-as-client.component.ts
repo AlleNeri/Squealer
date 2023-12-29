@@ -1,13 +1,11 @@
 import { Component, Input } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NzUploadChangeParam, NzUploadFile } from 'ng-zorro-antd/upload';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
 import Client from 'src/app/classes/client';
 
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { BackendComunicationService } from 'src/app/services/backend-comunication.service';
-import {Observable, Observer} from 'rxjs';
 
 @Component({
   selector: 'app-post-as-client',
@@ -28,23 +26,42 @@ export class PostAsClientComponent {
     this.isDrawerVisible = false;
     this.postForm = this.fb.group({
       title: ['', [Validators.required]],
-      text: ['', [Validators.required]],
+      text: [''],
+      img: [''],
       channel: ['', [Validators.required]],
+    }, { validators: this.contentValidator() });
+  }
+
+  private contentValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const text = control.get('text');
+      const img = control.get('img');
+      return (text?.value || img?.value) ? null : { noContent: true };
+    }
+  }
+
+  protected getImg(data: string): void {
+    this.postForm.setValue({
+      ...this.postForm.getRawValue(),
+      img: data
     });
   }
 
   protected post() {
-    if(!this.auth.isLoggedIn()) return;
+    if(!this.auth.isLoggedIn()) {
+      this.msgService.error("Non sei loggato");
+      return;
+    }
     const body = {
       post: {
         title: this.postForm.value.title,
         content: {
           text: this.postForm.value.text,
+          img: this.postForm.value.img,
         },
         posted_on: this.postForm.value.channel,
       }
     };
-    console.log(body);
     this.backend.post(`posts?as=${this.client.id}`, body, this.auth.token!)
       .subscribe(
         res => {

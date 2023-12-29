@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { NzMessageRef, NzMessageService } from 'ng-zorro-antd/message';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
 
@@ -9,11 +9,11 @@ import { NzUploadFile } from 'ng-zorro-antd/upload';
 })
 export class UploadImageComponent {
   fileList: NzUploadFile[];
-  private uploadedImg: string | undefined;
+  @Output() uploadedImg: EventEmitter<string>;
 
   constructor(private msgService: NzMessageService) {
     this.fileList = [];
-    this.uploadedImg = undefined;
+    this.uploadedImg = new EventEmitter<string>();
   }
 
   protected beforeUpload = (file: NzUploadFile): boolean => {
@@ -28,7 +28,7 @@ export class UploadImageComponent {
 
     const render = new FileReader();
     render.onload = () => {
-      this.uploadedImg = render.result as string;
+      this.uploadedImg.emit(render.result as string);
 
       const prevFile = this.fileList.pop() as unknown as File
       this.fileList = this.fileList.concat(file);
