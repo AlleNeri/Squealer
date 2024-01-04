@@ -15,7 +15,7 @@ export default function Post({post}) {
                 <Typography variant="body2" component="p">
                     {content.position}
                 </Typography>
-                {/*<img src={content.image} alt="post" />*/}
+                <img src={`http://localhost:8080/media/${content.img}`} alt="description" width="400" height="400" />
                 <Typography variant="body2" component="p">
                     {keywords.join(', ')}
                 </Typography>

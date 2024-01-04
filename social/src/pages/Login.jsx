@@ -41,6 +41,9 @@ function Login() {
       const token = data.jwt.token;
       console.log("token al login:", token);
       localStorage.setItem('token', token);
+      const user = data.id;
+      localStorage.setItem('user', JSON.stringify(user));
+      console.log("user al login:", user);
     } else {
       console.log("login failed!");
     }

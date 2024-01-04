@@ -3,37 +3,34 @@ import { LoginContext } from './LoginContext';
 import { TextField, Button, InputLabel, Grid } from '@material-ui/core';
 import './newPost.css';
 import Post from './Post';
+import { v4 as uuidv4 } from 'uuid';
 
 function NewPost({ modalOpen, setModalOpen }) {
   const { loggedIn } = useContext(LoginContext);
   const [subject, setSubject] = useState('');
   const [text, setText] = useState('');
   const [image, setImage] = useState(null);
+  const [imageId, setImageId] = useState(null);
+  const [preview, setPreview] = useState(null);
   const [video, setVideo] = useState(null);
   const [charCount, setCharCount] = useState(50);
   const [position, setPosition] = useState('');
   const [keywords, setKeywords] = useState('');
   const [posts, setPosts] = useState([]);
-
+  const generateFileId = () => uuidv4();
+  
   useEffect(() => {
-    const token = localStorage.getItem('token');
     fetch('http://localhost:8080/posts/my', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        // Include your authorization token if needed
-        'Authorization': token,
+        'Authorization': localStorage.getItem('token'),
       },
     })
     .then(response => response.json())
     .then(data => {
-      if (data.message) {
-        console.error('Error from server:', data.message);
-      } else if (Array.isArray(data)) {
-        setPosts(data);
-      } else {
-        console.error('Unexpected data:', data);
-      }
+      setPosts(data);
+      console.log(data);
     })
     .catch((error) => console.error('Error:', error));
   }, []);
@@ -60,41 +57,73 @@ function NewPost({ modalOpen, setModalOpen }) {
   };
 
   const handleImageChange = (event) => {
-    setImage(event.target.files[0]);
-  };
+    setImageId(generateFileId());
+    const file = event.target.files[0];
+    setImage(file);
 
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+  
   const handleVideoChange = (event) => {
     setVideo(event.target.files[0]);
   };
 
-const handleSubmit = async (event) => {
-  event.preventDefault();
-  const token = localStorage.getItem('token');
-  const data = {
-    title: subject || 'Default title',
-    content: {
-      text: text || 'Default text',
-      img: image || 'Default image',
-      video: video || 'Default video',
-      position: position || 'Default position',
-    },
-    keywords: keywords || ['Default keyword'],
-    popular: false,
-    unpopular: false,
+  const handleSubmit = async (event) => {
+    event.preventDefault();  
+    
+    const imageData = new FormData();
+    imageData.append('image', image);
+    imageData.append('id', imageId); 
+
+    const imageResponse = await fetch('http://localhost:8080/upload', {
+      method: 'POST',
+      body: imageData
+    }).catch(error => {
+      console.error('Error:', error);
+      return null;
+    });
+
+    if (!imageResponse) {
+      console.error('Fetch request failed');
+      return;
+    }else{
+      console.log(imageResponse);
+    }
+
+    const data = {
+      title: subject || 'Default title',
+      content: {
+        text: text || 'Default text',
+        img: imageId || 'Default image',
+        video: video || 'Default video',
+        position: position || 'Default position',
+      },
+      keywords: keywords || ['Default keyword'],
+      popular: false,
+      unpopular: false,
+    };
+  
+    const postResponse = await fetch('http://localhost:8080/posts/', {
+      method: 'POST',
+      headers: {
+        'Authorization': localStorage.getItem('token'),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ post: data }),
+    }).catch(error => {
+      console.error('Error:', error);
+      return null;
+    });
+    
+    if (!postResponse) {
+      console.error('Fetch request failed');
+    }
+    console.log(postResponse);
   };
-  console.log(JSON.stringify({ post: data }));
-  if (!data.title || !data.content) {
-    console.error('Invalid data format: title and content are required');
-  } 
-  const response = await fetch('http://localhost:8080/posts/', {
-  method: 'POST',
-  headers: {
-    'Authorization': token,
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({ post: data }),
-})
-}
 
   return (
     
@@ -133,12 +162,12 @@ const handleSubmit = async (event) => {
                 </div>
                 <div>
                   <InputLabel id="image-label">Image</InputLabel>
-                  <TextField
-                    id="image"
-                    type="file"
-                    onChange={handleImageChange}
-                    fullWidth
-                  />
+                  <div>
+                    <input type="file" accept="image/*" onChange={handleImageChange} />
+                    {preview && (
+                      <img src={preview} alt="Preview" style={{maxWidth: '100%', maxHeight: '400px'}} />
+                    )}
+                  </div>
                 </div>
                 <div>
                   <InputLabel id="video-label">Video</InputLabel>
