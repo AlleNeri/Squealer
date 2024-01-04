@@ -1,6 +1,0 @@
-use squealer
-db.createCollection("utente")
-db.createCollection("post")
-db.createCollection("tag")
-db.createCollection("canali")
-db.createCollection("credenziali")
