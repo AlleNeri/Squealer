@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent, Typography } from '@material-ui/core';
-
+import MapComponent from './Map';
 export default function Post({post}) {
     const {title, content, keywords} = post;
     return (
@@ -12,9 +12,7 @@ export default function Post({post}) {
                 <Typography variant="body2" component="p">
                     {content.text}
                 </Typography>
-                <Typography variant="body2" component="p">
-                    {content.position}
-                </Typography>
+                {content.position && <MapComponent position={content.position} />}
                 <img src={`http://localhost:8080/media/${content.img}`} alt="description" width="400" height="400" />
                 <Typography variant="body2" component="p">
                     {keywords.join(', ')}
