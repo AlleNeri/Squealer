@@ -9,6 +9,7 @@ import { router } from "./view/routers";
 import { postRoute } from "./view/post";
 import { userRoute } from "./view/user";
 import { channelRoute } from "./view/channel";
+import { mediaRoute } from "./view/media";
 
 /*** Configs ***/
 const PORT: number = Number(process.env.PORT) || 8080;
@@ -38,6 +39,7 @@ app.use("/router", router);	// This is for testing purposes only. TODO: Remove t
 app.use("/posts", postRoute);
 app.use("/users", userRoute);
 app.use("/channels", channelRoute);
+app.use("/media", mediaRoute);
 
 //TODO: remove this route, it's only for testing purposes
 app.get('/', (_: Request, res: Response)=>{
