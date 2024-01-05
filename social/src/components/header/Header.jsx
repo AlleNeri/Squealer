@@ -2,9 +2,9 @@ import React, {useState, useContext} from 'react';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from 'react-bootstrap/Button';
-import NewPost from '../../pages/NewPost';
+import NewPost from '../NewPost/NewPost';
 import './header.css';
-import { LoginContext } from "../../pages/LoginContext";
+import { LoginContext } from "../../context/LoginContext/LoginContext";
 import { Link, useNavigate } from 'react-router-dom';
 
 export default function ButtonAppBar({setModalOpen}) {

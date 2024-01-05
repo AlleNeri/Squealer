@@ -1,9 +1,9 @@
 import {useState} from 'react'
-import Header from '../components/header/Header';
-import NewPost from './NewPost';
-import Sidebar from '../components/sidebar/Sidebar';
+import Header from '../components/Header/Header';
+import NewPost from '../components/NewPost/NewPost';
+import Sidebar from '../components/Sidebar/Sidebar';
 import { Outlet } from 'react-router-dom';
-import './home.css';
+import './layout.css';
 
 function Home() {
     const [modalOpen, setModalOpen] = useState(false);

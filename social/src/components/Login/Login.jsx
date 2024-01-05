@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import './login.css';
-import { LoginContext } from './LoginContext';
+import { LoginContext } from '../../context/LoginContext/LoginContext';
 
 function Login() {
   const { setLoggedIn } = useContext(LoginContext);

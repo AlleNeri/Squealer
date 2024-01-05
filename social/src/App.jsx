@@ -1,11 +1,11 @@
 import {React, useState} from 'react';
 import { createBrowserRouter,  RouterProvider } from 'react-router-dom';
 import './app.css';
-import Home from './pages/Home';
-import LoginPage from './pages/Login';
-import RegisterPage from './pages/Register';
-import { LoginContext } from "./pages/LoginContext";
-import NewPost from './pages/NewPost';
+import Home from './layout/Layout';
+import LoginPage from './components/Login/Login';
+import RegisterPage from './components/Register/Register';
+import { LoginContext } from "./context/LoginContext/LoginContext";
+import NewPost from './components/NewPost/NewPost';
 
 const routes = createBrowserRouter([
 	{
