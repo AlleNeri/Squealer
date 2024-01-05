@@ -27,7 +27,7 @@ import "./controller/triggers";
 const app: Express = express();
 
 /*** Middleware ***/
-app.use(cors());
+v
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 

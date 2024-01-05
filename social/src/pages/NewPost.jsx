@@ -14,7 +14,7 @@ function NewPost({ modalOpen, setModalOpen }) {
   const [preview, setPreview] = useState(null);
   const [video, setVideo] = useState(null);
   const [charCount, setCharCount] = useState(50);
-  const [position, setPosition] = useState('');
+  const [position, setPosition] = useState({ latitude: null, longitude: null });
   const [keywords, setKeywords] = useState('');
   const [posts, setPosts] = useState([]);
   const generateFileId = () => uuidv4();
@@ -39,6 +39,10 @@ function NewPost({ modalOpen, setModalOpen }) {
     console.log(posts);
   }, [posts]);
 
+  useEffect(() => {
+    handlePositionChange();
+  }, []);
+
   const handleSubjectChange = (event) => {
     setSubject(event.target.value);
   };
@@ -47,8 +51,20 @@ function NewPost({ modalOpen, setModalOpen }) {
     setKeywords(event.target.value);
   };
 
-  const handlePositionChange = (event) => {
-    setPosition(event.target.value);
+  const handlePositionChange = () => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        if (latitude !== null && longitude !== null) {
+          setPosition({latitude, longitude});
+        } else {
+          console.error('Could not get current position');
+        }
+      },
+      (error) => {
+        console.error('Error getting current position', error);
+      }
+    );
   };
 
   const handleTextChange = (event) => {
@@ -106,7 +122,7 @@ function NewPost({ modalOpen, setModalOpen }) {
       popular: false,
       unpopular: false,
     };
-  
+    console.log(data);
     const postResponse = await fetch('http://localhost:8080/posts/', {
       method: 'POST',
       headers: {
@@ -208,7 +224,7 @@ function NewPost({ modalOpen, setModalOpen }) {
             <div className="modal-background" onClick={() => setModalOpen(false)}></div>
           </div>
             <div className="posts">
-              {posts.map(post => (
+              {posts.map((post) => (
                 <Post key={post.id} post={post} />
               ))}
             </div>

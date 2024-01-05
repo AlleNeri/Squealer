@@ -15,3 +15,7 @@ SMM/.angular
 # social
 social/node_modules
 social/dist
+social/.env
+
+node_modules
+dist
