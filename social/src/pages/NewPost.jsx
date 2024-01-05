@@ -42,7 +42,6 @@ function NewPost({ modalOpen, setModalOpen }) {
   useEffect(() => {
     handlePositionChange();
   }, []);
-
   const handleSubjectChange = (event) => {
     setSubject(event.target.value);
   };
@@ -122,6 +121,7 @@ function NewPost({ modalOpen, setModalOpen }) {
       popular: false,
       unpopular: false,
     };
+    console.log(data);
     console.log(data);
     const postResponse = await fetch('http://localhost:8080/posts/', {
       method: 'POST',
