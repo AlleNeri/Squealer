@@ -1,0 +1,23 @@
+<div class="user-card-container">
+  <nz-card
+    class="user-card"
+    style="width: 60%;"
+  >
+    <nz-skeleton
+      [nzLoading]="!!!this.user"
+      [nzAvatar]="{ size: 'large' }"
+      [nzParagraph]="{ rows: 1 }"
+      [nzActive]="true"
+    >
+      <nz-card-meta
+        [nzAvatar]="avatarTemplate"
+        nzTitle="{{ user.u_name }}"
+        nzDescription="{{ user.email }} - {{ user.name.first }} {{ user.name.last }}"
+      ></nz-card-meta>
+    </nz-skeleton>
+  </nz-card>
+</div>
+
+<ng-template #avatarTemplate>
+  <nz-avatar nzSrc="{{ user.img ?? '' }}" [nzSize]="'large'"></nz-avatar>
+</ng-template>

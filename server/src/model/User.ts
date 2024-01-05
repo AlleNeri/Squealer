@@ -24,7 +24,7 @@ const UserSchema: mongoose.Schema=new mongoose.Schema({
 			last: String,
 		}
 	},
-	email: {type: String, required: true},
+	email: {type: String, required: true, unique: true},
 	type: {type: String, required: true, enum: Object.values(UserType), default: UserType.NORMAL},
 	quote: {
 		dayly: { type: Number, min: 0, default: process.env.START_D_QUOTE },
@@ -65,14 +65,6 @@ UserSchema.virtual('isMod').get(function() {
 
 UserSchema.virtual('isNormal').get(function() {
 	return this.type===UserType.NORMAL;
-});
-
-UserSchema.virtual('publicInfo').get(function() {
-	return {
-		u_name: this.u_name,
-		name: this.name,
-		img: this.img,
-	};
 });
 
 UserSchema.methods.isFriend=function(user_id: string): boolean {

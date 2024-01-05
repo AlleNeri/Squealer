@@ -1,0 +1,21 @@
+<nz-layout
+  *appScreenDimension
+  class="page-layout"
+>
+  <app-home-header></app-home-header>
+
+  <nz-layout>
+
+    <nz-sider
+      nzTheme="light"
+       nzCollapsible
+    >
+      <app-dashboard-sidebar></app-dashboard-sidebar>
+    </nz-sider>
+
+    <nz-layout class="inner-layout">
+      <router-outlet></router-outlet>
+    </nz-layout>
+
+  </nz-layout>
+</nz-layout>

@@ -70,7 +70,7 @@ abstract class Auth {
 		const signedToken: string=jsonwebtoken.sign(payload, PRIV_KEY, { expiresIn: expiresIn, algorithm: 'RS256' });
 		return {
 			token: `Bearer ${signedToken}`,
-			expires: expiresIn,
+			expires: new Date(new Date().getTime() + parseInt(expiresIn!)),
 		}
 	}
 
@@ -110,7 +110,7 @@ abstract class Auth {
 			.then((credentials: Credentials | null) => {
 				if(!credentials) return null;
 				if(!Auth.validatePassword(password, credentials.hash, credentials.salt)) return null;
-				return { authToken: Auth.generateJwt(user), userId: credentials.user_id };
+				return { authToken: Auth.generateJwt(user), userId: credentials.user_id, userType: user.type };
 			})
 			.catch((_: any) => { return null; });
 	}

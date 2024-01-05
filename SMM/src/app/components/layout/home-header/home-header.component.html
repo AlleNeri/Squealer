@@ -1,0 +1,44 @@
+<nz-header>
+  <div class="logo"></div>
+  <ul
+    nz-menu
+    nzTheme="dark"
+    nzMode="horizontal"
+    class="header-menu"
+  >
+    <li
+      nz-menu-item
+      *ngIf="!this.auth.isLoggedIn()"
+    >
+      <a routerLink="/home" routerLinkActive="actual">Home</a>
+    </li>
+    <li
+      nz-menu-item
+      *ngIf="!this.auth.isLoggedIn()"
+    >
+      <a routerLink="/register" routerLinkActive="actual">Register</a>
+    </li>
+    <li
+      nz-menu-item
+      *ngIf="this.auth.isLoggedIn()"
+    >
+      <a routerLink="/smm" routerLinkActive="actual">Dashboard</a>
+    </li>
+    <li nz-menu-item>
+      <a routerLink="/login" routerLinkActive="actual">
+        <ng-template *ngIf="this.auth.isLoggedIn(); then logOutBlock else logInBlock" />
+      </a>
+    </li>
+    <li nz-menu-item>
+      <a href="">Squealer</a>
+    </li>
+  </ul>
+</nz-header>
+
+<ng-template #logInBlock>
+  Log In
+</ng-template>
+
+<ng-template #logOutBlock>
+  Log Out
+</ng-template>

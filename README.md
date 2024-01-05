@@ -1,5 +1,6 @@
 # Squealer
 Progetto di tecnologie web A.A. 2023
+
 ## Da fare
 - [X] Creare il database.
 - [X] Sviluppare un back-end.

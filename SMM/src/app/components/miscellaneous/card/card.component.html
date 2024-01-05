@@ -1,0 +1,27 @@
+<div class="card">
+  <!-- img to the right or to the left -->
+  <ng-template *ngIf="rightImg; then textBlock else imgBlock"></ng-template>
+  <ng-template *ngIf="rightImg; then imgBlock else textBlock"></ng-template>
+</div>
+
+<ng-template #textBlock>
+  <div class="txt-container" [ngClass]="{ 'right-img': rightImg, 'left-img': !rightImg }">
+    <div>
+      <h2 nz-typography>{{ title }}</h2>
+    </div>
+    <div>
+      <p nz-typography>{{ text }}</p>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #imgBlock>
+  <div class="img-container">
+    <img
+      nz-image
+      nzSrc="{{ img }}"
+      [nzFallback]="fallbackImg"
+      alt="{{ title }}"
+    />
+  </div>
+</ng-template>

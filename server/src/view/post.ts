@@ -1,11 +1,16 @@
 import { Router, Request, Response } from "express";
 
 import PostSchema, { Post } from "../model/Post";
-import UserSchema, { User } from '../model/User';
-import ChannelSchema, { Channel } from "../model/Channel";
 import Auth from "../controller/Auth";
 
 export const postRoute: Router=Router();
+
+//get all posts
+postRoute.get("/", Auth.authorize, Auth.isMod, (_: Request, res: Response) => {
+	PostSchema.find()
+		.then((posts: Post[]) => res.status(200).json(posts))
+		.catch((err: Error) => res.status(400).json({ msg: 'Posts not found', err: err }));
+});
 
 //get all my posts
 postRoute.get("/my", Auth.authorize, (req: Request, res: Response) => {

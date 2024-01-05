@@ -1,0 +1,13 @@
+div.user-card div.clients {
+  font-size: 0.9em;
+  color: #666;
+}
+
+div.user-card div.clients ul {
+  list-style: circle;
+}
+
+div.user-card div.clients ul li a {
+  color: #666;
+  text-decoration: none;
+}
