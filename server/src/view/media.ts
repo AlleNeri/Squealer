@@ -28,6 +28,8 @@ mediaRoute.post("/image", upload.single("image"), Auth.authorize, async (req: Re
 
 //get an image
 mediaRoute.get("/image/:id", async (req: Request, res: Response) => {
+	if(!req.params.id) return res.status(400).json({ msg: "No image id provided." });
+
 	ImageSchema.findById(req.params.id)
 		.then((image: Image | null) => {
 			if(!image) return res.status(404).json({ msg: "Image not found." });
@@ -41,6 +43,18 @@ mediaRoute.get("/image/:id", async (req: Request, res: Response) => {
 			});
 
 			res.end(imgBuffer);
+		})
+		.catch((err: Error) => res.status(500).json(err));
+});
+
+mediaRoute.delete("/image/:id", Auth.authorize, async (req: Request, res: Response) => {
+	if(!req.params.id) return res.status(400).json({ msg: "No image id provided." });
+
+	ImageSchema.findByIdAndDelete(req.params.id)
+		.then((image: Image | null) => {
+			if(!image) return res.status(404).json({ msg: "Image not found." });
+
+			res.status(200).json({ msg: "Image deleted succesfully." });
 		})
 		.catch((err: Error) => res.status(500).json(err));
 });
