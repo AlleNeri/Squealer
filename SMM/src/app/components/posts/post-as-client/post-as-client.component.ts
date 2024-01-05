@@ -70,15 +70,14 @@ export class PostAsClientComponent implements OnInit {
         title: this.postForm.value.title,
         content: {
           text: this.postForm.value.text,
-          img: this.postForm.value.img,
+          img: this.postForm.value.img == '' ? null : this.postForm.value.img,
         },
         posted_on: this.postForm.value.channel,
       }
     };
+    console.log("body:", body);
     this.backend.post(`posts?as=${this.client.id}`, body, this.auth.token!)
-      .subscribe(
-        res => {
-          console.log(res);
+      .subscribe(_ => {
           this.postForm.reset();
           this.toggleDrawer();
         }

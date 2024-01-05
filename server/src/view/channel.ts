@@ -48,7 +48,7 @@ channelRoute.get("/:id", (req: Request, res: Response) => {
 //create a channel
 //do not specify the logged user as an owner
 channelRoute.post("/", Auth.authorize, (req: Request, res: Response) => {
-	req.body.channel.owners.push(req.user!._id);
+	req.body.channel.owners=[req.user!._id];
 	const newChannel: Channel=new ChannelSchema(req.body.channel);
 	newChannel.save()
 		.then((channel: Channel) => res.status(200).json(channel))
