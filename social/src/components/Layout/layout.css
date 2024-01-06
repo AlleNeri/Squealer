@@ -1,12 +1,32 @@
+html, body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+.top {
+    height: 50px; /* Adjust as needed */
+    background-color: #f8f9fa; /* Adjust as needed */
+}
+
 .container {
-    justify-content: space-between;
+    display: flex;
+    flex: 1;
+    justify-content: flex-start;
+}
+
+.left {
+    width: 300px; /* Adjust as needed */
+    background-color: #f8f9fa; /* Adjust as needed */
+    overflow-y: auto;
 }
 
 .main {
-    margin-top: 0px;
+    flex: 1;
     overflow-y: auto;
-    margin-left: 300px;
-    padding:0;
-    
+    padding: 0;
+    margin-left: 300px; /* Adjust as needed */
     /* altre proprietà come padding, sfondo, ecc. */
 }

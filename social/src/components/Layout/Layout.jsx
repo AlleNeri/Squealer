@@ -10,14 +10,16 @@ function Home() {
 
     return (
         <>
-            <Header setModalOpen={setModalOpen} />
-            <Sidebar style={{ position:'fixed', marginTop:'800px'}}/> 
-            <div style={{ paddingTop: '100px' }}>
-                <div className='main'>
-                    <NewPost modalOpen={modalOpen} setModalOpen={setModalOpen} />
+            <div className="body">
+                <Header className="top" setModalOpen={setModalOpen} />
+                <Sidebar className="sidebar" /> 
+                <div className="container">
+                    <div className="main" style={{ paddingTop: '100px' }}>
+                        <NewPost modalOpen={modalOpen} setModalOpen={setModalOpen} />
+                        <Outlet />
+                    </div>
                 </div>
-                <Outlet />
-            </div>
+            </div>  
         </>
     );
 }
