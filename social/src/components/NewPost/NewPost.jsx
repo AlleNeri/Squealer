@@ -46,7 +46,8 @@ function NewPost({ modalOpen, setModalOpen }) {
     .then(data => {
       setPosts(data);
       console.log(data);
-      navigate('/MyPosts');
+      if(loggedIn) navigate('/MyPosts')
+      else navigate('/Login');
     })
     .catch((error) => console.error('Error:', error));
     

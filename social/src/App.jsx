@@ -5,7 +5,7 @@ import Layout from './components/Layout/Layout';
 import LoginPage from './pages/Login/Login';
 import RegisterPage from './pages/Register/Register';
 import { LoginContext } from "./context/LoginContext/LoginContext";
-import MyPosts from './components/MyPosts/MyPosts';
+import MyPosts from './pages/MyPosts/MyPosts';
 import { PostsContext } from './context/PostsContext/PostsContext';
 
 const routes = createBrowserRouter([

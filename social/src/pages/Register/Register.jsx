@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import "./register.css";
+import {TextField, Button, Grid, Container, Typography} from '@material-ui/core';
 function Register() {
 
   const [user, setUser] = useState({
@@ -41,67 +42,65 @@ function Register() {
   user.name.last.length === 0 || user.u_name.length === 0 || password.length === 0;
   
   return (
-    <form className="register-form" onSubmit={handleSubmit}>
+    <Container maxWidth="sm" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', height: '100vh' }}>
+    <Typography variant="h4" align="center" gutterBottom>
+      Create a new account!
+    </Typography>
+    <form className='register-Form' onSubmit={handleSubmit}>
       
-      <input 
-        className='register-form input'
-        type="text"
-        placeholder="Username"
-        value={user.u_name}
-        onChange={(e) => setUser({...user, u_name: e.target.value})} 
-      />
-
-    <input
-        className='register-form input'
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}  
-      />
-
-      <input
-        className='register-form input'
-        type="text" 
-        placeholder="First Name"
-        value={user.name.first}
-        onChange={(e) => setUser({...user, name: {...user.name, first: e.target.value}})}
-      />
-
-      <input
-        className='register-form input'
-        type="text"
-        placeholder="Last Name"
-        value={user.name.last}
-        onChange={(e) => setUser({...user, name: {...user.name, last: e.target.value}})}
-      />
-
-      <input
-        className='register-form input'
-        type="email"
-        placeholder="Email"
-        value={user.email}
-        onChange={(e) => setUser({...user, email: e.target.value})}
-      />
-
-      <select 
-        className='register-form select'
-        value={user.type}
-        onChange={(e) => setUser({...user, type: e.target.value})}
-      >
-        <option value="normal">Normal User</option>
-        <option value="admin">Admin</option>
-        <option value="smm">Social Media Manager</option>
-      </select>
-
-      <button 
-        className="register-button"
-        type="submit"
-        disabled={isDisabled}   
-      >
-        Register
-      </button>
-
+          <TextField
+            className='register-Form-Input'
+            label="Username"
+            value={user.u_name}
+            onChange={(e) => setUser({ ...user, u_name: e.target.value })}
+            fullWidth
+          />
+        
+          <TextField
+            className='register-Form-Input'
+            label="First Name"
+            value={user.name.first}
+            onChange={(e) => setUser({ ...user, name: { ...user.name, first: e.target.value } })}
+            fullWidth
+          />
+        
+          <TextField
+            className='register-Form-Input'
+            label="Last Name"
+            value={user.name.last}
+            onChange={(e) => setUser({ ...user, name: { ...user.name, last: e.target.value } })}
+            fullWidth
+          />
+        
+          <TextField
+            className='register-Form-Input'
+            label="Email"
+            value={user.email}
+            onChange={(e) => setUser({ ...user, email: e.target.value })}
+            fullWidth
+          />
+        
+          <TextField
+            className='register-Form-Input'
+            label="Password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            fullWidth
+          />
+        
+          <Button 
+            className="register-button"
+            type="submit"
+            disabled={isDisabled}
+            variant="contained" // This gives the button a solid background
+            color="primary" // This makes the button blue
+          >
+            Register
+          </Button>
+        
     </form>
+    </Container>
   );
 
 }

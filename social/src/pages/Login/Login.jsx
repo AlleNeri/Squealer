@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
+import {useNavigate} from 'react-router-dom';
 import './login.css';
 import { LoginContext } from '../../context/LoginContext/LoginContext';
 import TextField from '@material-ui/core/TextField';
@@ -11,6 +12,7 @@ function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loggedIn, setLoggedInState] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const isLoggedIn = localStorage.getItem('loggedIn');
@@ -41,13 +43,12 @@ function Login() {
       setLoggedInState(true);
       setLoggedIn(true);
       localStorage.setItem('loggedIn', true);
-      console.log(data);
       const token = data.jwt.token;
-      console.log("token al login:", token);
       localStorage.setItem('token', token);
       const user = data.id;
       localStorage.setItem('user', JSON.stringify(user));
-      console.log("user al login:", user);
+
+      navigate('/MyPosts');
     } else {
       console.log("login failed!");
     }
