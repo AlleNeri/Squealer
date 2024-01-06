@@ -35,22 +35,34 @@ function NewPost({ modalOpen, setModalOpen }) {
   }, [postType]);
 
   useEffect(() => {
-    fetch('http://localhost:8080/posts/my', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': localStorage.getItem('token'),
-      },
-    })
-    .then(response => response.json())
-    .then(data => {
-      setPosts(data);
-      console.log(data);
-      if(loggedIn) navigate('/MyPosts')
-      else navigate('/Login');
-    })
-    .catch((error) => console.error('Error:', error));
-    
+    const token = localStorage.getItem('token');
+  
+    if (token) {
+      fetch('http://localhost:8080/posts/my', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token,
+        },
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Not logged in');
+        }
+        return response.json();
+      })
+      .then(data => {
+        setPosts(data);
+        console.log(data);
+        navigate('/MyPosts');
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        navigate('/login');
+      });
+    } else {
+      navigate('/login');
+    }
   }, []);
   
   useEffect(() => {
@@ -115,7 +127,7 @@ function NewPost({ modalOpen, setModalOpen }) {
     imageData.append('image', image);
     imageData.append('id', imageId); 
 
-    const imageResponse = await fetch('http://localhost:8080/upload', {
+    const imageResponse = await fetch('http://localhost:8080/image', {
       method: 'POST',
       body: imageData
     }).catch(error => {

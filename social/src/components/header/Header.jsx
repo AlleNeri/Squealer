@@ -1,8 +1,7 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from 'react-bootstrap/Button';
-import NewPost from '../NewPost/NewPost';
 import './header.css';
 import { LoginContext } from "../../context/LoginContext/LoginContext";
 import { Link, useNavigate } from 'react-router-dom';
@@ -11,6 +10,13 @@ export default function ButtonAppBar({setModalOpen}) {
   const navigate = useNavigate();
   const { loggedIn, setLoggedIn } = useContext(LoginContext);
   const [redirect, setRedirect] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setLoggedIn(true);
+    }
+  }, []);
 
   const handleLogout = () => {
     setLoggedIn(false);

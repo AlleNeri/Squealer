@@ -43,10 +43,10 @@ export default function Post({post}) {
                     <Typography variant="body2" component="p">
                         {content.text}
                     </Typography>
-                    : <p>Loading</p>
+                    : <p></p>
                 }
                 {content && content.position && <div ref={mapRef} style={{ height: '500px', width: '100%', zIndex: 500 }}></div>}
-                {content && content.img && <img src={`http://localhost:8080/media/${content.img}`} alt="description" width="100%" height="500px" />}
+                {content && content.img && <img src={`http://localhost:8080/image/${content.img}`} alt="description" width="100%" height="500px" />}
                 <Divider style={{ margin: '20px 0' }} />
                 <Typography variant="body2" component="p">
                     {keywords && keywords.join(', ')}
