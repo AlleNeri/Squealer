@@ -1,18 +1,18 @@
 import React, { useEffect, useRef } from 'react';
-import { Card, CardContent, Typography } from '@material-ui/core';
+import { Card, CardContent, Divider, Typography, makeStyles } from '@material-ui/core';
 import L, {Icon} from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import markerIconPng from "leaflet/dist/images/marker-icon.png"
 
 export default function Post({post}) {
     const {title, content, keywords} = post;
-    const mapRef = useRef();
+    const mapRef = useRef(); // Assign useRef to a variable
 
     useEffect(() => {
-        if(content.position){
+        if(content && content.position){
             if (!mapRef.current) return;
             // If the map was already initialized, return early
-            if (mapRef.current.leafletElement) return;
+            if (mapRef.current && mapRef.current.leafletElement) return;
         
             try {
                 const map = L.map(mapRef.current).setView([content.position.latitude, content.position.longitude], 13);
@@ -29,25 +29,30 @@ export default function Post({post}) {
                 console.error('Error creating map', error);
             }
         }
-    }, [post]);
+    }, [content]);
 
     return (
-        <Card style={{ margin: '20px', backgroundColor: '#f5f5f5', borderRadius: '10px', width:'500px' }}>
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <Card style={{ margin: '20px', backgroundColor: '#f5f5f5', borderRadius: '10px', width:'658px' }}>
             <CardContent>
                 <Typography variant="h5" component="h2">
                     {title}
                 </Typography>
-                {content.text &&
+                <Divider style={{ margin: '20px 0' }} />
+                {content && content.text ?
                     <Typography variant="body2" component="p">
                         {content.text}
                     </Typography>
+                    : <p>Loading</p>
                 }
-                {content.position && <div ref={mapRef} style={{ height: '500px', width: '100%', zIndex: 500 }}></div>}
-                {content.img && <img src={`http://localhost:8080/media/${content.img}`} alt="description" width="100%" height="500px" />}
+                {content && content.position && <div ref={mapRef} style={{ height: '500px', width: '100%', zIndex: 500 }}></div>}
+                {content && content.img && <img src={`http://localhost:8080/media/${content.img}`} alt="description" width="100%" height="500px" />}
+                <Divider style={{ margin: '20px 0' }} />
                 <Typography variant="body2" component="p">
-                    {keywords.join(', ')}
+                    {keywords && keywords.join(', ')}
                 </Typography>
             </CardContent>
         </Card>
+    </div>
     );
 }

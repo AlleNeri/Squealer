@@ -1,7 +1,7 @@
 import {useState} from 'react'
-import Header from '../components/Header/Header';
-import NewPost from '../components/NewPost/NewPost';
-import Sidebar from '../components/Sidebar/Sidebar';
+import Header from '../Header/Header';
+import NewPost from '../NewPost/NewPost';
+import Sidebar from '../Sidebar/Sidebar';
 import { Outlet } from 'react-router-dom';
 import './layout.css';
 

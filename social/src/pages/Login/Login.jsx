@@ -1,6 +1,10 @@
 import React, { useState, useContext, useEffect } from 'react';
 import './login.css';
 import { LoginContext } from '../../context/LoginContext/LoginContext';
+import TextField from '@material-ui/core/TextField';
+import Container from '@material-ui/core/Container';
+import Button from '@material-ui/core/Button';
+import { Typography } from '@material-ui/core';
 
 function Login() {
   const { setLoggedIn } = useContext(LoginContext);
@@ -52,33 +56,39 @@ function Login() {
   return (
     <>
       {!loggedIn && 
-
+      <Container maxWidth="sm" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', height: '100vh' }}>
+        <Typography variant="h4" align="center" gutterBottom>
+          Effettua il login!
+        </Typography>
         <form className='login-form' onSubmit={handleSubmit}>
-        <input
-        className="login-form input"
-        type="text"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
+          <TextField
+            className="login-form-input"
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            fullWidth
+          />
 
-      <input
-        className="login-form input"
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}  
-      />
-
-      <button 
-        className="login-button"
-        type="submit"
-        disabled={isDisabled}
-      >
-        Login
-      </button>
-    </form> 
-        
+          <TextField
+            className="login-form-input"
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            fullWidth
+          />
+          <Button 
+            className="login-button"
+            type="submit"
+            disabled={isDisabled}
+            variant="contained" // This gives the button a solid background
+            color="primary" // This makes the button blue
+          >
+            Login
+          </Button>
+        </form> 
+      </Container>
       }  
     </>
   );

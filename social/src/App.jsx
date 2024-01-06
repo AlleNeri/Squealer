@@ -1,16 +1,17 @@
-import {React, useState} from 'react';
+import React, {useState} from 'react';
 import { createBrowserRouter,  RouterProvider } from 'react-router-dom';
 import './app.css';
-import Home from './layout/Layout';
-import LoginPage from './components/Login/Login';
-import RegisterPage from './components/Register/Register';
+import Layout from './components/Layout/Layout';
+import LoginPage from './pages/Login/Login';
+import RegisterPage from './pages/Register/Register';
 import { LoginContext } from "./context/LoginContext/LoginContext";
-import NewPost from './components/NewPost/NewPost';
+import MyPosts from './components/MyPosts/MyPosts';
+import { PostsContext } from './context/PostsContext/PostsContext';
 
 const routes = createBrowserRouter([
 	{
 		path: '/',
-		element: <Home />,
+		element: <Layout />,
 		children: [
       		{
 				path: '/Login',
@@ -21,8 +22,8 @@ const routes = createBrowserRouter([
 				element: <RegisterPage />
 			},
 			{
-				path: '/NewPost',
-				element: <NewPost />
+				path: '/MyPosts',
+				element: <MyPosts />
 			}
 		],
 	},
@@ -30,13 +31,15 @@ const routes = createBrowserRouter([
 
 function App() {
 	const [loggedIn, setLoggedIn] = useState(false);
+	const [posts, setPosts] = useState([]);
 	return (
-	<LoginContext.Provider value={{loggedIn, setLoggedIn}}>
-      	<>
-			<RouterProvider router={routes} />
-		</>	
-    </LoginContext.Provider>
-		
+		<LoginContext.Provider value={{loggedIn, setLoggedIn}}>
+			<PostsContext.Provider value={{posts, setPosts}}>
+				<>
+					<RouterProvider router={routes} />
+				</>	
+			</PostsContext.Provider>
+		</LoginContext.Provider>
 	);
 }
 

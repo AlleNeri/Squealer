@@ -1,8 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { LoginContext } from '../../context/LoginContext/LoginContext';
+import { PostsContext } from '../../context/PostsContext/PostsContext';
 import { TextField, Button, InputLabel, FormControl, MenuItem, Select, Box, Typography } from '@material-ui/core';
 import './newPost.css';
-import Post from '../Post/Post';
 import { v4 as uuidv4 } from 'uuid';
 
 function NewPost({ modalOpen, setModalOpen }) {
@@ -13,13 +14,26 @@ function NewPost({ modalOpen, setModalOpen }) {
   const [imageId, setImageId] = useState(null);
   const [preview, setPreview] = useState(null);
   const [video, setVideo] = useState(null);
-  const [charCount, setCharCount] = useState(50);
   const [position, setPosition] = useState(undefined);
   const [keywords, setKeywords] = useState('');
-  const [posts, setPosts] = useState([]);
   const [postType, setPostType] = useState('text'); // ['text', 'image', 'video', 'geo']
+  const [isFormValid, setIsFormValid] = useState(false);
   const generateFileId = () => uuidv4();
-  
+  const navigate = useNavigate();
+  const { posts, setPosts } = useContext(PostsContext);
+
+  useEffect(() => {
+    setIsFormValid(subject !== '' && (text !== '' || image !== null || video !== null || position ) && keywords !== '');
+  }, [subject, text, image, video, position, keywords]);
+
+  useEffect(() => {
+    // This function runs whenever postType changes
+    setImage(null);
+    setVideo(null);
+    setText('');
+    setPosition(null);
+  }, [postType]);
+
   useEffect(() => {
     fetch('http://localhost:8080/posts/my', {
       method: 'GET',
@@ -32,8 +46,10 @@ function NewPost({ modalOpen, setModalOpen }) {
     .then(data => {
       setPosts(data);
       console.log(data);
+      navigate('/MyPosts');
     })
     .catch((error) => console.error('Error:', error));
+    
   }, []);
   
   useEffect(() => {
@@ -150,107 +166,101 @@ function NewPost({ modalOpen, setModalOpen }) {
     <div className="new-post">
       {loggedIn ? (
         <div>
-          <div className="modal" style={{ display: modalOpen ? 'block' : 'none' }}>
-            
+          <div className="modal" style={{ display: modalOpen ? 'block' : 'none' }}>      
             <div className="modal-content">
-            <form onSubmit={handleSubmit}>
-            <Typography variant="h4" component="h2" gutterBottom>
-              NEW SQUEAL
-            </Typography>
+              <form onSubmit={handleSubmit}>
+              <Typography variant="h4" component="h2" gutterBottom>
+                NEW SQUEAL
+              </Typography>
 
-            <Box marginBottom={2}>
-              <TextField
-                label="Subject"
-                value={subject}
-                onChange={(e) => handleSubjectChange(e)}
-                variant="outlined"
-                fullWidth
-                margin="normal"
-              />
-            </Box>
-
-            <Box marginBottom={2}>
-              <FormControl fullWidth margin="normal">
-                <InputLabel id="post-type-label">Post Type</InputLabel>
-                <Select
-                  labelId="post-type-label"
-                  id="post-type"
-                  value={postType}
-                  onChange={handlePostTypeChange}
-                >
-                  <MenuItem value="text">Text</MenuItem>
-                  <MenuItem value="image">Image</MenuItem>
-                  <MenuItem value="video">Video</MenuItem>
-                  <MenuItem value="geolocation">Geolocation</MenuItem>
-                </Select>
-              </FormControl>
-
-              {postType === 'text' && (
+              <Box marginBottom={2}>
                 <TextField
-                  label="Text"
-                  value={text}
-                  onChange={(e) => handleTextChange(e)}
-                  multiline
-                  minRows={4}
+                  label="Subject"
+                  value={subject}
+                  onChange={(e) => handleSubjectChange(e)}
                   variant="outlined"
                   fullWidth
+                  margin="normal"
                 />
-              )}
+              </Box>
 
-              {postType === 'image' && (
-                <>
+              <Box marginBottom={2}>
+                <FormControl fullWidth margin="normal">
+                  <InputLabel id="post-type-label">Post Type</InputLabel>
+                  <Select
+                    labelId="post-type-label"
+                    id="post-type"
+                    value={postType}
+                    onChange={handlePostTypeChange}
+                  >
+                    <MenuItem value="text">Text</MenuItem>
+                    <MenuItem value="image">Image</MenuItem>
+                    <MenuItem value="video">Video</MenuItem>
+                    <MenuItem value="geolocation">Geolocation</MenuItem>
+                  </Select>
+                </FormControl>
+
+                {postType === 'text' && (
+                  <TextField
+                    label="Text"
+                    value={text}
+                    onChange={(e) => handleTextChange(e)}
+                    multiline
+                    minRows={4}
+                    variant="outlined"
+                    fullWidth
+                  />
+                )}
+
+                {postType === 'image' && (
+                  <>
+                    <Button variant="contained" component="label">
+                      Upload Image
+                      <input type="file" hidden accept="image/*" onChange={handleImageChange} />
+                    </Button>
+                    {image && <img src={preview} alt="preview" style={{height:"100px", width:"100px"}}/>}
+                  </>
+                )}
+
+                {postType === 'video' && (
                   <Button variant="contained" component="label">
-                    Upload Image
-                    <input type="file" hidden accept="image/*" onChange={handleImageChange} />
+                    Upload Video
+                    <input type="file" hidden accept="video/*" onChange={handleVideoChange} />
                   </Button>
-                  {image && <img src={preview} alt="preview" style={{height:"100px", width:"100px"}}/>}
-                </>
-              )}
+                )}
 
-              {postType === 'video' && (
-                <Button variant="contained" component="label">
-                  Upload Video
-                  <input type="file" hidden accept="video/*" onChange={handleVideoChange} />
-                </Button>
-              )}
+                {postType === 'geolocation' && (
+                  <Box marginBottom={2}>
+                    <Button variant="contained" onClick={handlePositionChange}>Get Current Position</Button>
+                    {position && (
+                      <Typography variant="body1">
+                        Latitude: {position.latitude}, Longitude: {position.longitude}
+                      </Typography>
+                    )}
+                  </Box>
+                )}
+              </Box>
 
-              {postType === 'geolocation' && (
-                <Box marginBottom={2}>
-                  <Button variant="contained" onClick={handlePositionChange}>Get Current Position</Button>
-                  {position && (
-                    <Typography variant="body1">
-                      Latitude: {position.latitude}, Longitude: {position.longitude}
-                    </Typography>
-                  )}
-                </Box>
-              )}
-            </Box>
+              <Box marginBottom={2}>
+                <TextField
+                  label="Keywords"
+                  value={keywords}
+                  onChange={(e) => handleKeywordsChange(e)}
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                />    
+              </Box>
 
-            <Box marginBottom={2}>
-              <TextField
-                label="Keywords"
-                value={keywords}
-                onChange={(e) => handleKeywordsChange(e)}
-                variant="outlined"
-                fullWidth
-                margin="normal"
-              />    
-            </Box>
-
-            <Box marginBottom={2}>
-              <Button type="submit" variant="contained" color="primary" onClick={
-                () => setModalOpen(false)
-              }>Submit</Button>
-            </Box>
-            </form>
+              <Box marginBottom={2}>
+                <Button type="submit" variant="contained" color="primary" disabled={!isFormValid} onClick={
+                  () => setModalOpen(false)
+                }>Submit</Button>
+              </Box>
+              </form>
             </div>
             <div className="modal-background" onClick={() => setModalOpen(false)}></div>
           </div>
-            <div className="posts">
-              {posts.map((post) => (
-                <Post key={post.id} post={post} />
-              ))}
-            </div>
         </div>
       
       ) : (
