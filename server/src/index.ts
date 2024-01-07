@@ -2,7 +2,9 @@
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
 import mongoose from "mongoose";
+
 import "./env"; //do not move this line and be careful to not import anything or write any code before this line
+
 import { router } from "./view/routers";
 import { postRoute } from "./view/post";
 import { userRoute } from "./view/user";

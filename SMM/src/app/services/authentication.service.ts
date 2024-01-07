@@ -16,6 +16,7 @@ export class AuthenticationService {
     this.checkCredentials();
     this.logKey="user";
     this.logInEvent=new EventEmitter<ILoggedUser>();
+    if(this.isLoggedIn()) this.logInEvent.emit(this.loggedUser!);
   }
 
   get userId(): string | null {
@@ -46,18 +47,25 @@ export class AuthenticationService {
     else this.loggedUser=JSON.parse(tmp); //TODO: controllare se ci sono i campi utili
   }
 
+  isTockenExpired(): boolean {
+    if(this.loggedUser===undefined) return true;
+    const exp=new Date(this.loggedUser.jwt.expires);
+    return exp.getTime()<(new Date()).getTime();
+  }
+
   register(data: IRegisterBody) {
     return this.backendComunication.post("users/register", data)
       .subscribe((d: Object)=> {
-        //TODO: controllare se la registrazione è valida
+        if(this.isTockenExpired()) return false;
         this.logUser=d as ILoggedUser | undefined;
+        return true;
       });
   }
 
   login(data: Object) {
-    return this.backendComunication.post("users/login", data)  //TODO: modificar l'endpoint in maniera coerente col backend
+    return this.backendComunication.post("users/login", data)
       .subscribe((d: Object)=> {
-        //TODO: controllare se il login è valido
+        if(this.isTockenExpired()) return false;
         this.logUser=d as ILoggedUser | undefined;
         return true;
       });
@@ -69,7 +77,8 @@ export class AuthenticationService {
 
   isLoggedIn(): boolean {
     this.checkCredentials();
-    if(this.loggedUser) return true;
-    else return false;
+    if(this.isTockenExpired()) return false;
+    if(this.loggedUser) return false;
+    return true;
   }
 }
