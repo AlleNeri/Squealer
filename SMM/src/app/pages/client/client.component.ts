@@ -11,11 +11,18 @@ import { UserInformationService } from 'src/app/services/user-information.servic
   styleUrls: ['./client.component.css']
 })
 export class ClientComponent {
-  public clientInformation: Client;
+  public clientInformation?: Client;
 
-  constructor(private route: ActivatedRoute, private userInformationService: UserInformationService, private router: Router) {
-    const tmpInfo: Client | undefined=this.userInformationService.clients.find(client => client.id == this.route.snapshot.paramMap.get('id'));
-    if(tmpInfo === undefined) this.router.navigate(['/smm/general']);
-    this.clientInformation=tmpInfo as Client;
+  constructor(
+    private route: ActivatedRoute,
+    private userInformationService: UserInformationService,
+    private router: Router
+  ) {
+    this.route.paramMap.subscribe(params => {
+      const id: string | null=params.get('id');
+      const tmpInfo: Client | undefined=this.userInformationService.clients.find(client => client.id == id);
+      if(tmpInfo === undefined) this.router.navigate(['/smm/general']);
+      this.clientInformation=tmpInfo as Client;
+    });
   }
 }

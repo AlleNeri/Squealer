@@ -1,7 +1,8 @@
 <div class="user-card-container">
   <nz-card
     class="user-card"
-    style="width: 60%;"
+    style="width: 100%;"
+    [nzLoading]="!!!this.user"
   >
     <nz-skeleton
       [nzLoading]="!!!this.user"

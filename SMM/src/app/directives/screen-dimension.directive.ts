@@ -1,12 +1,13 @@
 import { Directive, HostListener, TemplateRef, ViewContainerRef, OnInit } from '@angular/core';
 
 import { MyErrorMessageComponent } from '../components/miscellaneous/my-error-message/my-error-message.component';
+import { DimensionDirective } from '../interfaces/dimension-directive';
 
 @Directive({
   selector: '[appScreenDimension]'
 })
-export class ScreenDimensionDirective implements OnInit {
-  private pixelThreshold: number;
+export class ScreenDimensionDirective implements OnInit, DimensionDirective {
+  pixelThreshold: number;
   private tooSmallMessage: string;
 
   constructor(
@@ -23,7 +24,7 @@ export class ScreenDimensionDirective implements OnInit {
     else this.viewContainer.createEmbeddedView(this.templateRef);
   }
 
-  private isTooSmall(width: number): boolean {
+  isTooSmall(width: number): boolean {
     return width < this.pixelThreshold;
   }
 

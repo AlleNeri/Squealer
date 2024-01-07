@@ -16,6 +16,14 @@ channelRoute.get("/my", Auth.authorize, (req: Request, res: Response) => {
 		.catch((err: Error) => res.status(400).json(err));
 });
 
+//get all channels
+//TODO: filter by authentication(private, public, etc...)
+channelRoute.get("/all", Auth.authorize, (_: Request, res: Response) => {
+	ChannelSchema.find()
+		.then((channels: Channel[]) => res.status(200).json(channels))
+		.catch((err: Error) => res.status(400).json(err));
+});
+
 //get all posts of a channel
 //the channel has to be specified in the query: http ... /channels/{channelId}/posts
 channelRoute.get("/:id/posts", (req: Request, res: Response) => {
@@ -40,7 +48,7 @@ channelRoute.get("/:id", (req: Request, res: Response) => {
 //create a channel
 //do not specify the logged user as an owner
 channelRoute.post("/", Auth.authorize, (req: Request, res: Response) => {
-	req.body.channel.owners.push(req.user!._id);
+	req.body.channel.owners=[req.user!._id];
 	const newChannel: Channel=new ChannelSchema(req.body.channel);
 	newChannel.save()
 		.then((channel: Channel) => res.status(200).json(channel))

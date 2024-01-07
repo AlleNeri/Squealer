@@ -55,7 +55,7 @@ userRoute.get('/:id/char', Auth.authorize, Auth.isSMM, (req: Request, res: Respo
 
 //buy char availability
 //body: { period: 'day' | 'week' | 'month', quantity: number }
-userRoute.post('/:id/char', Auth.authorize, (req: Request, res: Response) => {
+userRoute.patch('/:id/char', Auth.softAuthorize, (req: Request, res: Response) => {
 	if(req.body.period !== 'day' && req.body.period !== 'week' && req.body.period !== 'month' && !req.body.quantity) return res.status(400).json({ msg: 'Bad request' });
 	if(req.params.id !== req.user?.id && !req.user?.isClient(req.params.id)) return res.status(401).json({ msg: 'Unauthorized' });
 	UserSchema.findById(req.params.id)
@@ -64,13 +64,19 @@ userRoute.post('/:id/char', Auth.authorize, (req: Request, res: Response) => {
 			else {
 				switch(req.body.period) {
 					case 'day':
-						user.char_availability.day+=req.body.quantity;
+						if(!user.char_availability.dayly)
+							user.char_availability.dayly=user.quote.dayly;
+						user.char_availability.dayly+=req.body.quantity;
 						break;
 					case 'week':
-						user.char_availability.week+=req.body.quantity;
+						if(!user.char_availability.weekly)
+							user.char_availability.weekly=user.quote.weekly;
+						user.char_availability.weekly+=req.body.quantity;
 						break;
 					case 'month':
-						user.char_availability.month+=req.body.quantity;
+						if(!user.char_availability.monthly)
+							user.char_availability.monthly=user.quote.monthly;
+						user.char_availability.monthly+=req.body.quantity;
 						break;
 				}
 				user.save()

@@ -1,4 +1,12 @@
-<app-user-card
-  [user]="this.userInfo.user!"
-  [clients]="this.userInfo.clients"
-/>
+<div nz-row>
+  <div
+    nz-col
+    nzSpan="20"
+    nzOffset="2"
+  >
+    <app-user-card
+      [user]="this.userInfo.user!"
+      [clients]="this.userInfo.clients"
+    />
+  </div>
+</div>

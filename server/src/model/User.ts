@@ -7,7 +7,7 @@ if(!process.env.START_M_QUOTE) throw new Error("START_M_QUOTE is not defined in 
 if(!process.env.POPULAR_POSTS_LIMIT_POS) throw new Error("POPULAR_POSTS_LIMIT_POS is not defined in the config.env file.");
 if(!process.env.POPULAR_POSTS_LIMIT_NEG) throw new Error("POPULAR_POSTS_LIMIT_NEG is not defined in the config.env file.");
 
-enum UserType {
+export enum UserType {
 	VIP='vip',
 	MOD='mod',
 	NORMAL='normal',

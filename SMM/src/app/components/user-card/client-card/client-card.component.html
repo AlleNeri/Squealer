@@ -1,14 +1,14 @@
 <div class="user-card-container">
   <nz-card
     class="user-card"
-    style="width: 60%;"
-    [nzActions]="[friends, characters]"
+    style="width: 100%;"
+    [nzActions]="[friends, characters, quote]"
   >
     <nz-card-meta
       [nzAvatar]="avatarTemplate"
       nzTitle="{{ client.username! }}"
       nzDescription="{{ client.email! }} - {{ client.completeName! }}"
-    ></nz-card-meta>
+    />
   </nz-card>
 </div>
 
@@ -17,9 +17,57 @@
 </ng-template>
 
 <ng-template #friends>
-  <span>Amici: {{ client.friendsNumber }}</span>
+  <nz-statistic
+    [nzValue]="client.friendsNumber"
+    [nzTitle]="'Amici'"
+  ></nz-statistic>
 </ng-template>
 
 <ng-template #characters>
-  <span>Personaggi: {{ client.charNumber }}</span>
+  <span
+    nz-button
+    (click)="buyCharModal()"
+    nz-popover
+    nzPopoverPlacement="bottom"
+    nzPopoverTitle="Caratteri rimanenti"
+    [nzPopoverMouseLeaveDelay]="0.3"
+    [nzPopoverContent]="charContent"
+  >
+    <nz-statistic
+      [nzValue]="client.charNumber?.dayly"
+      [nzTitle]="'Caratteri giornalieri rimanenti'"
+    ></nz-statistic>
+  </span>
+</ng-template>
+
+<ng-template #quote>
+  <span
+    nz-popover
+    nzPopoverPlacement="bottomRight"
+    nzPopoverTitle="Quota giornaliera"
+    [nzPopoverMouseLeaveDelay]="0.3"
+    [nzPopoverContent]="quoteContent"
+    [nzPopoverArrowPointAtCenter]="true"
+  >
+    <nz-statistic
+      [nzValue]="client.quoteNumber?.dayly"
+      [nzTitle]="'Quota giornaliera'"
+    ></nz-statistic>
+  </span>
+</ng-template>
+
+<ng-template #charContent>
+  <div>
+    <p>Giornaliera: {{ client.charNumber?.dayly }}</p>
+    <p>Settimanale: {{ client.charNumber?.weekly }}</p>
+    <p>Mensile: {{ client.charNumber?.monthly }}</p>
+  </div>
+</ng-template>
+
+<ng-template #quoteContent>
+  <div>
+    <p>Giornaliera: {{ client.quoteNumber?.dayly }}</p>
+    <p>Settimanale: {{ client.quoteNumber?.weekly }}</p>
+    <p>Mensile: {{ client.quoteNumber?.monthly }}</p>
+  </div>
 </ng-template>
