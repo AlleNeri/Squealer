@@ -1,0 +1,103 @@
+<button
+  nz-button
+  (click)="this.toggleDrawer()"
+  nzType="primary"
+>
+  Post
+</button>
+
+<nz-drawer
+  [nzBodyStyle]="{ overflow: 'auto' }"
+  [nzWidth]="500"
+  [nzVisible]="this.isDrawerVisible"
+  nzTitle="Posta per conto di {{ this.client.username }}"
+  [nzFooter]="drawerFooter"
+  (nzOnClose)="this.toggleDrawer()"
+>
+  <form
+    nz-form
+    [formGroup]="this.postForm"
+    (ngSubmit)="this.post()"
+    *nzDrawerContent
+  >
+    <div nz-row nzGutter="8">
+      <div nz-col nzSpan="24">
+        <nz-form-item>
+          <nz-form-label nzRequired>Titolo</nz-form-label>
+          <nz-form-control>
+            <input
+              nz-input
+              formControlName="title"
+              placeHolder="Scrivi il titolo..."
+              required
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row nzGutter="8">
+      <div nz-col nzSpan="24">
+        <nz-form-item>
+          <nz-form-label>Testo</nz-form-label>
+          <nz-form-control style="width: 100%;">
+            <textarea
+            nz-input
+            formControlName="text"
+            [nzAutosize]="{ minRows: 3, maxRows: 4 }"
+            placeHolder="Scrivi lo squeal..."
+            class="full-width"
+            ></textarea>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row nzGutter="8">
+      <div nz-col nzSpan="24">
+        <app-upload-image (uploadedImg)="getImg($event)" />
+      </div>
+    </div>
+    <div nz-row nzGutter="8">
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-label nzRequired>Canale</nz-form-label>
+          <nz-form-control style="width: 100%;">
+            <nz-select
+              formControlName="channel"
+              nzPlaceHolder="Seleziona un canale"
+              nzAllowClear
+            >
+              <nz-option
+                *ngFor="let channel of channels"
+                [nzLabel]="channel.name"
+                [nzValue]="channel._id"
+              ></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+  </form>
+
+  <!-- Footer -->
+  <ng-template #drawerFooter>
+    <nz-space style="float: right;">
+      <button
+        nz-button
+        nzType="default"
+        (click)="this.toggleDrawer()"
+        *nzSpaceItem
+      >
+        Cancella
+      </button>
+      <button
+        nz-button
+        nzType="primary"
+        (click)="this.post()"
+        *nzSpaceItem
+        [disabled]="!this.postForm.valid"
+      >
+        Post
+      </button>
+    </nz-space>
+  </ng-template>
+</nz-drawer>

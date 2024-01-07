@@ -4,6 +4,7 @@ import multer from 'multer';
 import ImageSchema, { Image }  from "../model/Image";
 import PostSchema, { Post } from "../model/Post";
 import Auth from "../controller/Auth";
+import {UserType} from "../model/User";
 
 /*** Multer initialization ***/
 const upload = multer({ storage: multer.memoryStorage() });
@@ -19,6 +20,13 @@ mediaRoute.put("/image", upload.single("image"), Auth.authorize, async (req: Req
 
 	const post: Post | null = await PostSchema.findById(req.body.postId);
 	if(!post) return res.status(404).json({ msg: "Post not found." });
+
+	if(req.user?.type === UserType.SMM && !req.user?.isClient(post._id))
+		return res.status(403).json({ msg: "You are not allowed to edit the post." });
+	else if(req.user?.type !== UserType.VIP || req.user?.type !== UserType.NORMAL)
+		return res.status(403).json({ msg: "You are not allowed to edit the post." });
+	else if(req.user?._id !== post.posted_by)
+		return res.status(403).json({ msg: "You are not allowed to edit the post." });
 
 	//delete the old image
 	if(post.content.img) {
@@ -66,6 +74,13 @@ mediaRoute.delete("/image", Auth.authorize, async (req: Request, res: Response) 
 
 	const post: Post | null = await PostSchema.findById(req.body.postId);
 	if(!post) return res.status(404).json({ msg: "Post not found." });
+
+	if(req.user?.type === UserType.SMM && !req.user?.isClient(post._id))
+		return res.status(403).json({ msg: "You are not allowed to edit the post." });
+	else if(req.user?.type !== UserType.VIP || req.user?.type !== UserType.NORMAL)
+		return res.status(403).json({ msg: "You are not allowed to edit the post." });
+	else if(req.user?._id !== post.posted_by)
+		return res.status(403).json({ msg: "You are not allowed to edit the post." });
 
 	const imgageId: string | undefined = post.content.img;
 	if(!imgageId) return res.status(404).json({ msg: "The post has no image." });

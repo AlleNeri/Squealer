@@ -1,0 +1,17 @@
+<div style="padding-bottom: 20px;">
+  <nz-upload
+    nzType="drag"
+    nzAccept="image/*"
+    [nzBeforeUpload]="beforeUpload"
+    [(nzFileList)]="fileList"
+    nzListType="picture"
+  >
+    <!-- [nzCustomRequest]="handleAction" -->
+    <p class="ant-upload-drag-icon">
+      <span nz-icon nzType="inbox" nzTheme="outline"></span>
+      <!-- span nz-icon [nzType]="'inbox'" [nzType]="'outline'"></span -->
+    </p>
+    <p class="ant-upload-text">Carica la tua immagine</p>
+    <p class="ant-upload-hint">Naviga i tuoi file o rilasciala qui.</p>
+  </nz-upload>
+</div>

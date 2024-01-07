@@ -1,0 +1,15 @@
+<nz-tabset [nzTabBarExtraContent]="addPost">
+  <nz-tab nzTitle="Tutti">
+    <p>Tutti i post</p>
+  </nz-tab>
+  <nz-tab nzTitle="Popolari">
+    <p>I post popolari</p>
+  </nz-tab>
+  <nz-tab nzTitle="Impopolari">
+    <p>I post impopolari</p>
+  </nz-tab>
+</nz-tabset>
+
+<ng-template #addPost>
+  <app-post-as-client [client]="client"/>
+</ng-template>

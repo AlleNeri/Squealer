@@ -13,6 +13,25 @@ import { NzImageModule } from 'ng-zorro-antd/image';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzPopoverModule } from 'ng-zorro-antd/popover';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NzDrawerModule } from 'ng-zorro-antd/drawer';
+import { NzSpaceModule } from 'ng-zorro-antd/space';
+import { NzStatisticModule } from 'ng-zorro-antd/statistic';
+import { NzUploadModule } from 'ng-zorro-antd/upload';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzFormModule } from 'ng-zorro-antd/form';
+
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { IconDefinition } from '@ant-design/icons-angular';
+import {
+  InboxOutline
+} from '@ant-design/icons-angular/icons';
 
 import { AppRoutingModule } from './app-routing.module';
 
@@ -31,22 +50,31 @@ import { LayoutComponent } from './components/layout/layout/layout.component';
 
 import { CardComponent } from './components/miscellaneous/card/card.component';
 import { MyErrorMessageComponent } from './components/miscellaneous/my-error-message/my-error-message.component';
+import { BuyCharFormComponent } from './components/miscellaneous/buy-char-form/buy-char-form.component';
 
 import { LoginCardComponent } from './components/auth/login-card/login-card.component';
 import { RegisterCardComponent } from './components/auth/register-card/register-card.component';
+
+import { PostAsClientComponent } from './components/posts/post-as-client/post-as-client.component';
 
 import { UserCardComponent } from './components/user-card/user-card/user-card.component';
 import { ClientCardComponent } from './components/user-card/client-card/client-card.component';
 
 import { UserInformationService, factoryUserInformationService } from './services/user-information.service';
-
 import { ScreenDimensionDirective } from './directives/screen-dimension.directive';
+
 import { NZ_I18N } from 'ng-zorro-antd/i18n';
 import { it_IT } from 'ng-zorro-antd/i18n';
 import { registerLocaleData } from '@angular/common';
 import it from '@angular/common/locales/it';
+import { PostSectionComponent } from './components/posts/post-section/post-section.component';
+import { UploadImageComponent } from './components/miscellaneous/upload-image/upload-image.component';
 
 registerLocaleData(it);
+
+const icons: IconDefinition[]= [
+  InboxOutline
+];
 
 @NgModule({
   declarations: [
@@ -67,6 +95,10 @@ registerLocaleData(it);
     ScreenDimensionDirective,
     MyErrorMessageComponent,
     ClientCardComponent,
+    BuyCharFormComponent,
+    PostAsClientComponent,
+    PostSectionComponent,
+    UploadImageComponent,
   ],
   imports: [
     BrowserModule,
@@ -84,6 +116,20 @@ registerLocaleData(it);
     NzCardModule,
     NzAvatarModule,
     NzSkeletonModule,
+    NzModalModule,
+    NzButtonModule,
+    NzInputNumberModule,
+    NzSelectModule,
+    NzPopoverModule,
+    NzTabsModule,
+    NzGridModule,
+    NzDrawerModule,
+    NzSpaceModule,
+    NzStatisticModule,
+    NzUploadModule,
+    NzInputModule,
+    NzFormModule,
+    NzIconModule.forChild(icons),
   ],
   providers: [
     UserInformationService,

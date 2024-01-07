@@ -22,7 +22,7 @@ const keyLocation : fs.PathLike | string | undefined = process.env.RSA_KEYS_LOCA
 	  iter : string | undefined = process.env.ITERATIONS,
 	  keyLen : string | undefined = process.env.KEYLEN,
 	  dig : string | undefined = process.env.DIGEST,
-	  expiresIn : string | undefined = process.env.JWT_EXPIRES_IN;
+	  exp: string | undefined = process.env.JWT_EXPIRES_IN;
 if(keyLocation === undefined) throw new Error("RSA_KEYS_LOCATION is not defined in the config.env file.");
 if(privKey === undefined) throw new Error("PRIV_KEY_NAME is not defined in the config.env file.");
 const PRIV_KEY=fs.readFileSync(`${keyLocation}/${privKey}`, 'utf8');
@@ -39,7 +39,8 @@ const keyLength: number=parseInt(keyLen);
 if(dig === undefined) throw new Error("DIGEST is not defined in the config.env file.");
 const digest: string=dig;
 
-if(expiresIn === undefined) throw new Error("JWT_EXPIRES_IN is not defined in the config.env file.");
+if(exp=== undefined) throw new Error("JWT_EXPIRES_IN is not defined in the config.env file.");
+const expiresIn: number=parseInt(exp);
 
 interface IHashSalt {
 	salt: string;
@@ -70,7 +71,7 @@ abstract class Auth {
 		const signedToken: string=jsonwebtoken.sign(payload, PRIV_KEY, { expiresIn: expiresIn, algorithm: 'RS256' });
 		return {
 			token: `Bearer ${signedToken}`,
-			expires: new Date(new Date().getTime() + parseInt(expiresIn!)),
+			expires: new Date(new Date().getTime() + expiresIn),
 		}
 	}
 

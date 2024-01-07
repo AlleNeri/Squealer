@@ -30,4 +30,5 @@ $ node dist/createKey.js
 - [ ] sottoscrizione ai canali.
 - [ ] aggiungere le route per il moderator.
 - [ ] implementare lo storage di immagini e video.
-- [ ] opzionalmente implementare il refresh token.
+    - [X] storage con multer.
+    - [ ] allargamento dello storage con gridfs.
