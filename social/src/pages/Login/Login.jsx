@@ -15,12 +15,23 @@ function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const isLoggedIn = localStorage.getItem('loggedIn');
-    if (isLoggedIn) {
+    const token = localStorage.getItem('token');
+    if (token) {
       setLoggedInState(true);
       setLoggedIn(true);
+      navigate('/MyPosts');
     }
   }, [setLoggedIn]);
+
+  useEffect(() => {
+    // Prevent scrolling when component mounts
+    document.body.style.overflow = 'hidden';
+
+    // Allow scrolling when component unmounts
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -57,7 +68,7 @@ function Login() {
   return (
     <>
       {!loggedIn && 
-      <Container maxWidth="sm" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', height: '100vh' }}>
+      <Container maxWidth="sm" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', height: '100vh',marginTop: '70px' }}>
         <Typography variant="h4" align="center" gutterBottom>
           Effettua il login!
         </Typography>

@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import "./register.css";
-import {TextField, Button, Grid, Container, Typography} from '@material-ui/core';
+import { useNavigate } from 'react-router-dom';
+import {TextField, Button, Container, Typography} from '@material-ui/core';
 function Register() {
+  const navigate = useNavigate(); // Initialize navigate
 
   const [user, setUser] = useState({
     u_name: '',
@@ -12,6 +14,7 @@ function Register() {
     email: '',
     type: 'normal'
   });
+
   const [password, setPassword] = useState('');
 
   const handleSubmit = async (e) => {
@@ -41,8 +44,18 @@ function Register() {
   const isDisabled = user.u_name.length === 0 || user.email.length === 0 ||user.name.first.length === 0 || 
   user.name.last.length === 0 || user.u_name.length === 0 || password.length === 0;
   
+  useEffect(() => {
+    // Prevent scrolling when component mounts
+    document.body.style.overflow = 'hidden';
+
+    // Allow scrolling when component unmounts
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
+
   return (
-    <Container maxWidth="sm" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', height: '100vh' }}>
+    <Container maxWidth="sm" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', height: '100vh', marginTop:'70px' }}>
     <Typography variant="h4" align="center" gutterBottom>
       Create a new account!
     </Typography>

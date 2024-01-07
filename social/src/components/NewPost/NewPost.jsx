@@ -4,21 +4,18 @@ import { LoginContext } from '../../context/LoginContext/LoginContext';
 import { PostsContext } from '../../context/PostsContext/PostsContext';
 import { TextField, Button, InputLabel, FormControl, MenuItem, Select, Box, Typography } from '@material-ui/core';
 import './newPost.css';
-import { v4 as uuidv4 } from 'uuid';
 
 function NewPost({ modalOpen, setModalOpen }) {
   const { loggedIn } = useContext(LoginContext);
   const [subject, setSubject] = useState('');
   const [text, setText] = useState('');
-  const [image, setImage] = useState(null);
-  const [imageId, setImageId] = useState(null);
+  const [image, setImage] = useState('');
   const [preview, setPreview] = useState(null);
   const [video, setVideo] = useState(null);
   const [position, setPosition] = useState(undefined);
   const [keywords, setKeywords] = useState('');
   const [postType, setPostType] = useState('text'); // ['text', 'image', 'video', 'geo']
   const [isFormValid, setIsFormValid] = useState(false);
-  const generateFileId = () => uuidv4();
   const navigate = useNavigate();
   const { posts, setPosts } = useContext(PostsContext);
 
@@ -101,34 +98,27 @@ function NewPost({ modalOpen, setModalOpen }) {
 
   const handleTextChange = (event) => {
     setText(event.target.value);
-    setCharCount(50 - event.target.value.length);
   };
 
-  const handleImageChange = (event) => {
-    setImageId(generateFileId());
+  const handleImageChange = async (event) => {
     const file = event.target.files[0];
-    setImage(file);
 
     const reader = new FileReader();
     reader.onloadend = () => {
       setPreview(reader.result);
     };
     reader.readAsDataURL(file);
-  };
-  
-  const handleVideoChange = (event) => {
-    setVideo(event.target.files[0]);
-  };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();  
-    
     const imageData = new FormData();
-    imageData.append('image', image);
-    imageData.append('id', imageId); 
+    imageData.append('image', file);
 
-    const imageResponse = await fetch('http://localhost:8080/image', {
+    const token = localStorage.getItem('token');
+
+    const imageResponse = await fetch('http://localhost:8080/media/image', {
       method: 'POST',
+      headers: {
+        'Authorization': token,
+      },
       body: imageData
     }).catch(error => {
       console.error('Error:', error);
@@ -138,15 +128,26 @@ function NewPost({ modalOpen, setModalOpen }) {
     if (!imageResponse) {
       console.error('Fetch request failed');
       return;
-    }else{
-      console.log(imageResponse);
+    } else {
+      const imageResponseData = await imageResponse.json();
+      console.log(imageResponseData);
+      setImage(imageResponseData.imgId);
     }
+  };
+  
+  const handleVideoChange = (event) => {
+    setVideo(event.target.files[0]);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();  
+    const token = localStorage.getItem('token');
 
     const data = {
       title: subject || 'Default title',
       content: {
         text: text || null,
-        img: imageId || null,
+        img: image || null,
         video: video || null,
         position: position || undefined,
       },
@@ -154,12 +155,10 @@ function NewPost({ modalOpen, setModalOpen }) {
       popular: false,
       unpopular: false,
     };
-    console.log(data);
-    console.log(data);
     const postResponse = await fetch('http://localhost:8080/posts/', {
       method: 'POST',
       headers: {
-        'Authorization': localStorage.getItem('token'),
+        'Authorization': token,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ post: data }),
@@ -171,7 +170,18 @@ function NewPost({ modalOpen, setModalOpen }) {
     if (!postResponse) {
       console.error('Fetch request failed');
     }
-    console.log(postResponse);
+    
+    const newPost = await postResponse.json();
+    setPosts(prevPosts => [...prevPosts, newPost]);
+
+    // Reset form fields
+    setSubject('');
+    setImage(null);
+    setVideo(null);
+    setText('');
+    setPosition(null);
+    setKeywords('');
+    setPostType('text');
   };
 
   return (
@@ -181,7 +191,7 @@ function NewPost({ modalOpen, setModalOpen }) {
         <div>
           <div className="modal" style={{ display: modalOpen ? 'block' : 'none' }}>      
             <div className="modal-content">
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} >
               <Typography variant="h4" component="h2" gutterBottom>
                 NEW SQUEAL
               </Typography>
@@ -194,6 +204,7 @@ function NewPost({ modalOpen, setModalOpen }) {
                   variant="outlined"
                   fullWidth
                   margin="normal"
+                  className='modal-form input'
                 />
               </Box>
 

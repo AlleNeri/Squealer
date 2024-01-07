@@ -9,7 +9,6 @@ import { Link, useNavigate } from 'react-router-dom';
 export default function ButtonAppBar({setModalOpen}) {
   const navigate = useNavigate();
   const { loggedIn, setLoggedIn } = useContext(LoginContext);
-  const [redirect, setRedirect] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -19,9 +18,13 @@ export default function ButtonAppBar({setModalOpen}) {
   }, []);
 
   const handleLogout = () => {
+    // Clear the token from localStorage
+    localStorage.removeItem('token');
+
+    // Update the loggedIn state
     setLoggedIn(false);
-    localStorage.removeItem('loggedIn');
-    setRedirect(true);
+
+    // Redirect to the login page
     navigate('/login');
   }
 
