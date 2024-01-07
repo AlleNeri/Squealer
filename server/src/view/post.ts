@@ -37,7 +37,7 @@ postRoute.post("/", Auth.authorize, (req: Request, res: Response) => {
 	if(req.user?.type === UserType.SMM && req.query.as && req.user?.isClient(req.query.as.toString()))
 		post.posted_by=req.query.as.toString();
 	else if(req.user?.type !== UserType.VIP || req.user?.type !== UserType.NORMAL) 
-		res.status(401).json({ msg: "Unauthorized" });
+		res.status(403).json({ msg: "Unauthorized" });
 	else post.posted_by=req.user?._id;
 	ChannelSchema.findById(post.posted_on)
 		.then((channel: Channel | null) => {
