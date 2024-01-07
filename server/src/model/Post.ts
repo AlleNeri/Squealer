@@ -23,7 +23,7 @@ const PostSchema: mongoose.Schema=new mongoose.Schema({
 		required: true,
 		type: {
 			text: String,
-			img: String,
+			img: mongoose.Schema.Types.ObjectId,
 			position: {
 				latitude: Number,
 				longitude: Number

@@ -1,6 +1,8 @@
 import { Router, Request, Response } from "express";
 
 import PostSchema, { Post } from "../model/Post";
+import ChannelSchema, { Channel } from "../model/Channel";
+import UserSchema, { User } from "../model/User";
 import Auth from "../controller/Auth";
 
 export const postRoute: Router=Router();
