@@ -1,6 +1,6 @@
 import { Injectable, Output, EventEmitter } from '@angular/core';
 
-import { ILoggedUser, IRegisterBody } from '../interfaces/auth-user';
+import { ILoggedUser, IRegisterBody, UserType } from '../interfaces/auth-user';
 
 import { BackendComunicationService } from './backend-comunication.service';
 
@@ -82,5 +82,10 @@ export class AuthenticationService {
     if(!this.loggedUser) return false;
     if(this.isTokenExpired()) return false;
     return true;
+  }
+
+  get isSMM(): boolean {
+    if(!this.isLoggedIn()) return false;
+    return this.loggedUser!.userType === UserType.SMM;
   }
 }

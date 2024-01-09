@@ -1,5 +1,13 @@
 import IUser from "./user";
 
+export enum UserType {
+	VIP='vip',
+	MOD='mod',
+	NORMAL='normal',
+	SMM='smm',
+	BOT='bot',
+};
+
 export interface IJWT {
   token: string;
   expires: string;
@@ -8,6 +16,7 @@ export interface IJWT {
 export interface ILoggedUser {
   id: string;
   jwt: IJWT;
+  userType: UserType;
 };
 
 export interface ILoginBody {
