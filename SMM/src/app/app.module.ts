@@ -26,6 +26,7 @@ import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { IconDefinition } from '@ant-design/icons-angular';
@@ -129,6 +130,7 @@ const icons: IconDefinition[]= [
     NzUploadModule,
     NzInputModule,
     NzFormModule,
+    NzDatePickerModule,
     NzIconModule.forChild(icons),
   ],
   providers: [

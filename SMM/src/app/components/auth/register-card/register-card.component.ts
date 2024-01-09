@@ -13,9 +13,11 @@ import { AuthenticationService } from '../../../services/authentication.service'
 })
 export class RegisterCardComponent {
   public registerForm: FormGroup;
-  public nameMinLength: number = 4;
+  public nameMinLength: number = 1;
   public passwordMinLength: number = 8;
   private selectedImage?: string;
+  protected passwordVisible: boolean;
+  protected passwordConfirmationVisible: boolean;
 
   constructor(private auth: AuthenticationService, private router: Router, private formBuilder: FormBuilder) {
     this.registerForm = this.formBuilder.group({
@@ -51,6 +53,7 @@ export class RegisterCardComponent {
       ]],
       img: [ null ],
     }, { validators: this.confirmPasswordValidator() });
+    this.passwordVisible = this.passwordConfirmationVisible = false;
   }
 
   //custom validator for confirm password
@@ -80,14 +83,11 @@ export class RegisterCardComponent {
     else return null;
   }
 
-  onImageSelected(event: any) {
-    //get the image from the event
-    const image = event.target.files[0];
-    //create a file reader
-    const reader = new FileReader();
-    reader.onload = () => this.selectedImage = reader.result as string;
-    //read the image
-    reader.readAsDataURL(image);
+  protected getImg(data: string): void {
+    this.registerForm.setValue({
+      ...this.registerForm.getRawValue(),
+      img: data
+    });
   }
 
   onSubmit() {
