@@ -12,6 +12,7 @@ import { ClientComponent } from './pages/client/client.component';
 
 const routes: Routes = [
   { path: 'smm', redirectTo: '/smm/general', pathMatch: 'full' }, // to make unreachable "smm" path
+  { path: 'logout', redirectTo: '/login', pathMatch: 'full' }, // logout behaviour is provided eventually by the login component
   {
     path: 'smm',
     component: DashboardLayoutComponent,
