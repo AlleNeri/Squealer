@@ -11,6 +11,12 @@ export class BackendComunicationService {
 
   constructor(private http: HttpClient) {}
 
+  /* Url composition */
+
+  at(endPoint: string): string {
+    return `${this.baseUrl}/${endPoint}`;
+  }
+
   /* All the HTTP methods */
 
   get(endPoint: string, token?: string): Observable<Object> {

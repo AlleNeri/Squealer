@@ -1,6 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
+import { BackendComunicationService } from 'src/app/services/backend-comunication.service';
+
 import { BuyCharFormComponent } from '../../miscellaneous/buy-char-form/buy-char-form.component';
 
 import Client from 'src/app/classes/client';
@@ -15,6 +17,7 @@ export class ClientCardComponent {
 
   constructor(
     private modal: NzModalService,
+    protected backendComunication: BackendComunicationService,
   ) {}
 
   protected buyCharModal() {
