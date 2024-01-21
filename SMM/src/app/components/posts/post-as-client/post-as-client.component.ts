@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzUploadFile } from 'ng-zorro-antd/upload';
 
 import { Channel } from 'src/app/interfaces/channel';
 
@@ -31,7 +32,7 @@ export class PostAsClientComponent implements OnInit {
     this.postForm = this.fb.group({
       title: ['', [Validators.required]],
       text: [''],
-      img: [''],
+      img: [null],
       channel: ['', [Validators.required]],
     }, { validators: this.contentValidator() });
   }
@@ -53,7 +54,7 @@ export class PostAsClientComponent implements OnInit {
     }
   }
 
-  protected getImg(data: string): void {
+  protected getImg(data: NzUploadFile): void {
     this.postForm.setValue({
       ...this.postForm.getRawValue(),
       img: data

@@ -5,6 +5,7 @@ import { FormGroup, Validators, ValidatorFn, ValidationErrors, AbstractControl, 
 import { IRegisterBody } from 'src/app/interfaces/auth-user';
 
 import { AuthenticationService } from '../../../services/authentication.service';
+import {NzUploadFile} from 'ng-zorro-antd/upload';
 
 @Component({
   selector: 'app-register-card',
@@ -15,9 +16,9 @@ export class RegisterCardComponent {
   public registerForm: FormGroup;
   public nameMinLength: number = 1;
   public passwordMinLength: number = 8;
-  private selectedImage?: string;
   protected passwordVisible: boolean;
   protected passwordConfirmationVisible: boolean;
+  protected loading: boolean;
 
   constructor(private auth: AuthenticationService, private router: Router, private formBuilder: FormBuilder) {
     this.registerForm = this.formBuilder.group({
@@ -54,6 +55,7 @@ export class RegisterCardComponent {
       img: [ null ],
     }, { validators: this.confirmPasswordValidator() });
     this.passwordVisible = this.passwordConfirmationVisible = false;
+    this.loading = false;
   }
 
   //custom validator for confirm password
@@ -83,7 +85,7 @@ export class RegisterCardComponent {
     else return null;
   }
 
-  protected getImg(data: string): void {
+  protected getImg(data: NzUploadFile): void {
     this.registerForm.setValue({
       ...this.registerForm.getRawValue(),
       img: data
@@ -91,6 +93,7 @@ export class RegisterCardComponent {
   }
 
   onSubmit() {
+    this.loading = true;
     //get the data to sent to the server
     const body: any = this.registerForm.value;
     const registerUser: IRegisterBody= {
@@ -105,9 +108,7 @@ export class RegisterCardComponent {
       },
       password: body.password
     };
-    if(this.selectedImage) registerUser.user.img = this.selectedImage;
-    console.log(registerUser);
-    this.auth.register(registerUser)
+    this.auth.register(registerUser, body.img)
       .add(() => {
         //redirect to the dashboard if the registration is successful(because the user is logged in)
         if(this.auth.isLoggedIn()) this.router.navigate(['/smm']);
@@ -115,6 +116,7 @@ export class RegisterCardComponent {
         //TODO: the email is unique, so if the registration fails because of the email, the user should be notified
         //suggestion: the problem is in the backend because the server should return a 409 error and not a 500 error
         else alert("Registrazione fallita, se possiedi già un account effettua il login!");
+        this.loading = false;
       });
   }
 }

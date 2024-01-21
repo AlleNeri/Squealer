@@ -3,6 +3,7 @@ import { Injectable, Output, EventEmitter } from '@angular/core';
 import { ILoggedUser, IRegisterBody, UserType } from '../interfaces/auth-user';
 
 import { BackendComunicationService } from './backend-comunication.service';
+import { Observable, Subscription, mergeMap, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -20,12 +21,12 @@ export class AuthenticationService {
   }
 
   get userId(): string | null {
-    if(this.loggedUser) return (this.loggedUser as any).id;
+    if(this.loggedUser) return this.loggedUser.id;
     else return null;
   }
 
   get token(): string | null {
-    if(this.loggedUser) return (this.loggedUser as any).jwt.token;
+    if(this.loggedUser) return this.loggedUser.jwt.token;
     else return null;
   }
 
@@ -55,10 +56,26 @@ export class AuthenticationService {
     return isExpired;
   }
 
-  register(data: IRegisterBody) {
+  uploadImage(img: File, id?: string) {
+    if(this.token) {
+      const imageFormData = new FormData();
+      imageFormData.append("image", img);
+      if(id) imageFormData.append("id", id);
+      return this.backendComunication.put(`media/image`, imageFormData, this.token);
+    }
+    return;
+  }
+
+  register(data: IRegisterBody, img: File | undefined) {
     return this.backendComunication.post("users/register", data)
-      .subscribe((d: Object)=> {
+      .pipe(mergeMap((d: Object)=> {
         this.logUser=d as ILoggedUser | undefined;
+        if(this.isTokenExpired()) return of(null);
+        if(this.token && img) return this.uploadImage(img)!;
+        return of(null);
+      }))
+      .subscribe((d: Object | null)=> {
+        if(d===null) return false;
         if(this.isTokenExpired()) return false;
         return true;
       });
