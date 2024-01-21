@@ -18,6 +18,7 @@ function NewPost({ modalOpen, setModalOpen }) {
   const [isFormValid, setIsFormValid] = useState(false);
   const navigate = useNavigate();
   const { posts, setPosts } = useContext(PostsContext);
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
     setIsFormValid(subject !== '' && (text !== '' || image !== null || video !== null || position ) && keywords !== '');
@@ -32,8 +33,6 @@ function NewPost({ modalOpen, setModalOpen }) {
   }, [postType]);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-  
     if (token) {
       fetch('http://localhost:8080/posts/my', {
         method: 'GET',
@@ -60,7 +59,7 @@ function NewPost({ modalOpen, setModalOpen }) {
     } else {
       navigate('/login');
     }
-  }, []);
+  }, [token]);
   
   useEffect(() => {
     console.log(posts);
@@ -112,8 +111,6 @@ function NewPost({ modalOpen, setModalOpen }) {
     const imageData = new FormData();
     imageData.append('image', file);
 
-    const token = localStorage.getItem('token');
-
     const imageResponse = await fetch('http://localhost:8080/media/image', {
       method: 'POST',
       headers: {
@@ -141,7 +138,6 @@ function NewPost({ modalOpen, setModalOpen }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();  
-    const token = localStorage.getItem('token');
 
     const data = {
       title: subject || 'Default title',
@@ -155,6 +151,7 @@ function NewPost({ modalOpen, setModalOpen }) {
       popular: false,
       unpopular: false,
     };
+    console.log('token prima del fetch: ', token); 
     const postResponse = await fetch('http://localhost:8080/posts/', {
       method: 'POST',
       headers: {
@@ -174,6 +171,7 @@ function NewPost({ modalOpen, setModalOpen }) {
     const newPost = await postResponse.json();
     setPosts(prevPosts => [...prevPosts, newPost]);
 
+    
     // Reset form fields
     setSubject('');
     setImage(null);
@@ -286,7 +284,6 @@ function NewPost({ modalOpen, setModalOpen }) {
             <div className="modal-background" onClick={() => setModalOpen(false)}></div>
           </div>
         </div>
-      
       ) : (
         <p></p>
       )}

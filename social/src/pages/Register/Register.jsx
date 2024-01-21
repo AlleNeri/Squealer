@@ -57,7 +57,7 @@ function Register() {
   return (
     <Container maxWidth="sm" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', height: '100vh', marginTop:'70px' }}>
     <Typography variant="h4" align="center" gutterBottom>
-      Create a new account!
+      Unisciti a noi!
     </Typography>
     <form className='register-Form' onSubmit={handleSubmit}>
       

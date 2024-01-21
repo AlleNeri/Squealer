@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import { createBrowserRouter,  RouterProvider } from 'react-router-dom';
-import './app.css';
 import Layout from './components/Layout/Layout';
 import LoginPage from './pages/Login/Login';
 import RegisterPage from './pages/Register/Register';
