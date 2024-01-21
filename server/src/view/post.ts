@@ -33,12 +33,16 @@ postRoute.get("/:id", (req: Request, res: Response) => {
 //a SMM can post as a client, the client id is in a query parameter called 'as'
 postRoute.post("/", Auth.authorize, (req: Request, res: Response) => {
 	//if it's a smm, the post must be posted by one of his clients; the client id is in a query parameter
+	if(!req.body.post) return res.status(400).json({ msg: "Bad request, no post provided" });
+
 	const post: Post=req.body.post;
 	if(req.user?.type === UserType.SMM && req.query.as && req.user?.isClient(req.query.as.toString()))
 		post.posted_by=req.query.as.toString();
-	else if(req.user?.type !== UserType.VIP || req.user?.type !== UserType.NORMAL) 
-		res.status(403).json({ msg: "Unauthorized" });
+	else if(req.user?.type !== UserType.VIP && req.user?.type !== UserType.NORMAL) 
+		return res.status(403).json({ msg: "Unauthorized" });
 	else post.posted_by=req.user?._id;
+
+	if(!post.posted_on) return res.status(400).json({ msg: "Bad request, no posted_on provided" });
 	ChannelSchema.findById(post.posted_on)
 		.then((channel: Channel | null) => {
 			if(!channel) return res.status(404).json({ msg: "Channel not found" });
