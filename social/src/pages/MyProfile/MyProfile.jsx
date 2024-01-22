@@ -1,13 +1,121 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card, CardContent, Typography, Avatar, Grid, Box } from '@material-ui/core';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
 
 const MyProfile = () => {
-  const { id } = useParams();
-  const [user, setUser] = useState(null);
+    const { id } = useParams();
+    const [user, setUser] = useState(null);
+    const fileInput = useRef(null);
+    const token = localStorage.getItem('token');
+
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [openDialog, setOpenDialog] = React.useState(false);
+
+    const handleChangeImage = () => {
+        // Simula un click sull'input del file quando l'utente clicca su "Cambia immagine"
+        fileInput.current.click();
+    };
+
+    const handleAvatarClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleOpenDialog = () => {
+        setOpenDialog(true);
+        setAnchorEl(null);
+    };
+
+    const handleCloseDialog = () => {
+    setOpenDialog(false);
+    };
+
+    const handleRemoveImage = () => {
+        // Chiudi il menu
+        setAnchorEl(null);
+      
+        // Rimuovi l'immagine dal server
+        fetch(`http://localhost:8080/media/image/`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': token,
+            },
+        })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            // Aggiorna lo stato dell'utente per riflettere il cambiamento
+            fetch(`http://localhost:8080/users/${user._id}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': token,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ img: null }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('User updated:', data);
+                // Aggiorna lo stato dell'utente con i nuovi dati
+                setUser(prevState => ({ ...prevState, img: null }));
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        })
+          
+      };
+
+    const handleFileChange = (event) => {
+        if (event.target.files && event.target.files.length > 0) {
+            const file = event.target.files[0];
+            const formData = new FormData();
+        formData.append('image', file);
+    
+        fetch('http://localhost:8080/media/image', {
+        method: 'PUT',
+            headers: {
+                'Authorization': token,
+            },
+        body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            // Aggiorna l'utente con l'ID dell'immagine
+            fetch(`http://localhost:8080/users/${user._id}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': token,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ img: data.imgId }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('User updated:', data);
+                // Aggiorna lo stato dell'utente con i nuovi dati
+                setUser(prevState => ({ ...prevState, img: data.imgId }));
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+        }
+  };
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
     console.log('Token:', token); // Debug: stampa il token
   
     const userId = id;
@@ -43,7 +151,29 @@ const MyProfile = () => {
     <Card>
       <CardContent>
         <Box display="flex" flexDirection="row" alignItems="flex-start">
-            <Avatar src={user.image} alt={user.u_name} style={{ marginRight: '16px' }} />
+            <div>
+            <Avatar 
+                src={`http://localhost:8080/media/image/${user.img}`} 
+                onClick={handleAvatarClick} 
+                style={{ height: '100px', width: '100px' }} 
+            />
+            <Menu
+                anchorEl={anchorEl}
+                keepMounted
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+            >
+                <MenuItem onClick={handleOpenDialog}>Visualizza immagine</MenuItem>
+                <MenuItem onClick={handleRemoveImage}>Rimuovi immagine</MenuItem>
+                <MenuItem onClick={handleChangeImage}>Cambia immagine</MenuItem>
+            </Menu>
+            <Dialog open={openDialog} onClose={handleCloseDialog}>
+            <DialogContent>
+                <img src={`http://localhost:8080/media/image/${user.img}`} alt="User" style={{ width: '100%', height: 'auto' }} />
+            </DialogContent>
+            </Dialog>
+            <input type="file" ref={fileInput} style={{ display: 'none' }} onChange={handleFileChange} />
+            </div>
             <Box display="flex" flexDirection="column">
             <Box display="flex" alignItems="center">
                 <Typography variant="subtitle1" component="span" style={{ fontWeight: 'bold' }}>
