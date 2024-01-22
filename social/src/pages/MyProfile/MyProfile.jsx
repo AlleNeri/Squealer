@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useParams } from 'react-router-dom';
-import { Card, CardContent, Typography, Avatar, Grid, Box } from '@material-ui/core';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Card, CardContent, Typography, Avatar, Box } from '@material-ui/core';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Dialog from '@material-ui/core/Dialog';
@@ -12,9 +12,18 @@ const MyProfile = () => {
     const fileInput = useRef(null);
     const token = localStorage.getItem('token');
 
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const [openDialog, setOpenDialog] = React.useState(false);
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [openDialog, setOpenDialog] = useState(false);
 
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if(user && user.imgId){
+            setUser(prevState => ({ ...prevState, img: `http://localhost:8080/media/image/${user.imgId}` }));
+        }
+    }, [user]);
+
+    
     const handleChangeImage = () => {
         // Simula un click sull'input del file quando l'utente clicca su "Cambia immagine"
         fileInput.current.click();
@@ -78,40 +87,45 @@ const MyProfile = () => {
         if (event.target.files && event.target.files.length > 0) {
             const file = event.target.files[0];
             const formData = new FormData();
-        formData.append('image', file);
-    
-        fetch('http://localhost:8080/media/image', {
-        method: 'PUT',
-            headers: {
-                'Authorization': token,
-            },
-        body: formData,
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Success:', data);
-            // Aggiorna l'utente con l'ID dell'immagine
-            fetch(`http://localhost:8080/users/${user._id}`, {
-            method: 'PUT',
-            headers: {
-                'Authorization': token,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ img: data.imgId }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('User updated:', data);
-                // Aggiorna lo stato dell'utente con i nuovi dati
-                setUser(prevState => ({ ...prevState, img: data.imgId }));
-            })
-            .catch((error) => {
+            formData.append('image', file);
+          
+            // Mostra un'immagine di caricamento o un segnaposto
+            setUser(prevState => ({ ...prevState, img: 'loading-image-url' }));
+          
+            fetch('http://localhost:8080/media/image', {
+                method: 'PUT',
+                headers: {
+                    'Authorization': token,
+                },
+                body: formData,
+                })
+                .then(response => response.json())
+                .then(data => {
+                console.log('Success:', data);
+                // Aggiorna l'utente con l'ID dell'immagine
+                fetch(`http://localhost:8080/users/${user._id}`, {
+                    method: 'PUT',
+                    headers: {
+                    'Authorization': token,
+                    'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ img: data.imgId }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('User updated:', data);
+                    // Aggiorna lo stato dell'utente con l'ID dell'immagine
+                    setUser(prevState => ({ ...prevState, imgId: data.imgId }));
+                    // Aggiorna l'URL dell'immagine
+                    setUser(prevState => ({ ...prevState, img: `http://localhost:8080/media/image/${data.imgId}` }));
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+                })
+                .catch((error) => {
                 console.error('Error:', error);
-            });
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
+                });
         }
   };
 

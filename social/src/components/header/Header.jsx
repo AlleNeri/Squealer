@@ -5,11 +5,13 @@ import Button from 'react-bootstrap/Button';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import './header.css';
 import { LoginContext } from "../../context/LoginContext/LoginContext";
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 export default function ButtonAppBar({setModalOpen}) {
   const navigate = useNavigate();
   const { loggedIn, setLoggedIn } = useContext(LoginContext);
+  const [isProfileClicked, setIsProfileClicked] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -31,8 +33,19 @@ export default function ButtonAppBar({setModalOpen}) {
 
   const handleNewPostClick = () => {
     setModalOpen(true);
+    setIsProfileClicked(false);
   };
 
+  const handleProfileClick = () => {
+    navigate(`/MyProfile/${localStorage.getItem('userId')}`);
+    setIsProfileClicked(true);
+  };
+
+  useEffect(() => {
+    if (location.pathname === '/MyPosts') {
+      setIsProfileClicked(false);
+    }
+  }, [location]);
   return (
     
     <div className="header">
@@ -64,15 +77,21 @@ export default function ButtonAppBar({setModalOpen}) {
           {loggedIn && 
           <div className='newLog'>
 
-            <Button className='button' onClick={handleNewPostClick}>NEW SQUEAL</Button>
+          {isProfileClicked ? (
+              <Link to="/MyPosts" className='Link'>
+                <Button className='button'>I TUOI POST</Button>
+              </Link>
+            ) : (
+              <Button className='button' onClick={handleNewPostClick}>NEW SQUEAL</Button>
+            )}
           
-            <Link to="../../login" className='Link'>
-              <Button className='button' onClick={handleLogout}>LOGOUT</Button>
-            </Link>
+          <Link to="../../login" className='Link'>
+            <Button className='button' onClick={handleLogout}>LOGOUT</Button>
+          </Link>
 
-            <Link to={`/MyProfile/${localStorage.getItem('userId')}`} className='Link'>
-              <AccountCircleIcon onClick={() => navigate(`/MyProfile/${localStorage.getItem('userId')}`)} />
-            </Link>
+          <Link to={`/MyProfile/${localStorage.getItem('userId')}`} className='Link'>
+            <AccountCircleIcon onClick={handleProfileClick} />
+          </Link>
             
           </div>}
           
