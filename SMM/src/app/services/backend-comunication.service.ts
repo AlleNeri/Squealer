@@ -28,7 +28,7 @@ export class BackendComunicationService {
   put(endPoint: string, body: Object, token?: string): Observable<Object> {
     if(!token) return this.http.put(`${this.baseUrl}/${endPoint}`, body);
     const httpHeaders: HttpHeaders = new HttpHeaders({ Authorization: token });
-    return this.http.put(`${this.baseUrl}/${endPoint}`, { headers: httpHeaders });
+    return this.http.put(`${this.baseUrl}/${endPoint}`, body, { headers: httpHeaders });
   }
 
   delete(endPoint: string, token?: string): Observable<Object> {

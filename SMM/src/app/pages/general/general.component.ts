@@ -14,6 +14,6 @@ export class GeneralComponent implements OnInit {
 
   /* redirect to login page if not logged in */
   ngOnInit() {
-    if (!this.auth.isLoggedIn()) this.router.navigate(['/login']);
+    if (!this.auth.isLoggedIn()) this.router.navigate(['/logout']);
   }
 }

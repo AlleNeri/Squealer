@@ -1,32 +1,168 @@
-<form
-  [formGroup]="registerForm"
-  (ngSubmit)="onSubmit()"
-  class="auth-card"
->
-  <h2 nz-typography class="form-title">Registrati come social media manager</h2>
-  <input type="text" formControlName="username" placeholder="Username" />
-  <input type="password" formControlName="password" placeholder="Password" />
-  <input type="password" formControlName="confirmPassword" placeholder="Conferma la password" />
-  <div class="split">
-    <input type="text" formControlName="name" placeholder="Nome" />
-    <input type="text" formControlName="surname" placeholder="Cognome" />
-  </div>
-  <div class="split">
-    <input type="date" formControlName="birthDate" placeholder="Data di nascita" />
-    <input type="email" formControlName="email" placeholder="Email" />
-  </div>
-  <input type="file" formControlName="img" accept="image/*" (change)="onImageSelected($event)" />
-  <!-- TODO: capire come funziona -->
-  <!-- max="{{new Date().toISOString().split('T')[0]; | date:\'yyyy-MM-dd\'}}"  -->
-  <div class="explanation">
-    <p>I campi sono tutti richiesti. Sono previsti alcuni vincoli:</p>
-    <ul>
-      <li>L'username deve essere lungo almeno {{nameMinLength}} caratteri.</li>
-      <li>La password deve essere lunga almeno {{passwordMinLength}} caratteri.</li>
-      <li>La password deve contenere almeno una cifra, una lettera maiuscola e una minuscola.</li>
-      <li>Nome e cognome devono essere lunghi almeno {{nameMinLength}} caratteri.</li>
-      <li>La data di nascita deve essere antecedente a quella odierna.</li>
-    </ul>
-  </div>
-  <input type="submit" value="Registrati" [disabled]="!registerForm.valid" />
-</form>
+<div class="auth-card">
+  <form
+    nz-form
+    [formGroup]="registerForm"
+    (ngSubmit)="onSubmit()"
+    nzLayout="vertical"
+  >
+    <h2 nz-typography class="form-title">Registrati come social media manager</h2>
+    <nz-form-item>
+      <nz-form-label nzRequired nzfor="username">Username</nz-form-label>
+      <nz-form-control
+        nzErrorTip="L'username può contenere solo lettere e numeri"
+        nzHasFeedback
+      >
+        <input
+          nz-input
+          type="text"
+          formControlName="username"
+          placeholder="Username"
+          id="username"
+          nzSize="small"
+        />
+      </nz-form-control>
+    </nz-form-item>
+    <nz-input-group>
+      <div nz-row [nzGutter]="8">
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label nzFor="password" nzRequired>Password</nz-form-label>
+            <nz-form-control
+              [nzErrorTip]="'Almeno '+passwordMinLength+' caratteri tra lettere maiuscole, minuscole e cifre!'"
+              nzHasFeedback
+            >
+              <nz-input-group [nzSuffix]="pwdSuffixTpl" nzSize="small">
+                <input
+                  nz-input
+                  [type]="passwordVisible ? 'text' : 'password'"
+                  id="password"
+                  formControlName="password"
+                  (ngModelChange)="confirmPasswordValidator()"
+                  placeholder="Password"
+                />
+              </nz-input-group>
+              <ng-template #pwdSuffixTpl>
+                <span
+                  nz-icon
+                  [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+                  (click)="passwordVisible = !passwordVisible"
+                ></span>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label nzFor="checkPassword" nzRequired>Conferma</nz-form-label>
+            <nz-form-control
+              nzErrorTip="Le password devono coincidere!"
+              nzHasFeedback
+            >
+              <nz-input-group [nzSuffix]="pwdCheckSuffixTpl" nzSize="small">
+                <input
+                  nz-input
+                  [type]="passwordConfirmationVisible ? 'text' : 'password'"
+                  formControlName="confirmPassword"
+                  id="checkPassword"
+                  placeholder="Conferma la password"
+                />
+              </nz-input-group>
+              <ng-template #pwdCheckSuffixTpl>
+                <span
+                  nz-icon
+                  [nzType]="passwordConfirmationVisible ? 'eye-invisible' : 'eye'"
+                  (click)="passwordConfirmationVisible = !passwordConfirmationVisible"
+                ></span>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+    </nz-input-group>
+    <nz-input-group>
+      <div nz-row [nzGutter]="8">
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label nzFor="name" nzRequired>Nome</nz-form-label>
+            <nz-form-control>
+              <input
+                nz-input
+                type="text"
+                formControlName="name"
+                placeholder="Nome"
+                id="name"
+                nzSize="small"
+              />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label nzFor="surname" nzRequired>Cognome</nz-form-label>
+            <nz-form-control>
+              <input
+                nz-input
+                type="text"
+                formControlName="surname"
+                placeholder="Cognome"
+                id="surname"
+                nzSize="small"
+              />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+    </nz-input-group>
+    <nz-input-group>
+      <div nz-row [nzGutter]="8">
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label nzFor="birthDate" nzRequired>Data di nascita</nz-form-label>
+            <nz-form-control>
+              <nz-date-picker
+                formControlName="birthDate"
+                id="birthDate"
+                [nzSize]="'small'"
+                [nzFormat]="'dd/MM/yyyy'"
+                [nzPlaceHolder]="'Data di nascita'"
+                style="width: 100%;"
+              ></nz-date-picker>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label nzFor="email" nzRequired>Email</nz-form-label>
+            <nz-form-control>
+              <input
+                nz-input
+                type="email"
+                formControlName="email"
+                placeholder="Email"
+                id="email"
+                nzSize="small"
+              />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      <nz-form-item>
+        <nz-form-label>Immagine profilo</nz-form-label>
+        <app-upload-image (uploadedImg)="getImg($event)" />
+      </nz-form-item>
+    </nz-input-group>
+    <nz-form-item>
+      <nz-form-control>
+        <button
+          nz-button
+          nzType="primary"
+          nzSize="large"
+          [disabled]="!registerForm.valid"
+          [nzLoading]="loading"
+        >
+          Registrati
+        </button>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</div>
