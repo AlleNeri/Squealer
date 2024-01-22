@@ -165,18 +165,21 @@ function NewPost({ modalOpen, setModalOpen }) {
       return null;
     });
 
+    let newPost = null;
+
     if (!postResponse) {
       console.error('Fetch request failed');
     } else if (!postResponse.ok) {
       const text = await postResponse.text();
       console.error('Server response:', text);
     } else {
-      const json = await postResponse.json();
-      console.log('Server response:', json);
+      newPost = await postResponse.json();
+      console.log('Server response:', newPost);
     }
-    
-    const newPost = await postResponse.json();
-    setPosts(prevPosts => [...prevPosts, newPost]);
+
+    if (newPost) {
+      setPosts(prevPosts => [...prevPosts, newPost]);
+}
 
     
     // Reset form fields

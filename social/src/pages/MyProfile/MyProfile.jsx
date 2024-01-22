@@ -1,10 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, CardContent, Typography, Avatar, Box } from '@material-ui/core';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
+import { Card, CardContent, Typography, Avatar, Box, Menu, MenuItem, Dialog, DialogContent } from '@material-ui/core';
+import './MyProfile.css';
 
 const MyProfile = () => {
     const { id } = useParams();
@@ -162,14 +159,14 @@ const MyProfile = () => {
   }
 
   return (
-    <Card>
+    <Card style={{ backgroundColor: '#f5f5f5' }}>
       <CardContent>
-        <Box display="flex" flexDirection="row" alignItems="flex-start">
+        <Box display="flex" flexDirection="row" alignItems="center">
             <div>
             <Avatar 
                 src={`http://localhost:8080/media/image/${user.img}`} 
                 onClick={handleAvatarClick} 
-                style={{ height: '100px', width: '100px' }} 
+                style={{ height: '200px', width: '200px' }} 
             />
             <Menu
                 anchorEl={anchorEl}
@@ -182,13 +179,14 @@ const MyProfile = () => {
                 <MenuItem onClick={handleChangeImage}>Cambia immagine</MenuItem>
             </Menu>
             <Dialog open={openDialog} onClose={handleCloseDialog}>
-            <DialogContent>
-                <img src={`http://localhost:8080/media/image/${user.img}`} alt="User" style={{ width: '100%', height: 'auto' }} />
-            </DialogContent>
+                <DialogContent>
+                    <img src={`http://localhost:8080/media/image/${user.img}`} alt="User" className="dialog-image" />
+                </DialogContent>
             </Dialog>
-            <input type="file" ref={fileInput} style={{ display: 'none' }} onChange={handleFileChange} />
+            <input type="file" ref={fileInput} className="hidden-file-input" onChange={handleFileChange} />
             </div>
-            <Box display="flex" flexDirection="column">
+
+            <Box display="flex" flexDirection="column" ml={10}>
             <Box display="flex" alignItems="center">
                 <Typography variant="subtitle1" component="span" style={{ fontWeight: 'bold' }}>
                 Username:
