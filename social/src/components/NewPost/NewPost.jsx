@@ -148,24 +148,31 @@ function NewPost({ modalOpen, setModalOpen }) {
         position: position || undefined,
       },
       keywords: keywords || ['Default keyword'],
+      posted_on: "658d915b3bf3108a9e5af06b",
       popular: false,
       unpopular: false,
     };
-    console.log('token prima del fetch: ', token); 
+
     const postResponse = await fetch('http://localhost:8080/posts/', {
-      method: 'POST',
-      headers: {
-        'Authorization': token,
-        'Content-Type': 'application/json',
-      },
+    method: 'POST',
+    headers: {
+      'Authorization': token,
+      'Content-Type': 'application/json',
+    },
       body: JSON.stringify({ post: data }),
     }).catch(error => {
       console.error('Error:', error);
       return null;
     });
-    
+
     if (!postResponse) {
       console.error('Fetch request failed');
+    } else if (!postResponse.ok) {
+      const text = await postResponse.text();
+      console.error('Server response:', text);
+    } else {
+      const json = await postResponse.json();
+      console.log('Server response:', json);
     }
     
     const newPost = await postResponse.json();

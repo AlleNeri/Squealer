@@ -51,6 +51,9 @@ function Login() {
 
     if (data.success) {
       console.log("login success!");
+      // Salva l'ID dell'utente nel localStorage
+      localStorage.setItem('userId', data.id);
+      console.log("userId", data.id);
       setLoggedInState(true);
       setLoggedIn(true);
       localStorage.setItem('loggedIn', true);

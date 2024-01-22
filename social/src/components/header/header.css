@@ -42,5 +42,6 @@ button:hover {
 
 .newLog {
     display: flex; 
+    align-items: center;
     gap: 10px; /* adds gap between flex items */
 }
