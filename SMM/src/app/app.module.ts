@@ -70,6 +70,7 @@ import { registerLocaleData } from '@angular/common';
 import it from '@angular/common/locales/it';
 import { PostSectionComponent } from './components/posts/post-section/post-section.component';
 import { UploadImageComponent } from './components/miscellaneous/upload-image/upload-image.component';
+import { MapComponent } from './components/miscellaneous/map/map.component';
 
 registerLocaleData(it);
 
@@ -100,6 +101,7 @@ const icons: IconDefinition[]= [
     PostAsClientComponent,
     PostSectionComponent,
     UploadImageComponent,
+    MapComponent,
   ],
   imports: [
     BrowserModule,

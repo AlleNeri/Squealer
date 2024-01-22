@@ -19,6 +19,7 @@
     [formGroup]="this.postForm"
     (ngSubmit)="this.post()"
     *nzDrawerContent
+    nzLayout="vertical"
   >
     <div nz-row nzGutter="8">
       <div nz-col nzSpan="24">
@@ -54,6 +55,18 @@
     <div nz-row nzGutter="8">
       <div nz-col nzSpan="24">
         <app-upload-image (uploadedImg)="getImg($event)" />
+      </div>
+    </div>
+    <div nz-row nzGutter="8">
+      <div nz-col nzSpan="24">
+        <nz-form-item>
+          <nz-form-label>Posizione</nz-form-label>
+          <nz-form-control>
+            <div class="position-picker">
+              <app-map></app-map>
+            </div>
+          </nz-form-control>
+        </nz-form-item>
       </div>
     </div>
     <div nz-row nzGutter="8">
