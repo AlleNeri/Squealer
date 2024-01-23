@@ -23,7 +23,6 @@ const routes = createBrowserRouter([
 			},
 			{
 				path: '/MyPosts',
-				element: <MyPosts />
 			},
 			{
 				path: '/MyProfile/:id',

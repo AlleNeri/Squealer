@@ -33,7 +33,7 @@ export default function Post({post}) {
 
     return (
     <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <Card style={{ margin: '20px', backgroundColor: '#f5f5f5', borderRadius: '10px', width:'658px' }}>
+        <Card style={{ margin: '20px', backgroundColor: '#f5f5f5', borderRadius: '10px', width:'600px' }}>
             <CardContent>
                 <Typography variant="h5" component="h2">
                     {title}

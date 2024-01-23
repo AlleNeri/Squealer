@@ -1,6 +1,8 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useRef, useContext } from 'react';
+import { useParams } from 'react-router-dom';
 import { Card, CardContent, Typography, Avatar, Box, Menu, MenuItem, Dialog, DialogContent } from '@material-ui/core';
+import { PostsContext } from '../../context/PostsContext/PostsContext';
+import MyPosts from '../MyPosts/MyPosts';
 import './MyProfile.css';
 
 const MyProfile = () => {
@@ -8,7 +10,7 @@ const MyProfile = () => {
     const [user, setUser] = useState(null);
     const fileInput = useRef(null);
     const token = localStorage.getItem('token');
-
+    const { posts, setPosts } = useContext(PostsContext);
     const [anchorEl, setAnchorEl] = useState(null);
     const [openDialog, setOpenDialog] = useState(false);
 
@@ -18,7 +20,6 @@ const MyProfile = () => {
         }
     }, [user]);
 
-    
     const handleChangeImage = () => {
         // Simula un click sull'input del file quando l'utente clicca su "Cambia immagine"
         fileInput.current.click();
@@ -152,12 +153,17 @@ const MyProfile = () => {
       });
   }, [id]);
 
+  useEffect(() => {
+    console.log(posts);
+    }, [posts]);
   if (!user) {
     return <div>Loading...</div>;
   }
 
   return (
-    <Card style={{ backgroundColor: '#f5f5f5' }}>
+    <>
+
+    <Card style={{ backgroundColor: '#f5f5f5', width:'100%' }}>
       <CardContent>
         <Box display="flex" flexDirection="row" alignItems="center">
             <div>
@@ -283,6 +289,13 @@ const MyProfile = () => {
         </Box>
         </CardContent>
     </Card>
+
+    <Typography variant="h4" component="h2" gutterBottom style={{ textAlign: 'center', fontFamily:'Roboto slab' }}>
+        Post pubblicati da {user.u_name}
+    </Typography>
+    <MyPosts/>
+    </>
+
   );
 };
 

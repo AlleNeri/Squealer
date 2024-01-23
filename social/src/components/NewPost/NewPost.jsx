@@ -60,10 +60,6 @@ function NewPost({ modalOpen, setModalOpen }) {
       navigate('/login');
     }
   }, [token]);
-  
-  useEffect(() => {
-    console.log(posts);
-  }, [posts]);
 
   const handleSubjectChange = (event) => {
     setSubject(event.target.value);
@@ -179,7 +175,7 @@ function NewPost({ modalOpen, setModalOpen }) {
 
     if (newPost) {
       setPosts(prevPosts => [...prevPosts, newPost]);
-}
+  }
 
     
     // Reset form fields
