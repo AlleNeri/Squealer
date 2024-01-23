@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Card, CardContent, Divider, Typography, makeStyles } from '@material-ui/core';
+import { Card, CardContent, Divider, Typography } from '@material-ui/core';
 import L, {Icon} from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import markerIconPng from "leaflet/dist/images/marker-icon.png"
