@@ -22,7 +22,8 @@ const routes = createBrowserRouter([
 				element: <RegisterPage />
 			},
 			{
-				path: '/MyPosts',
+				path: '/Home',
+				element: <h1>HOME PAGE</h1>
 			},
 			{
 				path: '/MyProfile/:id',

@@ -19,7 +19,6 @@ function Login() {
     if (token) {
       setLoggedInState(true);
       setLoggedIn(true);
-      navigate('/MyPosts');
     }
   }, [setLoggedIn]);
 
@@ -62,7 +61,7 @@ function Login() {
       const user = data.id;
       localStorage.setItem('user', JSON.stringify(user));
       console.log('token al login', token);
-      navigate('/MyPosts');
+      navigate('/Home');
     } else {
       console.log("login failed!");
     }

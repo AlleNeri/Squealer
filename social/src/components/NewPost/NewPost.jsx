@@ -50,7 +50,7 @@ function NewPost({ modalOpen, setModalOpen }) {
       .then(data => {
         setPosts(data);
         console.log(data);
-        navigate('/MyPosts');
+        navigate('/Home');
       })
       .catch((error) => {
         console.error('Error:', error);

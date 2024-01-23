@@ -42,7 +42,7 @@ export default function ButtonAppBar({setModalOpen}) {
   };
 
   useEffect(() => {
-    if (location.pathname === '/MyPosts') {
+    if (location.pathname === '/Home') {
       setIsProfileClicked(false);
     }
   }, [location]);
@@ -52,7 +52,7 @@ export default function ButtonAppBar({setModalOpen}) {
         <Toolbar className="Toolbar">
           
           {!loggedIn && <div>
-            <Link to="/" className="Link">
+            <Link to="/Home" className="Link">
               <Button className='button'>HOME</Button>
             </Link>
           </div>
@@ -78,8 +78,8 @@ export default function ButtonAppBar({setModalOpen}) {
           <div className='newLog'>
 
           {isProfileClicked ? (
-              <Link to="/MyPosts" className='Link'>
-                <Button className='button'>I TUOI POST</Button>
+              <Link to="/Home" className='Link'>
+                <Button className='button'>HOME PAGE</Button>
               </Link>
             ) : (
               <Button className='button' onClick={handleNewPostClick}>NEW SQUEAL</Button>
