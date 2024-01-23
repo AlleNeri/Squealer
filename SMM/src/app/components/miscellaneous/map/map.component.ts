@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, Output, EventEmitter } from '@angular/core';
 import {
   map,
   Map,
@@ -8,7 +8,8 @@ import {
   Marker,
   Icon,
   Control,
-  DomUtil
+  DomUtil,
+  LatLng
 } from 'leaflet';
 
 const BolognaCoords: LatLngExpression = [44.494887, 11.342616];
@@ -23,9 +24,11 @@ export class MapComponent implements AfterViewInit {
   protected mapId: string;
   private marker?: Marker
   private removeMarkerControl?: Control;
+  @Output() positionSelected: EventEmitter<LatLng | undefined>;
 
   constructor() {
     this.mapId = 'map';
+    this.positionSelected = new EventEmitter<LatLng | undefined>();
   }
 
   private initMap(): void {
@@ -46,6 +49,8 @@ export class MapComponent implements AfterViewInit {
 
     //creating the marker on click handler
     this.map.on('click', (e) => {
+      //emit the position
+      this.positionSelected.emit(e.latlng);
       //remove the old marker if it exists
       this.removeMarker();
       //create the new marker
@@ -72,6 +77,7 @@ export class MapComponent implements AfterViewInit {
 
           container.onclick = (eContainer) => {
             eContainer.stopPropagation();
+            this.positionSelected.emit(undefined);
             this.removeMarker();
           }
           return container;

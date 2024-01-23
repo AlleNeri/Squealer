@@ -63,7 +63,7 @@
           <nz-form-label>Posizione</nz-form-label>
           <nz-form-control>
             <div class="position-picker">
-              <app-map></app-map>
+              <app-map (positionSelected)="getPos($event)" />
             </div>
           </nz-form-control>
         </nz-form-item>
@@ -97,7 +97,7 @@
       <button
         nz-button
         nzType="default"
-        (click)="this.toggleDrawer()"
+        (click)="this.postForm.reset(); this.toggleDrawer();"
         *nzSpaceItem
       >
         Cancella

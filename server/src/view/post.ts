@@ -46,7 +46,7 @@ postRoute.post("/", Auth.authorize, (req: Request, res: Response) => {
 				UserSchema.findById(post.posted_by)
 					.then((user: User | null) => {
 						if(!user) return res.status(404).json({ msg: "User not found" });
-						const content=req.body.post.content;
+						const content=post.content;
 						//TODO: non è attualmente previstio e gestito il poter postare contenuti di diverso tipo(testo/immagini/posizione)
 						if(content.text && !user.canPost(content.text.length)) return res.status(500).json({ msg: "User can't post" });
 						else if((content.img || content.position) && !user.canPost(100)) return res.status(500).json({ msg: "User can't post" });
@@ -58,7 +58,7 @@ postRoute.post("/", Auth.authorize, (req: Request, res: Response) => {
 					.catch((err: Error) => res.status(500).json({ msg: "Error while find the user", err: err }));
 			}
 			else {
-				const newPost: Post=new PostSchema(req.body.post);
+				const newPost: Post=new PostSchema(post);
 				newPost.save()
 					.then((post: Post) => res.status(200).json(post))
 					.catch((err: Error) => res.status(500).json({ msg: "Error creating post", err: err }));
