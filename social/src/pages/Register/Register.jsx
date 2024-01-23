@@ -1,21 +1,44 @@
 import React, { useState, useEffect } from 'react';
 import "./register.css";
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import {TextField, Button, Container, Typography, Box} from '@material-ui/core';
+import {green} from '@material-ui/core/colors/';
 import { useNavigate } from 'react-router-dom';
-import {TextField, Button, Container, Typography} from '@material-ui/core';
-function Register() {
-  const navigate = useNavigate(); // Initialize navigate
 
+function Register() {
   const [user, setUser] = useState({
-    u_name: '',
     name: {
-        first: '',
-        last: ''
+      first: '',
+      last: ''
     },
     email: '',
-    type: 'normal'
+    type: 'normal',
+    b_date: '', 
+    img: '' 
   });
 
   const [password, setPassword] = useState('');
+  const [uploadComplete, setUploadComplete] = useState(false);
+  const [imageFile, setImageFile] = useState(null);
+  const [error, setError] = useState('');
+
+  const  navigate = useNavigate();
+
+  const isEmailValid = (email) => {
+    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return regex.test(email);
+  };
+  
+  const handleEmailChange = (event) => {
+    const email = event.target.value;
+    setUser(prevState => ({ ...prevState, email: email }));
+  
+    if (!isEmailValid(email)) {
+      setError('Please enter a valid email address');
+    } else {
+      setError('');
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,12 +60,48 @@ function Register() {
 
     if(data.success) {
       console.log('Registration successful!');
+      localStorage.setItem('token', data.jwt.token);
+      handleImageUpload(imageFile);
     } else {
       console.log('Registration failed!'); 
     }
   }
-  const isDisabled = user.u_name.length === 0 || user.email.length === 0 ||user.name.first.length === 0 || 
-  user.name.last.length === 0 || user.u_name.length === 0 || password.length === 0;
+
+  const handleImageSelection = (event) => {
+    setImageFile(event.target.files[0]);
+    setUploadComplete(true);
+  }
+
+  const handleImageUpload = (file) => {
+    const formData = new FormData();
+    formData.append('image', file);
+    const token = localStorage.getItem('token');
+
+    // Show a loading image or placeholder
+    setUser(prevState => ({ ...prevState, img: 'loading-image-url' }));
+  
+    fetch('http://localhost:8080/media/image', {
+      method: 'PUT',
+      headers: {
+        'Authorization': token,
+      },
+      body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Success:', data);
+      // Update the user state with the returned image URL
+      setUser(prevState => ({ ...prevState, img: data.url }));
+      localStorage.removeItem('token');
+      navigate('/login');
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+  }
+
+  const isDisabled = !isEmailValid(user.email) || user.u_name?.length === 0 || user.email?.length === 0 ||user.name.first?.length === 0 || 
+  user.name?.last.length === 0 || user.u_name?.length === 0 || password?.length === 0;
   
   useEffect(() => {
     // Prevent scrolling when component mounts
@@ -84,14 +143,28 @@ function Register() {
             onChange={(e) => setUser({ ...user, name: { ...user.name, last: e.target.value } })}
             fullWidth
           />
-        
+
+          <TextField
+            className='register-Form-Input'
+            label="Birth Date"
+            type="date"
+            value={user.b_date}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            onChange={(e) => setUser({ ...user, b_date: e.target.value })}
+            fullWidth
+          />
+
           <TextField
             className='register-Form-Input'
             label="Email"
             value={user.email}
-            onChange={(e) => setUser({ ...user, email: e.target.value })}
+            onChange={handleEmailChange}
             fullWidth
           />
+
+          {error && <p style={{ color: 'red' }}>{error}</p>}
         
           <TextField
             className='register-Form-Input'
@@ -101,7 +174,21 @@ function Register() {
             onChange={(e) => setPassword(e.target.value)}
             fullWidth
           />
-        
+
+          <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column">
+            <Button
+              component="label"
+            >
+              Upload profile image
+              <input
+                type="file"
+                hidden
+                onChange={handleImageSelection}
+              />
+            </Button>
+            {uploadComplete && <CheckCircleIcon style={{ color: green[500] }} />}
+          </Box>
+
           <Button 
             className="register-button"
             type="submit"

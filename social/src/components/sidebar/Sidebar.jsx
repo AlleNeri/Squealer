@@ -16,7 +16,7 @@ const Sidebar = () => {
           <CDBSidebar textColor="#fff" backgroundColor="#333">
             <CDBSidebarHeader prefix={<i className="fa fa-bars fa-large"></i>}>
               <a href="/" className="text-decoration-none" style={{ color: 'inherit' }}>
-                Sidebar
+                CHANNELS
               </a>
             </CDBSidebarHeader>
     

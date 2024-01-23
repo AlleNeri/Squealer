@@ -12,8 +12,6 @@ const MyProfile = () => {
     const [anchorEl, setAnchorEl] = useState(null);
     const [openDialog, setOpenDialog] = useState(false);
 
-    const navigate = useNavigate();
-
     useEffect(() => {
         if(user && user.imgId){
             setUser(prevState => ({ ...prevState, img: `http://localhost:8080/media/image/${user.imgId}` }));
@@ -213,6 +211,14 @@ const MyProfile = () => {
             </Box>
             <Box display="flex" alignItems="center">
                 <Typography variant="subtitle1" component="span" style={{ fontWeight: 'bold' }}>
+                    Birth date:
+                </Typography>
+                <Typography variant="body2" component="span" style={{ marginLeft: '8px' }}>
+                    {new Date(user.b_date).toLocaleDateString()}
+                </Typography>
+            </Box>
+            <Box display="flex" alignItems="center">
+                <Typography variant="subtitle1" component="span" style={{ fontWeight: 'bold' }}>
                     E-mail Address:
                 </Typography>
                 <Typography variant="body2" component="span" style={{ marginLeft: '8px' }}>
@@ -234,22 +240,46 @@ const MyProfile = () => {
                 <Typography variant="body2" component="span" style={{ marginLeft: '8px' }}>
                     {new Date(user.creation_date).toLocaleDateString()}
                 </Typography>
-                </Box>
+            </Box>
             <Box display="flex" alignItems="center">
                 <Typography variant="subtitle1" component="span" style={{ fontWeight: 'bold' }}>
                     Message popularity:
                 </Typography>
                 <Typography variant="body2" component="span" style={{ marginLeft: '8px', color: 'green' }}>
-                    {user.messagePopularity.positive}
+                    {user && user.messagePopularity && user.messagePopularity.positive || 0}
                 </Typography>
                 <Typography variant="body2" component="span">
-                    /
+                /
                 </Typography>
                 <Typography variant="body2" component="span" style={{ color: 'red' }}>
-                    {user.messagePopularity.negative}
+                    {user && user.messagePopularity && user.messagePopularity.negative || 0}
+                </Typography>
+            </Box>
+            <Box display="flex" alignItems="center">
+                <Typography variant="subtitle1" component="span" style={{ fontWeight: 'bold' }}>
+                    Daily quote:
+                </Typography>
+                <Typography variant="body2" component="span" style={{ marginLeft: '8px' }}>
+                    {user && user.quote && user.quote.dayly || 0}
                 </Typography>
                 </Box>
+                <Box display="flex" alignItems="center">
+                    <Typography variant="subtitle1" component="span" style={{ fontWeight: 'bold' }}>
+                        Weekly quote:
+                    </Typography>
+                    <Typography variant="body2" component="span" style={{ marginLeft: '8px' }}>
+                        {user && user.quote && user.quote.weekly || 0}
+                    </Typography>
+                </Box>
+                <Box display="flex" alignItems="center">
+                    <Typography variant="subtitle1" component="span" style={{ fontWeight: 'bold' }}>
+                        Monthly quote:
+                    </Typography>
+                    <Typography variant="body2" component="span" style={{ marginLeft: '8px' }}>
+                        {user && user.quote && user.quote.monthly || 0}
+                    </Typography>
             </Box>
+          </Box>
         </Box>
         </CardContent>
     </Card>
