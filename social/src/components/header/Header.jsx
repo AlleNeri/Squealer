@@ -77,14 +77,12 @@ export default function ButtonAppBar({setModalOpen}) {
           {loggedIn && 
           <div className='newLog'>
 
-          {isProfileClicked ? (
+          {isProfileClicked && 
               <Link to="/Home" className='Link'>
                 <Button className='button'>HOME PAGE</Button>
               </Link>
-            ) : (
-              <Button className='button' onClick={handleNewPostClick}>NEW SQUEAL</Button>
-            )}
-          
+          }
+          <Button className='button' onClick={handleNewPostClick}>NEW SQUEAL</Button>
           <Link to="../../login" className='Link'>
             <Button className='button' onClick={handleLogout}>LOGOUT</Button>
           </Link>

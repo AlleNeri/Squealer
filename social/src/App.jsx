@@ -1,10 +1,9 @@
-import React, {useState} from 'react';
+import React, {useState, useMemo} from 'react';
 import { createBrowserRouter,  RouterProvider } from 'react-router-dom';
 import Layout from './components/Layout/Layout';
 import LoginPage from './pages/Login/Login';
 import RegisterPage from './pages/Register/Register';
 import { LoginContext } from "./context/LoginContext/LoginContext";
-import MyPosts from './pages/MyPosts/MyPosts';
 import MyProfile from './pages/MyProfile/MyProfile';
 import { PostsContext } from './context/PostsContext/PostsContext';
 
@@ -35,13 +34,13 @@ const routes = createBrowserRouter([
 
 function App() {
 	const [loggedIn, setLoggedIn] = useState(false);
+	const loginContextValue = useMemo(() => ({ loggedIn, setLoggedIn }), [loggedIn, setLoggedIn]);
 	const [posts, setPosts] = useState([]);
+	const postsContextValue = useMemo(() => ({ posts, setPosts }), [posts, setPosts]);
 	return (
-		<LoginContext.Provider value={{loggedIn, setLoggedIn}}>
-			<PostsContext.Provider value={{posts, setPosts}}>
-				<>
-					<RouterProvider router={routes} />
-				</>	
+		<LoginContext.Provider value={loginContextValue}>
+			<PostsContext.Provider value={postsContextValue}>
+				<RouterProvider router={routes} />
 			</PostsContext.Provider>
 		</LoginContext.Provider>
 	);
