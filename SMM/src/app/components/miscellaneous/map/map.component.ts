@@ -4,7 +4,11 @@ import {
   Map,
   tileLayer,
   LatLngExpression,
-  marker
+  marker,
+  Marker,
+  Icon,
+  Control,
+  DomUtil
 } from 'leaflet';
 
 const BolognaCoords: LatLngExpression = [44.494887, 11.342616];
@@ -17,12 +21,15 @@ const BolognaCoords: LatLngExpression = [44.494887, 11.342616];
 export class MapComponent implements AfterViewInit {
   protected map?: Map;
   protected mapId: string;
+  private marker?: Marker
+  private removeMarkerControl?: Control;
 
   constructor() {
     this.mapId = 'map';
   }
 
   private initMap(): void {
+    //Creating the map and setting the layers
     this.map = map(this.mapId, {
       scrollWheelZoom: false,
       center: BolognaCoords,
@@ -37,9 +44,51 @@ export class MapComponent implements AfterViewInit {
 
     tiles.addTo(this.map);
 
-    marker(BolognaCoords)
-      .bindPopup('Trascina la mappa per cambiare la posizione')
-      .addTo(this.map);
+    //creating the marker on click handler
+    this.map.on('click', (e) => {
+      //remove the old marker if it exists
+      this.removeMarker();
+      //create the new marker
+      //remove the shadow from the marker, it's buggy
+      const icon = new Icon.Default();
+      icon.options.shadowUrl = '';
+      icon.options.shadowSize = [0, 0];
+      this.marker = marker(e.latlng, { icon })
+        .bindPopup(`Posizione selezionata: ${e.latlng.lat.toFixed(2)}, ${e.latlng.lng.toFixed(2)} circa`)
+        .addTo(this.map!);
+      //add the remove marker button
+      const RemoveMarkerControl = Control.extend({
+        options: {
+          position: 'topleft'
+        },
+        onAdd: () => {
+          const container = DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+
+          container.innerHTML = '<img src="assets/map-marker-slash.svg" alt="X" style="width: 22px; height: 22px; margin: 4px 4px 4px 4px;"/>';
+
+          container.style.backgroundColor = 'white';
+          container.style.width = '34px';
+          container.style.height = '34px';
+
+          container.onclick = (eContainer) => {
+            eContainer.stopPropagation();
+            this.removeMarker();
+          }
+          return container;
+        }
+      });
+      if(this.marker) {
+        this.removeMarkerControl = new RemoveMarkerControl();
+        this.map!.addControl(this.removeMarkerControl);
+      }
+    });
+  }
+
+  removeMarker() {
+    this.marker?.remove();
+    this.marker = undefined;
+    if(this.removeMarkerControl)
+      this.map?.removeControl(this.removeMarkerControl);
   }
 
   ngAfterViewInit(): void {
