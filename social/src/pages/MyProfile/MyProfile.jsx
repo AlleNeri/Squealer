@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Card, CardContent, Typography, Avatar, Box, Menu, MenuItem, Dialog, DialogContent } from '@material-ui/core';
 import { PostsContext } from '../../context/PostsContext/PostsContext';
 import MyPosts from '../MyPosts/MyPosts';
-import './MyProfile.css';
+import './myProfile.css';
 
 const MyProfile = () => {
     const { id } = useParams();
@@ -39,7 +39,7 @@ const MyProfile = () => {
     };
 
     const handleCloseDialog = () => {
-    setOpenDialog(false);
+        setOpenDialog(false);
     };
 
     const handleRemoveImage = () => {

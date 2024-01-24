@@ -51,12 +51,12 @@ export default function ButtonAppBar({setModalOpen}) {
     <div className="header">
         <Toolbar className="Toolbar">
           
-          {!loggedIn && <div>
+          <div>
             <Link to="/Home" className="Link">
               <Button className='button'>HOME</Button>
             </Link>
           </div>
-          }
+
           <div>
             <Typography className="Typography">
               SQUEALER
@@ -77,19 +77,14 @@ export default function ButtonAppBar({setModalOpen}) {
           {loggedIn && 
           <div className='newLog'>
 
-          {isProfileClicked && 
-              <Link to="/Home" className='Link'>
-                <Button className='button'>HOME PAGE</Button>
-              </Link>
-          }
-          <Button className='button' onClick={handleNewPostClick}>NEW SQUEAL</Button>
-          <Link to="../../login" className='Link'>
-            <Button className='button' onClick={handleLogout}>LOGOUT</Button>
-          </Link>
+            <Button className='button' onClick={handleNewPostClick}>NEW SQUEAL</Button>
+            <Link to="../../login" className='Link'>
+              <Button className='button' onClick={handleLogout}>LOGOUT</Button>
+            </Link>
 
-          <Link to={`/MyProfile/${localStorage.getItem('userId')}`} className='Link'>
-            <AccountCircleIcon onClick={handleProfileClick} />
-          </Link>
+            <Link to={`/MyProfile/${localStorage.getItem('userId')}`} className='Link'>
+              <AccountCircleIcon onClick={handleProfileClick} />
+            </Link>
             
           </div>}
           

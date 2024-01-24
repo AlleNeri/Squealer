@@ -108,7 +108,7 @@ function NewPost({ modalOpen, setModalOpen }) {
     imageData.append('image', file);
 
     const imageResponse = await fetch('http://localhost:8080/media/image', {
-      method: 'POST',
+      method: 'PUT',
       headers: {
         'Authorization': token,
       },
