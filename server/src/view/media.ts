@@ -31,8 +31,6 @@ mediaRoute.put("/image", upload.single("image"), Auth.authorize, async (req: Req
 			return res.status(403).json({ msg: "You are not allowed to edit the post." });
 		else if(req.user?.type !== UserType.VIP && req.user?.type !== UserType.NORMAL)
 			return res.status(403).json({ msg: "You are not allowed to edit the post." });
-		else if(req.user?._id !== post.posted_by)
-			return res.status(403).json({ msg: "You are not allowed to edit the post." });
 
 		//delete the old image
 		if(post.content.img) {
