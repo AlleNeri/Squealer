@@ -2,25 +2,28 @@ import { Router, Request, Response } from "express";
 
 import ChannelSchema, { Channel } from "../model/Channel";
 import PostSchema, { Post } from "../model/Post";
+import { UserType } from "../model/User";
 import Auth from "../controller/Auth";
 
 export const channelRoute: Router=Router();
 
 //get all my channels
 //TODO: test this
-//TODO: find out if the passport middleware helps and put the id in the req
-//		otherwise, ask for the id in the body
 channelRoute.get("/my", Auth.authorize, (req: Request, res: Response) => {
+	console.log(req.user);
 	ChannelSchema.find({ author: req.user!._id })
 		.then((posts: Channel[]) => res.status(200).json(posts))
 		.catch((err: Error) => res.status(400).json(err));
 });
 
 //get all channels
-//TODO: filter by authentication(private, public, etc...)
-channelRoute.get("/all", Auth.authorize, (_: Request, res: Response) => {
+channelRoute.get("/all", Auth.softAuthorize, (req: Request, res: Response) => {
 	ChannelSchema.find()
-		.then((channels: Channel[]) => res.status(200).json(channels))
+		.then((channels: Channel[]) => {
+			const publicChannels: Channel[] = channels.filter((channel: Channel) => !channel.private);
+			if(req.user?.type != UserType.MOD) res.status(200).json(publicChannels);
+			else res.status(200).json(channels)
+		})
 		.catch((err: Error) => res.status(400).json(err));
 });
 
@@ -48,11 +51,14 @@ channelRoute.get("/:id", (req: Request, res: Response) => {
 //create a channel
 //do not specify the logged user as an owner
 channelRoute.post("/", Auth.authorize, (req: Request, res: Response) => {
-	req.body.channel.owners=[req.user!._id];
+	req.body.channel.owners=[req.user!._id.toString()];
 	const newChannel: Channel=new ChannelSchema(req.body.channel);
 	newChannel.save()
 		.then((channel: Channel) => res.status(200).json(channel))
-		.catch((err: Error) => res.status(500).json({ msg: "Error creating channel", err: err }));
+		.catch((err: Error) => {
+			console.log(err);
+			res.status(500).json({ msg: "Error creating channel", err: err })
+		});
 });
 
 //update a channel

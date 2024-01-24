@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 const {DBCOLLECTION_CHANNEL}=process.env;
 
 if(!DBCOLLECTION_CHANNEL) throw new Error("DBCOLLECTION_CHANNEL is not defined in the config.env file.");
+if(!process.env.DBCOLLECTION_USER) throw new Error("DBCOLLECTION_USER is not defined in the config.env file.");
 
 const ChannelSchema: mongoose.Schema=new mongoose.Schema({
 	//if the name of the channel starts with "__direct__", the channel is a direct message channel between two users and ends with the two usernames
@@ -29,7 +30,7 @@ ChannelSchema.pre('save', function(next) {
 
 //prevent to change the value of private
 ChannelSchema.pre('save', function(next) {
-	if(this.isModified('private')) return next(new Error("Can't change the value of private"));
+	if(!this.isNew && this.isModified('private')) return next(new Error("Can't change the value of private"));
 	next();
 });
 
