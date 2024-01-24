@@ -7,16 +7,18 @@ import Auth from "../controller/Auth";
 
 export const channelRoute: Router=Router();
 
-//get all my channels
-//TODO: test this
+//get all my channels, private and public
 channelRoute.get("/my", Auth.authorize, (req: Request, res: Response) => {
-	console.log(req.user);
-	ChannelSchema.find({ author: req.user!._id })
-		.then((posts: Channel[]) => res.status(200).json(posts))
+	ChannelSchema.find()
+		.then((channels: Channel[]) => {
+			const myChannels: Channel[] = channels.filter((channel: Channel) => channel.owners.includes(req.user!._id));
+			console.log(myChannels);
+			res.status(200).json(myChannels);
+		})
 		.catch((err: Error) => res.status(400).json(err));
 });
 
-//get all channels
+//get all private channels, only for admins also get public channels
 channelRoute.get("/all", Auth.softAuthorize, (req: Request, res: Response) => {
 	ChannelSchema.find()
 		.then((channels: Channel[]) => {
