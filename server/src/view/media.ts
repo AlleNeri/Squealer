@@ -29,7 +29,7 @@ mediaRoute.put("/image", upload.single("image"), Auth.authorize, async (req: Req
 
 		if(req.user?.type === UserType.SMM && !req.user?.isClient(post._id))
 			return res.status(403).json({ msg: "You are not allowed to edit the post." });
-		else if(req.user?.type !== UserType.VIP || req.user?.type !== UserType.NORMAL)
+		else if(req.user?.type !== UserType.VIP && req.user?.type !== UserType.NORMAL)
 			return res.status(403).json({ msg: "You are not allowed to edit the post." });
 		else if(req.user?._id !== post.posted_by)
 			return res.status(403).json({ msg: "You are not allowed to edit the post." });
