@@ -95,89 +95,82 @@ function NewPost({ modalOpen, setModalOpen }) {
     setText(event.target.value);
   };
 
-  const handleImageChange = async (event) => {
+  const handleImageChange = (event) => {
     const file = event.target.files[0];
-
+  
     const reader = new FileReader();
     reader.onloadend = () => {
       setPreview(reader.result);
     };
     reader.readAsDataURL(file);
-
-    const imageData = new FormData();
-    imageData.append('image', file);
-
-    const imageResponse = await fetch('http://localhost:8080/media/image', {
-      method: 'PUT',
-      headers: {
-        'Authorization': token,
-      },
-      body: imageData
-    }).catch(error => {
-      console.error('Error:', error);
-      return null;
-    });
-
-    if (!imageResponse) {
-      console.error('Fetch request failed');
-      return;
-    } else {
-      const imageResponseData = await imageResponse.json();
-      console.log(imageResponseData);
-      setImage(imageResponseData.imgId);
-    }
-  };
   
+    // Saves the image file in lcoal state
+    setImage(file);
+  };
+
   const handleVideoChange = (event) => {
     setVideo(event.target.files[0]);
   };
 
   const handleSubmit = async (event) => {
-    event.preventDefault();  
-
+    event.preventDefault();
+  
+    // First, create the post without the image ID
     const data = {
       title: subject || 'Default title',
       content: {
         text: text || null,
-        img: image || null,
+        img: null,
         video: video || null,
         position: position || undefined,
       },
       keywords: keywords || ['Default keyword'],
       posted_on: "658d915b3bf3108a9e5af06b",
       popular: false,
-      unpopular: false,
     };
-
-    const postResponse = await fetch('http://localhost:8080/posts/', {
-    method: 'POST',
-    headers: {
-      'Authorization': token,
-      'Content-Type': 'application/json',
-    },
-      body: JSON.stringify({ post: data }),
-    }).catch(error => {
-      console.error('Error:', error);
-      return null;
+  
+    const postResponse = await fetch('http://localhost:8080/posts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token,
+      },
+      body: JSON.stringify({post: data}),
     });
-
-    let newPost = null;
-
-    if (!postResponse) {
-      console.error('Fetch request failed');
-    } else if (!postResponse.ok) {
-      const text = await postResponse.text();
-      console.error('Server response:', text);
-    } else {
-      newPost = await postResponse.json();
-      console.log('Server response:', newPost);
+  
+    if (!postResponse.ok) {
+      console.error('Error creating post');
+      return;
     }
+  
+    const newPost = await postResponse.json();
+    console.log('Server response:', newPost);
+  
+    // Then, if an image was selected, upload the image with the post ID
+    if (image) {
+      const imageData = new FormData();
+      imageData.append('image', image);
+      imageData.append('postId', newPost._id); // Assuming the post ID is available as _id
+  
+      const imageResponse = await fetch('http://localhost:8080/media/image', {
+        method: 'PUT',
+        headers: {
+          'Authorization': token,
+        },
+        body: imageData,
+      });
+  
+      if (!imageResponse.ok) {
+        return;
+      }
 
-    if (newPost) {
-      setPosts(prevPosts => [...prevPosts, newPost]);
-  }
-
+      const imageResponseData = await imageResponse.json();
+      newPost.content.img = imageResponseData.imgId; // Assuming the image ID is available as imgId
+    }
     
+    // Updated the posts list
+    setPosts(prevPosts => [...prevPosts, newPost]);
+
     // Reset form fields
     setSubject('');
     setImage(null);
