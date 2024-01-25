@@ -9,3 +9,7 @@ button {
 button:hover {
     background-color: #0062cc;
 }
+
+.selectedChannel {
+    background-color: #72B2F4 !important;
+  }

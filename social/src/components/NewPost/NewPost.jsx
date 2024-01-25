@@ -16,6 +16,8 @@ function NewPost({ modalOpen, setModalOpen }) {
   const [keywords, setKeywords] = useState('');
   const [postType, setPostType] = useState('text'); // ['text', 'image', 'video', 'geo']
   const [isFormValid, setIsFormValid] = useState(false);
+  const [channel, setChannel] = useState(''); // New state variable for the selected channel
+  const [myChannels, setMyChannels] = useState([]); // New state variable for the user's channels
   const navigate = useNavigate();
   const { posts, setPosts } = useContext(PostsContext);
   const token = localStorage.getItem('token');
@@ -60,6 +62,30 @@ function NewPost({ modalOpen, setModalOpen }) {
       navigate('/login');
     }
   }, [token]);
+
+  useEffect(() => {
+    if (loggedIn) {
+      const fetchMyChannels = async () => {
+        const response = await fetch('http://localhost:8080/channels/my', {
+          method: 'GET',
+          headers: {
+            'Authorization': token,
+          },
+        });
+
+        if (!response.ok) {
+          console.error('Error fetching my channels');
+          return;
+        }
+
+        const channels = await response.json();
+        setMyChannels(channels);
+        console.log(channels);
+      };
+
+      fetchMyChannels();
+    }
+  }, [loggedIn, token]);
 
   const handleSubjectChange = (event) => {
     setSubject(event.target.value);
@@ -114,7 +140,11 @@ function NewPost({ modalOpen, setModalOpen }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
+    
+    if (!channel) {
+      alert('Please select a channel.');
+      return;
+    }
     // First, create the post without the image ID
     const data = {
       title: subject || 'Default title',
@@ -125,7 +155,7 @@ function NewPost({ modalOpen, setModalOpen }) {
         position: position || undefined,
       },
       keywords: keywords || ['Default keyword'],
-      posted_on: "658d915b3bf3108a9e5af06b",
+      posted_on: channel,
       popular: false,
     };
   
@@ -139,6 +169,7 @@ function NewPost({ modalOpen, setModalOpen }) {
     });
   
     if (!postResponse.ok) {
+      console.log(postResponse);
       console.error('Error creating post');
       return;
     }
@@ -261,7 +292,22 @@ function NewPost({ modalOpen, setModalOpen }) {
                   </Box>
                 )}
               </Box>
-
+              
+              <FormControl variant="outlined" className="form-control">
+                <InputLabel id="channel-label">Channel</InputLabel>
+                <Select
+                  labelId="channel-label"
+                  id="channel"
+                  value={channel}
+                  onChange={(event) => setChannel(event.target.value)}
+                  label="Channel"
+                >
+                  {myChannels.map((channel) => (
+                    <MenuItem key={channel._id} value={channel._id}>{channel.name}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              
               <Box marginBottom={2}>
                 <TextField
                   label="Keywords"
@@ -272,7 +318,7 @@ function NewPost({ modalOpen, setModalOpen }) {
                   margin="normal"
                 />    
               </Box>
-
+                
               <Box marginBottom={2}>
                 <Button type="submit" variant="contained" color="primary" disabled={!isFormValid} onClick={
                   () => setModalOpen(false)

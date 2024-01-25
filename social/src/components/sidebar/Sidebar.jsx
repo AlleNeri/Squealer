@@ -9,6 +9,7 @@ import {
 } from 'cdbreact';
 import { NavLink } from 'react-router-dom';
 import { Typography, Button, useMediaQuery } from '@material-ui/core'; // Import Typography from Material UI
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 import Channel from '../Channel/Channel';
 import { LoginContext } from '../../context/LoginContext/LoginContext';
 import './sidebar.css';
@@ -17,6 +18,8 @@ const Sidebar = () => {
   const [myChannels, setMyChannels] = useState([]);
   const [isChannelModalOpen, setChannelModalOpen] = useState(false);
   const [isSidebarMinimized, setSidebarMinimized] = useState(false);
+  const [selectedChannel, setSelectedChannel] = useState(null);
+  const [hoveredChannel, setHoveredChannel] = useState(null);
   const { loggedIn } = useContext(LoginContext);
   const token = localStorage.getItem('token');
 
@@ -34,16 +37,21 @@ const Sidebar = () => {
   };
 
 
-  const buttonContainerStyle = {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexGrow: 1,
-  };
-
   const minimizeSidebar = () => {
     console.log('minimizeSidebar was called' + isSidebarMinimized);
     setSidebarMinimized(!isSidebarMinimized);
+  };
+
+  const handleChannelClick = (channelId) => {
+    setSelectedChannel(channelId);
+  };
+  
+  const handleMouseEnter = (channelId) => {
+    setHoveredChannel(channelId);
+  };
+  
+  const handleMouseLeave = () => {
+    setHoveredChannel(null);
   };
 
   useEffect(() => {
@@ -98,6 +106,7 @@ const Sidebar = () => {
             <CDBSidebarHeader prefix={<i className="fa fa-bars fa-large" onClick={minimizeSidebar}></i> }>
               <h6 className="text-decoration-none" style={{ color: 'inherit' }}>
                 CHANNELS
+                {loggedIn && <AddCircleIcon style={{ marginLeft: '10px', cursor: 'pointer' }} onClick={() => setChannelModalOpen(true)} />}
               </h6>
             </CDBSidebarHeader>
     
@@ -107,13 +116,21 @@ const Sidebar = () => {
                   <span style={{ marginLeft: '20px' }}>EXPLORE</span>
                 </Typography>
                 {allChannels.map(channel => (
-                  <CDBSidebarMenuItem 
+                  <NavLink
                     key={channel.id}
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#72B2F4'}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''}
-                  >
-                    {channel.name}
-                  </CDBSidebarMenuItem>
+                    to={`/AllChannels/${channel._id}`}
+                    activeClassName="activeClicked"
+                    onClick={() => handleChannelClick(channel._id)}
+                    style={{ textDecoration: 'none' }}>
+                    <CDBSidebarMenuItem 
+                      key={channel._id}
+                      onMouseEnter={() => handleMouseEnter(channel._id)}
+                      onMouseLeave={handleMouseLeave}
+                      style={{ backgroundColor: selectedChannel === channel._id || hoveredChannel === channel._id ? '#72B2F4' : 'transparent' }}
+                    >
+                      {channel.name}
+                    </CDBSidebarMenuItem>
+                  </NavLink>
                 ))}
                 {loggedIn ? (
                   <>
@@ -122,13 +139,21 @@ const Sidebar = () => {
                     </Typography>
                       {myChannels.length > 0 ? (
                         myChannels.map(channel => (
-                          <CDBSidebarMenuItem 
-                            key={channel.id}
-                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#72B2F4'}
-                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''}
-                          >
-                            {channel.name}
-                          </CDBSidebarMenuItem>
+                          <NavLink
+                          key={channel.id}
+                          to={`/MyChannels/${channel._id}`}
+                          activeClassName="activeClicked"
+                          onClick={() => handleChannelClick(channel._id)}
+                          style={{ textDecoration: 'none' }}>
+                            <CDBSidebarMenuItem 
+                              key={channel._id}
+                              onMouseEnter={() => handleMouseEnter(channel._id)}
+                              onMouseLeave={handleMouseLeave}
+                              style={{ backgroundColor: selectedChannel === channel._id || hoveredChannel === channel._id ? '#72B2F4' : 'transparent' }}
+                            >
+                              {channel.name}
+                            </CDBSidebarMenuItem>
+                          </NavLink>
                         ))
                       ) : (
                         <Typography variant="body1">You have not created any channels yet</Typography>
@@ -136,21 +161,6 @@ const Sidebar = () => {
                   </>
                 ) : <p></p>}
               </CDBSidebarMenu>      
-              <div style={{ flexGrow: 1 }}></div>     
-              {loggedIn && ( // Render the button only if the user is logged in
-                <div style={buttonContainerStyle}>
-                  <Button 
-                    className='button' 
-                    onClick={() => setChannelModalOpen(true)} 
-                    style={{ 
-                      ...buttonStyle, 
-                      display: shouldHideButton ? 'none' : 'block' 
-                    }}
-                  >
-                    NEW CHANNEL
-                  </Button>
-                </div>
-              )}
             </CDBSidebarContent>
           </CDBSidebar>
         </div>
