@@ -9,23 +9,17 @@ export const channelRoute: Router=Router();
 
 //get all my channels, private and public
 channelRoute.get("/my", Auth.authorize, (req: Request, res: Response) => {
-	ChannelSchema.find()
-		.then((channels: Channel[]) => {
-			const myChannels: Channel[] = channels.filter((channel: Channel) => channel.owners.includes(req.user!._id));
-			console.log(myChannels);
-			res.status(200).json(myChannels);
-		})
+	//get only the channels where the logged user is in the owner array
+	ChannelSchema.find({ owners: { $in: [req.user!._id] } })
+		.then((channels: Channel[]) => res.status(200).json(channels))
 		.catch((err: Error) => res.status(400).json(err));
 });
 
 //get all private channels, only for admins also get public channels
 channelRoute.get("/all", Auth.softAuthorize, (req: Request, res: Response) => {
-	ChannelSchema.find()
-		.then((channels: Channel[]) => {
-			const publicChannels: Channel[] = channels.filter((channel: Channel) => !channel.private);
-			if(req.user?.type != UserType.MOD) res.status(200).json(publicChannels);
-			else res.status(200).json(channels)
-		})
+	//if the user is a mod, get all channels, otherwise only the public ones
+	ChannelSchema.find(req.user?.type == UserType.MOD ? {} : { private: false })
+		.then((channels: Channel[]) => res.status(200).json(channels))
 		.catch((err: Error) => res.status(400).json(err));
 });
 
