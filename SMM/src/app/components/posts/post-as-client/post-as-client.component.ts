@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
+import { LatLng } from 'leaflet';
 
 import { Channel } from 'src/app/interfaces/channel';
 
@@ -33,6 +34,7 @@ export class PostAsClientComponent implements OnInit {
       title: ['', [Validators.required]],
       text: [''],
       img: [null],
+      position: [null],
       channel: ['', [Validators.required]],
     }, { validators: this.contentValidator() });
   }
@@ -50,7 +52,8 @@ export class PostAsClientComponent implements OnInit {
     return (control: AbstractControl): ValidationErrors | null => {
       const text = control.get('text');
       const img = control.get('img');
-      return (text?.value || img?.value) ? null : { noContent: true };
+      const position = control.get('position');
+      return (text?.value || img?.value || position?.value) ? null : { noContent: true };
     }
   }
 
@@ -59,6 +62,22 @@ export class PostAsClientComponent implements OnInit {
       ...this.postForm.getRawValue(),
       img: data
     });
+  }
+
+  protected getPos(data?: LatLng): void {
+    if(data)
+      this.postForm.setValue({
+        ...this.postForm.getRawValue(),
+        position: {
+          latitude: data.lat,
+          longitude: data.lng
+        }
+      });
+    else
+      this.postForm.setValue({
+        ...this.postForm.getRawValue(),
+        position: null
+      });
   }
 
   protected post() {
@@ -72,6 +91,7 @@ export class PostAsClientComponent implements OnInit {
         content: {
           text: this.postForm.value.text,
           img: this.postForm.value.img == '' ? null : this.postForm.value.img,
+          position: this.postForm.value.position
         },
         posted_on: this.postForm.value.channel,
       }

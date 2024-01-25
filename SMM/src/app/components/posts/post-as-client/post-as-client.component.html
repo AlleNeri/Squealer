@@ -19,6 +19,7 @@
     [formGroup]="this.postForm"
     (ngSubmit)="this.post()"
     *nzDrawerContent
+    nzLayout="vertical"
   >
     <div nz-row nzGutter="8">
       <div nz-col nzSpan="24">
@@ -57,6 +58,18 @@
       </div>
     </div>
     <div nz-row nzGutter="8">
+      <div nz-col nzSpan="24">
+        <nz-form-item>
+          <nz-form-label>Posizione</nz-form-label>
+          <nz-form-control>
+            <div class="position-picker">
+              <app-map (positionSelected)="getPos($event)" />
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row nzGutter="8">
       <div nz-col nzSpan="12">
         <nz-form-item>
           <nz-form-label nzRequired>Canale</nz-form-label>
@@ -84,7 +97,7 @@
       <button
         nz-button
         nzType="default"
-        (click)="this.toggleDrawer()"
+        (click)="this.postForm.reset(); this.toggleDrawer();"
         *nzSpaceItem
       >
         Cancella

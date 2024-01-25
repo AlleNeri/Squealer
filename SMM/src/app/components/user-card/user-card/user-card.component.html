@@ -20,5 +20,5 @@
 </div>
 
 <ng-template #avatarTemplate>
-  <nz-avatar nzSrc="{{ user.img ?? '' }}" [nzSize]="'large'"></nz-avatar>
+  <nz-avatar nzSrc="{{ user.img && backendComunication.at('media/image/'+user.img) }}" [nzSize]="'large'"></nz-avatar>
 </ng-template>

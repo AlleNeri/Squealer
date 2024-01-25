@@ -3,7 +3,7 @@ import { Injectable, Output, EventEmitter } from '@angular/core';
 import { ILoggedUser, IRegisterBody, UserType } from '../interfaces/auth-user';
 
 import { BackendComunicationService } from './backend-comunication.service';
-import { Observable, Subscription, mergeMap, of } from 'rxjs';
+import { mergeMap, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
