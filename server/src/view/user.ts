@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 
-import UserSchema, { User } from '../model/User';
+import UserSchema, { User, UserType } from '../model/User';
 import Auth from "../controller/Auth";
 import { getUserPublicInfo } from '../controller/publicInfo';
 
@@ -86,6 +86,53 @@ userRoute.patch('/:id/char', Auth.softAuthorize, (req: Request, res: Response) =
 		})
 		.catch(err=> res.status(404).json({ msg: 'User not found', err: err }));
 });
+
+//get all smms
+//only a vip can do this
+userRoute.get('/smms', Auth.authorize, Auth.isVip, (_: Request, res: Response) => {
+	UserSchema.find({ type: UserType.SMM })
+		.then((users: User[]) => res.status(200).json(users))
+		.catch(err=> res.status(404).json({ msg: 'SMMs not found', err: err }));
+});
+
+//select a smm
+//only a vip can do this
+userRoute.put('/smms/select/:id', Auth.authorize, Auth.isVip, (req: Request, res: Response) => {
+	UserSchema.findById(req.params.id)
+		.then(async (user: User | null) => {
+			if(!user) return res.status(404).json({ msg: 'SMM not found' });
+			else if(user.type !== UserType.SMM) return res.status(400).json({ msg: 'Bad request, the user is not a SMM' });
+			user.friends.push(req.user?.id);
+			if(req.user!.friends[0]){
+				const oldSMM: User | null = await UserSchema.findById(req.user!.friends[0]);
+				if(oldSMM) {
+					oldSMM.friends = oldSMM.friends.filter((client: string)=> client != req.user!.id);
+					oldSMM.save();
+				}
+			}
+			req.user!.friends = [user.id];
+			await user.save();
+			await req.user?.save();
+			res.status(200).json(user);
+		})
+		.catch(err=> res.status(404).json({ msg: 'SMM not found', err: err }));
+});
+
+//delete a smm
+//only a vip client can do this
+userRoute.delete('/smms/delete', Auth.authorize, (req: Request, res: Response) => {
+	if(!req.user?.friends[0]) return res.status(400).json({ msg: 'Bad request, you don\'t have a SMM' });
+	UserSchema.findById(req.user?.friends[0])
+		.then(async (user: User | null) => {
+			if(!user) return res.status(404).json({ msg: 'SMM not found' });
+			user.friends = user.friends.filter((client: string)=> client != req.user!.id);
+			req.user!.friends = [];
+			await user.save();
+			await req.user?.save();
+			res.status(200).json(user);
+		})
+		.catch(err=> res.status(404).json({ msg: 'SMM not found', err: err }));
+}
 
 //authentication routes
 userRoute.use('/', authenticationRoute);

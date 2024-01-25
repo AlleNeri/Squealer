@@ -6,3 +6,8 @@
   margin-right: 6px;
   font-size: 24px;
 }
+
+.position-picker {
+  height: 300px;
+  padding-bottom: 10px;
+}

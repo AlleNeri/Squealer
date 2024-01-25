@@ -11,35 +11,41 @@ export class BackendComunicationService {
 
   constructor(private http: HttpClient) {}
 
+  /* Url composition */
+
+  at(endPoint: string): string {
+    return `${this.baseUrl}/${endPoint}`;
+  }
+
   /* All the HTTP methods */
 
   get(endPoint: string, token?: string): Observable<Object> {
-    if(!token) return this.http.get(`${this.baseUrl}/${endPoint}`);
+    if(!token) return this.http.get(this.at(endPoint));
     const httpHeaders: HttpHeaders = new HttpHeaders({ Authorization: token });
-    return this.http.get(`${this.baseUrl}/${endPoint}`, { headers: httpHeaders });
+    return this.http.get(this.at(endPoint), { headers: httpHeaders });
   }
 
   post(endPoint: string, body: Object, token?: string): Observable<Object> {
-    if(!token) return this.http.post(`${this.baseUrl}/${endPoint}`, body);
+    if(!token) return this.http.post(this.at(endPoint), body);
     const httpHeaders: HttpHeaders = new HttpHeaders({ Authorization: token });
-    return this.http.post(`${this.baseUrl}/${endPoint}`, body, { headers: httpHeaders });
+    return this.http.post(this.at(endPoint), body, { headers: httpHeaders });
   }
 
   put(endPoint: string, body: Object, token?: string): Observable<Object> {
-    if(!token) return this.http.put(`${this.baseUrl}/${endPoint}`, body);
+    if(!token) return this.http.put(this.at(endPoint), body);
     const httpHeaders: HttpHeaders = new HttpHeaders({ Authorization: token });
-    return this.http.put(`${this.baseUrl}/${endPoint}`, body, { headers: httpHeaders });
+    return this.http.put(this.at(endPoint), body, { headers: httpHeaders });
   }
 
   delete(endPoint: string, token?: string): Observable<Object> {
-    if(!token) return this.http.delete(`${this.baseUrl}/${endPoint}`);
+    if(!token) return this.http.delete(this.at(endPoint));
     const httpHeaders: HttpHeaders = new HttpHeaders({ Authorization: token });
-    return this.http.delete(`${this.baseUrl}/${endPoint}`, { headers: httpHeaders });
+    return this.http.delete(this.at(endPoint), { headers: httpHeaders });
   }
 
   patch(endPoint: string, body: Object, token?: string): Observable<Object> {
-    if(!token) return this.http.patch(`${this.baseUrl}/${endPoint}`, body);
+    if(!token) return this.http.patch(this.at(endPoint), body);
     const httpHeaders: HttpHeaders = new HttpHeaders({ Authorization: token });
-    return this.http.patch(`${this.baseUrl}/${endPoint}`, body, { headers: httpHeaders });
+    return this.http.patch(this.at(endPoint), body, { headers: httpHeaders });
   }
 }
