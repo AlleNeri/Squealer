@@ -15,8 +15,15 @@ postRoute.get("/", Auth.authorize, Auth.isMod, (_: Request, res: Response) => {
 });
 
 //get all my posts
+//a SMM can gat as a client, the client id is in a query parameter called 'as'
 postRoute.get("/my", Auth.authorize, (req: Request, res: Response) => {
-	PostSchema.find({ posted_by: req.user?._id })
+	let userId: string;
+
+	if(req.user!.type === UserType.SMM && req.query.as && req.user?.isClient(req.query.as.toString())) userId=req.query.as.toString();
+	else if(req.user!.type === UserType.VIP || req.user!.type === UserType.NORMAL) userId=req.user!._id;
+	else return res.status(403).json({ msg: "Unauthorized" });
+
+	PostSchema.find({ posted_by: userId })
 		.then((posts: Post[]) => res.status(200).json(posts))
 		.catch((err: Error) => res.status(400).json(err));
 });
