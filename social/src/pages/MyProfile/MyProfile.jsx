@@ -290,8 +290,8 @@ const MyProfile = () => {
         </CardContent>
     </Card>
 
-    <Typography variant="h4" component="h2" gutterBottom style={{ textAlign: 'center', fontFamily:'Roboto slab' }}>
-        Post pubblicati da {user.u_name}
+    <Typography variant="h4" component="h6" gutterBottom style={{ textAlign: 'center', marginTop:'20px' }}>
+        POST PUBBLICATI DA {user.u_name.toUpperCase()}
     </Typography>
     <MyPosts/>
     </>

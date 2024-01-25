@@ -64,11 +64,11 @@ export default function ButtonAppBar({setModalOpen}) {
           </div>
           {!loggedIn &&
           <div className='regLog'>
-            <Link to='../../register' className="Link">
+            <Link to='/Register' className="Link">
               <Button className='button'>REGISTER</Button>
             </Link>
             
-            <Link to='../../login' className="Link">
+            <Link to='/Login' className="Link">
               <Button className='button'>LOGIN</Button>
             </Link>
           </div>
@@ -78,7 +78,7 @@ export default function ButtonAppBar({setModalOpen}) {
           <div className='newLog'>
 
             <Button className='button' onClick={handleNewPostClick}>NEW SQUEAL</Button>
-            <Link to="../../login" className='Link'>
+            <Link to="/Login" className='Link'>
               <Button className='button' onClick={handleLogout}>LOGOUT</Button>
             </Link>
 
