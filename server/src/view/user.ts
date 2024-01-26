@@ -15,6 +15,14 @@ userRoute.get('/', Auth.softAuthorize, Auth.isMod, (_: Request, res: Response) =
 		.catch(err=> res.status(404).json({ msg: 'Users not found', err: err }));
 });
 
+//get all smms
+//only a vip can do this
+userRoute.get('/smms', Auth.authorize, Auth.isVip, (_: Request, res: Response) => {
+	UserSchema.find({ type: UserType.SMM })
+		.then((users: User[]) => res.status(200).json(users))
+		.catch(err=> res.status(404).json({ msg: 'SMMs not found', err: err }));
+});
+
 //get a specific user
 userRoute.get('/:id', Auth.softAuthorize, (req: Request, res: Response) => {
 	//if it's not, return only the public info
@@ -87,14 +95,6 @@ userRoute.patch('/:id/char', Auth.softAuthorize, (req: Request, res: Response) =
 		.catch(err=> res.status(404).json({ msg: 'User not found', err: err }));
 });
 
-//get all smms
-//only a vip can do this
-userRoute.get('/smms', Auth.authorize, Auth.isVip, (_: Request, res: Response) => {
-	UserSchema.find({ type: UserType.SMM })
-		.then((users: User[]) => res.status(200).json(users))
-		.catch(err=> res.status(404).json({ msg: 'SMMs not found', err: err }));
-});
-
 //select a smm
 //only a vip can do this
 userRoute.put('/smms/select/:id', Auth.authorize, Auth.isVip, (req: Request, res: Response) => {
@@ -132,7 +132,7 @@ userRoute.delete('/smms/delete', Auth.authorize, (req: Request, res: Response) =
 			res.status(200).json(user);
 		})
 		.catch(err=> res.status(404).json({ msg: 'SMM not found', err: err }));
-}
+});
 
 //authentication routes
 userRoute.use('/', authenticationRoute);
