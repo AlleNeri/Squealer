@@ -141,11 +141,11 @@ PostSchema.virtual("views").get(function(): number {
 });
 
 PostSchema.methods.addView = function(user_id: string): void {
-	//check if the user has already seen the post
-	if(this.reactions.findIndex((reaction: any)=> reaction.user_id.toString() == user_id) != -1) return;
-	//add the user to the reactions
-	this.addReaction(user_id, 0);
-	//this.reactions.push({ user_id: user_id, value: 0 });
+	//check if the user has already react the post and if he has, remove the reaction
+	const index: number = this.reactions.findIndex((reaction: any)=> reaction.user_id.toString() == user_id);
+	if(index != -1) this.reactions[index].value=0;
+	//add the user to the reactions array if he is not already there
+	else this.addReaction(user_id, 0);
 	//check only if the popular and unpopular values decrease because a view can't increase them
 	if(this.posReaction < (this.views * CM_COEFFICIENT)) this.removePopular();
 	if(this.negReaction < (this.views * CM_COEFFICIENT)) this.removeUnpopular();
