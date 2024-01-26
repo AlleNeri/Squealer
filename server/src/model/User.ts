@@ -41,7 +41,8 @@ const UserSchema: mongoose.Schema=new mongoose.Schema({
 	b_date: Date,
 	creation_date: {type: Date, immutable: true, default: Date.now},
 	appartenence: [{type: mongoose.Schema.Types.ObjectId, ref: process.env.DBCOLLECTION_CHANNEL}],
-	friends: [{type: mongoose.Schema.Types.ObjectId, ref: process.env.DBCOLLECTION_USER}],	//the smm uses the friends list as clients list
+	client: [{type: mongoose.Schema.Types.ObjectId, ref: process.env.DBCOLLECTION_USER}],
+	smm: {type: mongoose.Schema.Types.ObjectId, ref: process.env.DBCOLLECTION_USER, required: false},
 	messagePopularity: {
 		type: {
 			positive: Number,
@@ -67,24 +68,30 @@ UserSchema.virtual('isNormal').get(function() {
 	return this.type===UserType.NORMAL;
 });
 
-UserSchema.methods.isFriend=function(user_id: string): boolean {
-	return this.friends.reduce((accumulator: boolean, currVal: mongoose.Types.ObjectId)=> {
-		if(accumulator) return true;
+UserSchema.methods.isClient=function(user_id: string): boolean {
+	if(!this.isSMM) return false;
+	else return this.client.reduce((accumulatior: boolean, currVal: mongoose.Types.ObjectId)=> {
+		if(accumulatior) return true;
 		else return currVal.toString()==user_id;
 	}, false);
 };
 
-UserSchema.methods.addFriend=function(user_id: string): void {
-	if(!this.isFriend(user_id)) this.friends.push(user_id);
-};
-
-UserSchema.methods.isClient=function(user_id: string): boolean {
-	return (this.isSMM && this.isFriend(user_id));
-};
-
 UserSchema.methods.addClient=function(user_id: string): void {
-	if(this.isSMM && !this.isFriend(user_id)) this.friends.push(user_id);
+	if(this.isSMM && !this.isClient(user_id)) this.client.push(user_id);
 };
+
+UserSchema.methods.removeClient=function(user_id: string): void {
+	if(this.isSMM) this.client=this.client.filter((client: string)=> client!=user_id);
+};
+
+UserSchema.methods.isMySMM = function(user_id: string): boolean {
+	if(!this.isVip || !this.smm) return false;
+	return this.smm?.toString()===user_id;
+}
+
+UserSchema.methods.setMySMM = function(user_id: string): void {
+	if(this.isVip) this.smm=user_id;
+}
 
 UserSchema.methods.isAMidnightPassed=function(): boolean | undefined {
 	const now: Date=new Date();
