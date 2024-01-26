@@ -7,7 +7,7 @@ import {
   CDBSidebarMenu,
   CDBSidebarMenuItem,
 } from 'cdbreact';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { Typography, Button, useMediaQuery } from '@material-ui/core'; // Import Typography from Material UI
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import Channel from '../Channel/Channel';
@@ -21,6 +21,7 @@ const Sidebar = () => {
   const [selectedChannel, setSelectedChannel] = useState(null);
   const [hoveredChannel, setHoveredChannel] = useState(null);
   const { loggedIn } = useContext(LoginContext);
+  const location = useLocation();
   const token = localStorage.getItem('token');
 
   const matches = useMediaQuery('(max-width:710px)');
@@ -44,6 +45,7 @@ const Sidebar = () => {
 
   const handleChannelClick = (channelId) => {
     setSelectedChannel(channelId);
+    localStorage.setItem('selectedChannel', channelId); // Store the selected channel ID in local storage
   };
   
   const handleMouseEnter = (channelId) => {
@@ -55,8 +57,25 @@ const Sidebar = () => {
   };
 
   useEffect(() => {
+    // Get the selected channel ID from local storage when the component mounts
+    const storedSelectedChannel = localStorage.getItem('selectedChannel');
+    if (storedSelectedChannel) {
+      setSelectedChannel(storedSelectedChannel);
+    }
+  }, []);
+
+  
+useEffect(() => {
+  // Deselect the channel when the page changes, unless it's the selected channel
+  if (location.pathname !== `/MyChannels/${selectedChannel}`) {
+    setSelectedChannel(null);
+    localStorage.removeItem('selectedChannel'); // Remove the selected channel ID from local storage
+  }
+}, [location]);
+  
+  useEffect(() => {
     const fetchAllChannels = async () => {
-      const response = await fetch('http://localhost:8080/channels/all', {
+      const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels/all`, {
         method: 'GET',
         headers: {
           'Authorization': token,
@@ -78,7 +97,7 @@ const Sidebar = () => {
   useEffect(() => {
     if (loggedIn) {
       const fetchMyChannels = async () => {
-        const response = await fetch('http://localhost:8080/channels/my', {
+        const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels/my`, {
           method: 'GET',
           headers: {
             'Authorization': token,
@@ -112,9 +131,11 @@ const Sidebar = () => {
     
             <CDBSidebarContent className="sidebar-content" style={{ display: 'flex', flexDirection: 'column' }}>
             <CDBSidebarMenu>
+              {!isSidebarMinimized ? (
                 <Typography variant="h6" style={{ fontWeight: 'bold' }}>
                   <span style={{ marginLeft: '20px' }}>EXPLORE</span>
                 </Typography>
+              ): <p></p>}
                 {allChannels.map(channel => (
                   <NavLink
                     key={channel.id}
@@ -126,7 +147,7 @@ const Sidebar = () => {
                       key={channel._id}
                       onMouseEnter={() => handleMouseEnter(channel._id)}
                       onMouseLeave={handleMouseLeave}
-                      style={{ backgroundColor: selectedChannel === channel._id || hoveredChannel === channel._id ? '#72B2F4' : 'transparent' }}
+                      style={{ backgroundColor: (selectedChannel === channel._id || hoveredChannel === channel._id) && !isSidebarMinimized ? '#72B2F4' : 'transparent' }}
                     >
                       {channel.name}
                     </CDBSidebarMenuItem>
@@ -134,30 +155,37 @@ const Sidebar = () => {
                 ))}
                 {loggedIn ? (
                   <>
+                  {!isSidebarMinimized ?(
                     <Typography variant="h6" style={{ fontWeight: 'bold' }}>
                       <span style={{ marginLeft: '20px' }}>MY CHANNELS</span>
                     </Typography>
-                      {myChannels.length > 0 ? (
-                        myChannels.map(channel => (
+                  ): <p></p>}
+                    {
+                      myChannels.length > 0 ? (
+                        myChannels.map((channel) => (
                           <NavLink
-                          key={channel.id}
-                          to={`/MyChannels/${channel._id}`}
-                          activeClassName="activeClicked"
-                          onClick={() => handleChannelClick(channel._id)}
-                          style={{ textDecoration: 'none' }}>
-                            <CDBSidebarMenuItem 
-                              key={channel._id}
-                              onMouseEnter={() => handleMouseEnter(channel._id)}
-                              onMouseLeave={handleMouseLeave}
-                              style={{ backgroundColor: selectedChannel === channel._id || hoveredChannel === channel._id ? '#72B2F4' : 'transparent' }}
-                            >
-                              {channel.name}
-                            </CDBSidebarMenuItem>
+                            key={channel._id}
+                            to={`/MyChannels/${channel._id}`}
+                            activeClassName="activeClicked"
+                            style={{ textDecoration: 'none' }}
+                            onClick={() => handleChannelClick(channel._id)}
+                          >
+                          <CDBSidebarMenuItem 
+                            key={channel._id}
+                            onMouseEnter={() => handleMouseEnter(channel._id)}
+                            onMouseLeave={handleMouseLeave}
+                            style={{ backgroundColor: (selectedChannel === channel._id || hoveredChannel === channel._id) && !isSidebarMinimized ? '#72B2F4' : 'transparent' }}
+                          >
+                            {channel.name}
+                          </CDBSidebarMenuItem>
                           </NavLink>
                         ))
                       ) : (
-                        <Typography variant="body1">You have not created any channels yet</Typography>
-                      )}
+                        !isSidebarMinimized && (
+                          <Typography variant="body1"> <span style={{ marginLeft: '20px' }}>You have not channels</span></Typography>
+                        )
+                      )
+                    }
                   </>
                 ) : <p></p>}
               </CDBSidebarMenu>      

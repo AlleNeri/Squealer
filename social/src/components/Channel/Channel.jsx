@@ -31,7 +31,7 @@ const Channel = ({ isOpen, onClose }) => {
         event.preventDefault();
 
         try {
-            const response = await fetch('http://localhost:8080/channels/', {
+            const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels/`, {
                 method: 'POST',
                 headers: {
                     'Authorization': token,

@@ -10,7 +10,7 @@ const MyChannels = () => {
   let reversedPosts = [...posts].reverse();
 
   useEffect(() => {
-    fetch(`http://localhost:8080/channels/${id}`)
+    fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels/${id}`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -27,7 +27,7 @@ const MyChannels = () => {
 
   useEffect(() => {
     // Fetch posts
-    fetch(`http://localhost:8080/channels/${id}/posts`)
+    fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels/${id}/posts`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');

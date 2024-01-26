@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import "./register.css";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import {TextField, Button, Container, Typography, Box} from '@material-ui/core';
+import {TextField, Button, Container, Typography, Box, FormControl, InputLabel, Select, MenuItem} from '@material-ui/core';
 import {green} from '@material-ui/core/colors/';
 import { useNavigate } from 'react-router-dom';
 
@@ -43,7 +43,7 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await fetch('http://localhost:8080/users/register', {
+    const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/register`, {
       method: 'POST', 
       headers: {
         'Content-Type': 'application/json'
@@ -80,7 +80,7 @@ function Register() {
     // Show a loading image or placeholder
     setUser(prevState => ({ ...prevState, img: 'loading-image-url' }));
   
-    fetch('http://localhost:8080/media/image', {
+    fetch(`${import.meta.env.VITE_DEFAULT_URL}/media/image`, {
       method: 'PUT',
       headers: {
         'Authorization': token,
@@ -174,6 +174,17 @@ function Register() {
             onChange={(e) => setPassword(e.target.value)}
             fullWidth
           />
+
+          <InputLabel>Type</InputLabel>
+          <Select
+            value={user.type}
+            onChange={(e) => setUser({ ...user, type: e.target.value })}
+            fullWidth
+          >
+            <MenuItem value={'normal'}>Normal</MenuItem>
+            <MenuItem value={'vip'}>VIP</MenuItem>
+            <MenuItem value={'smm'}>Smm</MenuItem>
+          </Select>
 
           <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column">
             <Button

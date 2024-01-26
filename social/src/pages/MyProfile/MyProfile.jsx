@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useContext } from 'react';
-import { useParams } from 'react-router-dom';
-import { Card, CardContent, Typography, Avatar, Box, Menu, MenuItem, Dialog, DialogContent } from '@material-ui/core';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Card, CardContent, Typography, Avatar, Box, Menu, MenuItem, Dialog, DialogContent, Button } from '@material-ui/core';
 import { PostsContext } from '../../context/PostsContext/PostsContext';
 import MyPosts from '../MyPosts/MyPosts';
 import './myProfile.css';
@@ -13,10 +13,11 @@ const MyProfile = () => {
     const { posts, setPosts } = useContext(PostsContext);
     const [anchorEl, setAnchorEl] = useState(null);
     const [openDialog, setOpenDialog] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if(user && user.imgId){
-            setUser(prevState => ({ ...prevState, img: `http://localhost:8080/media/image/${user.imgId}` }));
+            setUser(prevState => ({ ...prevState, img: `${import.meta.env.VITE_DEFAULT_URL}/media/image/${user.imgId}` }));
         }
     }, [user]);
 
@@ -47,7 +48,7 @@ const MyProfile = () => {
         setAnchorEl(null);
       
         // Rimuovi l'immagine dal server
-        fetch(`http://localhost:8080/media/image/`, {
+        fetch(`${import.meta.env.VITE_DEFAULT_URL}/media/image/`, {
             method: 'DELETE',
             headers: {
                 'Authorization': token,
@@ -58,7 +59,7 @@ const MyProfile = () => {
               throw new Error('Network response was not ok');
             }
             // Aggiorna lo stato dell'utente per riflettere il cambiamento
-            fetch(`http://localhost:8080/users/${user._id}`, {
+            fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/${user._id}`, {
             method: 'PUT',
             headers: {
                 'Authorization': token,
@@ -87,8 +88,8 @@ const MyProfile = () => {
           
             // Mostra un'immagine di caricamento o un segnaposto
             setUser(prevState => ({ ...prevState, img: 'loading-image-url' }));
-          
-            fetch('http://localhost:8080/media/image', {
+        
+            fetch(`${import.meta.env.VITE_DEFAULT_URL}/media/image`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': token,
@@ -99,7 +100,7 @@ const MyProfile = () => {
                 .then(data => {
                 console.log('Success:', data);
                 // Aggiorna l'utente con l'ID dell'immagine
-                fetch(`http://localhost:8080/users/${user._id}`, {
+                fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/${user._id}`, {
                     method: 'PUT',
                     headers: {
                     'Authorization': token,
@@ -113,7 +114,7 @@ const MyProfile = () => {
                     // Aggiorna lo stato dell'utente con l'ID dell'immagine
                     setUser(prevState => ({ ...prevState, imgId: data.imgId }));
                     // Aggiorna l'URL dell'immagine
-                    setUser(prevState => ({ ...prevState, img: `http://localhost:8080/media/image/${data.imgId}` }));
+                    setUser(prevState => ({ ...prevState, img: `${import.meta.env.VITE_DEFAULT_URL}/media/image/${data.imgId}` }));
                 })
                 .catch((error) => {
                     console.error('Error:', error);
@@ -131,7 +132,7 @@ const MyProfile = () => {
     const userId = id;
     console.log('User ID:', userId); // Debug: stampa l'ID dell'utente
   
-    fetch(`http://localhost:8080/users/${userId}`, {
+    fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/${userId}`, {
       method: 'GET',
       headers: {
         'Authorization': token,
@@ -168,7 +169,7 @@ const MyProfile = () => {
         <Box display="flex" flexDirection="row" alignItems="center">
             <div>
             <Avatar 
-                src={`http://localhost:8080/media/image/${user.img}`} 
+                src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${user.img}`} 
                 onClick={handleAvatarClick} 
                 style={{ height: '200px', width: '200px' }} 
             />
@@ -184,7 +185,7 @@ const MyProfile = () => {
             </Menu>
             <Dialog open={openDialog} onClose={handleCloseDialog}>
                 <DialogContent>
-                    <img src={`http://localhost:8080/media/image/${user.img}`} alt="User" className="dialog-image" />
+                    <img src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${user.img}`} alt="User" className="dialog-image" />
                 </DialogContent>
             </Dialog>
             <input type="file" ref={fileInput} className="hidden-file-input" onChange={handleFileChange} />
@@ -286,9 +287,18 @@ const MyProfile = () => {
                     </Typography>
             </Box>
           </Box>
+          {user.type === 'vip' && (
+            <Box ml={20}>
+              <Button variant="contained" color="primary" onClick={() => navigate('/Smm')}>
+                Trova SMM
+              </Button>
+            </Box>
+        )}
         </Box>
         </CardContent>
     </Card>
+
+    
 
     <Typography variant="h4" component="h6" gutterBottom style={{ textAlign: 'center', marginTop:'20px' }}>
         POST PUBBLICATI DA {user.u_name.toUpperCase()}

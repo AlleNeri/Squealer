@@ -36,7 +36,7 @@ function NewPost({ modalOpen, setModalOpen }) {
 
   useEffect(() => {
     if (token) {
-      fetch('http://localhost:8080/posts/my', {
+      fetch(`${import.meta.env.VITE_DEFAULT_URL}/posts/my`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -66,7 +66,7 @@ function NewPost({ modalOpen, setModalOpen }) {
   useEffect(() => {
     if (loggedIn) {
       const fetchMyChannels = async () => {
-        const response = await fetch('http://localhost:8080/channels/my', {
+        const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels/my`, {
           method: 'GET',
           headers: {
             'Authorization': token,
@@ -159,7 +159,7 @@ function NewPost({ modalOpen, setModalOpen }) {
       popular: false,
     };
   
-    const postResponse = await fetch('http://localhost:8080/posts', {
+    const postResponse = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/posts`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -183,7 +183,7 @@ function NewPost({ modalOpen, setModalOpen }) {
       imageData.append('image', image);
       imageData.append('postId', newPost._id); // Assuming the post ID is available as _id
   
-      const imageResponse = await fetch('http://localhost:8080/media/image', {
+      const imageResponse = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/media/image`, {
         method: 'PUT',
         headers: {
           'Authorization': token,

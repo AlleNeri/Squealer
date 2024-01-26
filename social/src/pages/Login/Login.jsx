@@ -35,7 +35,7 @@ function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const response = await fetch("http://localhost:8080/users/login", {
+    const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
