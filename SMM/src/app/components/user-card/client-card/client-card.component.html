@@ -2,7 +2,7 @@
   <nz-card
     class="user-card"
     style="width: 100%;"
-    [nzActions]="[friends, characters, quote]"
+    [nzActions]="[characters, quote]"
   >
     <nz-card-meta
       [nzAvatar]="avatarTemplate"
@@ -14,13 +14,6 @@
 
 <ng-template #avatarTemplate>
   <nz-avatar nzSrc="{{ client.image && backendComunication.at('media/image/'+client.image) }}" [nzSize]="'large'"></nz-avatar>
-</ng-template>
-
-<ng-template #friends>
-  <nz-statistic
-    [nzValue]="client.friendsNumber"
-    [nzTitle]="'Amici'"
-  ></nz-statistic>
 </ng-template>
 
 <ng-template #characters>
@@ -43,11 +36,10 @@
 <ng-template #quote>
   <span
     nz-popover
-    nzPopoverPlacement="bottomRight"
+    nzPopoverPlacement="bottom"
     nzPopoverTitle="Quota giornaliera"
     [nzPopoverMouseLeaveDelay]="0.3"
     [nzPopoverContent]="quoteContent"
-    [nzPopoverArrowPointAtCenter]="true"
   >
     <nz-statistic
       [nzValue]="client.quoteNumber?.dayly"
