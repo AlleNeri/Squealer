@@ -109,10 +109,10 @@ postRoute.delete("/:id", (req: Request, res: Response) => {
 //TODO: decide if the view should be added only from logged users or not(maybe check in the teacher's requirements)
 postRoute.patch("/:id/visualize", Auth.authorize, (req: Request, res: Response) => {
 	PostSchema.findById(req.params.id)
-		.then((post: Post | null) => {
+		.then(async (post: Post | null) => {
 			if(!post) res.status(404).json({ msg: "Post not found" });
 			else {
-				post.addView(req.user?._id);
+				await post.addView(req.user?._id);
 				const result=post.save();
 				if(!result) res.status(404).json({ msg: "Post not saved" });
 				else res.status(200).json({ msg: "Post updated", post: post });
@@ -128,7 +128,7 @@ postRoute.patch("/:id/visualize", Auth.authorize, (req: Request, res: Response) 
 //a body is neaded with the reaction field: { reaction: -2 | -1 | 1 | 2 }
 postRoute.patch("/:id/react", Auth.authorize, (req: Request, res: Response) => {
 	if(!req.body.reaction) res.status(400).json({ msg: "Bad request, no reaction provided" });
-	else if(Math.abs(req.body.reaction) > 2) res.status(400).json({ msg: "Bad request, reaction not valid" });
+	else if(Math.abs(req.body.reaction) > 2 || req.body.reaction == 0) res.status(400).json({ msg: "Bad request, reaction not valid" });
 
 	PostSchema.findById(req.params.id)
 		.then((post: Post | null) => {
