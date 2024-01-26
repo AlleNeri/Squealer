@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardContent, Typography, CardActions, Button } from '@material-ui/core';
+import { Card, CardContent, Typography, CardActions, Button, Avatar } from '@material-ui/core';
 
 const SmmPage = () => {
   const [smms, setSmms] = useState([]);
@@ -8,7 +8,7 @@ const SmmPage = () => {
 
   const handleSelect = async (smmId) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/smms/select/${smmId}`, {
+      const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/smms/select/${smmId}`, {
         method: 'PUT',
         headers: {
           'Authorization': token,
@@ -28,7 +28,7 @@ const SmmPage = () => {
 
   const handleRevoke = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/smms/delete`, {
+      const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/smms/delete`, {
         method: 'DELETE',
         headers: {
           'Authorization': token,
@@ -62,6 +62,7 @@ const SmmPage = () => {
         return response.json();
       })
       .then((data) => {
+        console.log(data);
         setSmms(data);
       })
       .catch((error) => {
@@ -70,33 +71,31 @@ const SmmPage = () => {
   }, []);
 
   return (
-    <div>
-      {smms.map((smm) => (
-        <Card key={smm._id}>
-          <CardContent>
-            <Typography variant="subtitle1" component="div">
-              <b>Nome:</b> {smm.name.first}
-            </Typography>
-            <Typography variant="subtitle1" component="div">
-              <b>Cognome:</b> {smm.name.last}
-            </Typography>
-            <Typography variant="subtitle1" component="div">
-              <b>Descrizione:</b> {smm.description}
-            </Typography>
-          </CardContent>
-          <CardActions>
-            {selectedSmm === smm._id ? (
-              <Button variant="contained" color="secondary" onClick={handleRevoke}>
-                REVOCA SMM
-              </Button>
-            ) : (
-              <Button variant="contained" color="primary" onClick={() => handleSelect(smm._id)}>
-                Scegli SMM
-              </Button>
-            )}
-          </CardActions>
-        </Card>
-      ))}
+  <div>
+    {smms.map((smm) => (
+      <Card key={smm._id}>
+        <CardContent>
+          <Avatar alt="SMM Profile" src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${smm.img}`} />
+          <Typography variant="subtitle1" component="div">
+            <b>Nome:</b> {smm.name.first}
+          </Typography>
+          <Typography variant="subtitle1" component="div">
+            <b>Cognome:</b> {smm.name.last}
+          </Typography>
+        </CardContent>
+        <CardActions>
+          {selectedSmm === smm._id ? (
+            <Button variant="contained" color="secondary" onClick={handleRevoke}>
+              REVOCA SMM
+            </Button>
+          ) : (
+            <Button variant="contained" color="primary" onClick={() => handleSelect(smm._id)}>
+              Scegli SMM
+            </Button>
+          )}
+        </CardActions>
+      </Card>
+    ))}
     </div>
   );
 };
