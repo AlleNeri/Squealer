@@ -27,10 +27,6 @@ export default class Client {
     return this.user?.email;
   }
 
-  public get friendsNumber(): number | undefined {
-    return this.user?.friends?.length;
-  }
-
   public get image(): string | undefined {
     return this.user?.img;
   }
