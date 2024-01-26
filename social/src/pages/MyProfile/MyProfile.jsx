@@ -15,13 +15,14 @@ const MyProfile = () => {
     const {loggedIn} = useContext(LoginContext);
     const [anchorEl, setAnchorEl] = useState(null);
     const [openDialog, setOpenDialog] = useState(false);
+    const [image, setImage] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
-        if(user && user.imgId){
-            setUser(prevState => ({ ...prevState, img: `${import.meta.env.VITE_DEFAULT_URL}/media/image/${user.imgId}` }));
+        if (image) {
+          setUser(prevState => ({ ...prevState, img: `${import.meta.env.VITE_DEFAULT_URL}/media/image/${image}` }));
         }
-    }, [user]);
+      }, [image]);
 
     useEffect(() => {
         if (token) {
@@ -40,7 +41,6 @@ const MyProfile = () => {
           })
           .then(data => {
             setPosts(data);
-            console.log(data);
           })
           .catch((error) => {
             console.error('Error:', error);
@@ -49,7 +49,7 @@ const MyProfile = () => {
         } else {
           navigate('/login');
         }
-    }, [loggedIn, posts._id]);
+    }, [loggedIn, posts]);
 
     const handleChangeImage = () => {
         // Simula un click sull'input del file quando l'utente clicca su "Cambia immagine"
@@ -113,6 +113,7 @@ const MyProfile = () => {
     const handleFileChange = (event) => {
         if (event.target.files && event.target.files.length > 0) {
             const file = event.target.files[0];
+            setImage(file);
             const formData = new FormData();
             formData.append('image', file);
           

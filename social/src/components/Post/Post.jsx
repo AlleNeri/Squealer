@@ -90,43 +90,37 @@ export default function Post({post}) {
     }, [content]);
 
     const handleReaction = async (reaction) => {
-        let previousValue = null;
-        if (userReaction) {
-          previousValue = userReaction.value;
-          updateReactionCounts(previousValue, -1);
-        }
-      
-        if (previousValue === reaction) {
-          setUserReaction(null);
-        } else {
-          setUserReaction({ user_id: userID, value: reaction });
-          updateReactionCounts(reaction, 1);
-        }
-
-        try {
-          const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/posts/${post._id}/react`, {
-            method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': token
-            },
-            body: JSON.stringify({ reaction })
-          });
-      
-          if (!response.ok) {
-            console.log(response);
-            throw new Error('Error reacting to post');
-          }
-          setReactionCounts(prevCounts => ({
-            ...prevCounts,
-            [reaction]: prevCounts[reaction] + 1,
-          }));
-          const data = await response.json();
-          console.log(data);
-        } catch (error) {
-          console.error('Error reacting to post', error);
-        }
-      };
+      let previousValue = null;
+      if (userReaction) {
+        previousValue = userReaction.value;
+        updateReactionCounts(previousValue, -1);
+      }
+    
+      if (previousValue === reaction) {
+        setUserReaction(null);
+        // Send a request to remove the reaction
+        await fetch(`${import.meta.env.VITE_DEFAULT_URL}/posts/${post._id}/visualize`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token
+          },
+          body: JSON.stringify({ reaction: null }),
+        });
+      } else {
+        setUserReaction({ user_id: userID, value: reaction });
+        updateReactionCounts(reaction, 1);
+        // Send a request to add the reaction
+        await fetch(`${import.meta.env.VITE_DEFAULT_URL}/posts/${post._id}/react`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token
+          },
+          body: JSON.stringify({ reaction }),
+        });
+      }
+    };
 
     return (
     <div style={{ display: 'flex', justifyContent: 'center' }}>

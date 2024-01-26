@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card, CardContent, Box, Avatar, Typography } from '@material-ui/core';
 import Post from '../../components/Post/Post';
+import { PostsContext } from '../../context/PostsContext/PostsContext';
 
 const AllChannels = () => {
   const { id } = useParams();
   const [channel, setChannel] = useState(null);
-  const [posts, setPosts] = useState([]);
+  const {posts, setPosts} = useContext(PostsContext);
   let reversedPosts = [...posts].reverse();
   const token = localStorage.getItem('token');
-  
+
   useEffect(() => {
     fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels/${id}`)
       .then(response => {
@@ -24,7 +25,7 @@ const AllChannels = () => {
       .catch(error => {
         console.error('There was an error!', error);
       });
-  }, [id]);
+  }, [id, posts]);
 
   useEffect(() => {
     // Fetch posts
@@ -41,7 +42,7 @@ const AllChannels = () => {
       .catch(error => {
         console.error('There was an error!', error);
       });
-  }, [id, posts.length, token, posts._id]); // Add posts.length as a dependency
+  }, [id, posts]); // Add posts.length as a dependency
 
   if (!channel) {
     return <div>Loading...</div>;
