@@ -127,6 +127,9 @@ postRoute.patch("/:id/visualize", Auth.authorize, (req: Request, res: Response) 
 //react to a post
 //a body is neaded with the reaction field: { reaction: -2 | -1 | 1 | 2 }
 postRoute.patch("/:id/react", Auth.authorize, (req: Request, res: Response) => {
+	if(!req.body.reaction) res.status(400).json({ msg: "Bad request, no reaction provided" });
+	else if(Math.abs(req.body.reaction) > 2) res.status(400).json({ msg: "Bad request, reaction not valid" });
+
 	PostSchema.findById(req.params.id)
 		.then((post: Post | null) => {
 			if(!post) res.status(404).json({ msg: "Post not found" });

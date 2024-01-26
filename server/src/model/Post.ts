@@ -140,29 +140,33 @@ PostSchema.virtual("views").get(function(): number {
 	return this.reactions.length;
 });
 
-PostSchema.methods.addView=function(user_id: string): void {
+PostSchema.methods.addView = function(user_id: string): void {
 	//check if the user has already seen the post
 	if(this.reactions.findIndex((reaction: any)=> reaction.user_id.toString() == user_id) != -1) return;
 	//add the user to the reactions
 	this.addReaction(user_id, 0);
 	//this.reactions.push({ user_id: user_id, value: 0 });
 	//check only if the popular and unpopular values decrease because a view can't increase them
-	if(this.getPosReactions() < (this.getViews() * CM_COEFFICIENT)) this.removePopular();
-	if(this.getNegReactions() < (this.getViews() * CM_COEFFICIENT)) this.removeUnpopular();
+	if(this.posReaction < (this.views * CM_COEFFICIENT)) this.removePopular();
+	if(this.negReaction < (this.views * CM_COEFFICIENT)) this.removeUnpopular();
 	if(!this.isControversial()) this.removeControversial();
 };
 
-PostSchema.methods.addReaction=function(user_id: string, reaction: number): boolean {
+PostSchema.methods.addReaction = function(user_id: string, reaction: number): boolean {
+	if(Math.abs(reaction) > 2) return false;
 	//check if the user has already reacted to the post
 	let index: number=this.reactions.findIndex((reaction: any)=> reaction.user_id.toString() == user_id);
 	if(index != -1) this.reactions[index].value=reaction;
 	else this.reactions.push({user_id: user_id, value: reaction});
-	if(Math.abs(reaction) > 2) return false;
 	//check only if the popular and unpopular values increase because a reaction can't decrease them
-	if(this.getPosReactions() > (this.getViews() * CM_COEFFICIENT)) this.addPopular();
-	if(this.getNegReactions() > (this.getViews() * CM_COEFFICIENT)) this.removePopular();
-	const channel: Channel=ChannelSchema.findById(this.posted_on);
-	if(!channel.private && this.isControversial()) this.addControversial();
+	if(this.posReaction > (this.views * CM_COEFFICIENT)) this.addPopular();
+	if(this.negReaction > (this.views * CM_COEFFICIENT)) this.removePopular();
+	ChannelSchema.findById(this.posted_on)
+		.then((channel: Channel | null)=> {
+			if(!channel) return;
+			if(channel.private) return;
+			if(this.isControversial()) this.addControversial();
+		});
 	return true;
 };
 
