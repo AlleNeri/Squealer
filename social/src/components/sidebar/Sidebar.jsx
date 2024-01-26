@@ -67,7 +67,7 @@ const Sidebar = () => {
   
 useEffect(() => {
   // Deselect the channel when the page changes, unless it's the selected channel
-  if (location.pathname !== `/MyChannels/${selectedChannel}`) {
+  if (location.pathname !== `/AllChannels/${selectedChannel}`) {
     setSelectedChannel(null);
     localStorage.removeItem('selectedChannel'); // Remove the selected channel ID from local storage
   }
@@ -165,7 +165,7 @@ useEffect(() => {
                         myChannels.map((channel) => (
                           <NavLink
                             key={channel._id}
-                            to={`/MyChannels/${channel._id}`}
+                            to={`/AllChannels/${channel._id}`}
                             activeClassName="activeClicked"
                             style={{ textDecoration: 'none' }}
                             onClick={() => handleChannelClick(channel._id)}

@@ -6,7 +6,6 @@ import RegisterPage from './pages/Register/Register';
 import { LoginContext } from "./context/LoginContext/LoginContext";
 import MyProfile from './pages/MyProfile/MyProfile';
 import AllChannels from './pages/AllChannels/AllChannels';
-import MyChannels from './pages/MyChannels/MyChannels';
 import Smm from './pages/Smm/Smm';
 import { PostsContext } from './context/PostsContext/PostsContext';
 
@@ -34,10 +33,6 @@ const routes = createBrowserRouter([
 			{
 				path: '/AllChannels/:id',
 				element: <AllChannels />
-			},
-			{
-				path: '/MyChannels/:id',
-				element: <MyChannels />
 			},
 			{
 				path: '/Smm',

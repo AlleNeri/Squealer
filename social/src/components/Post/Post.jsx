@@ -22,7 +22,7 @@ export default function Post({post}) {
     const userID = localStorage.getItem('userId');
     const [userReaction, setUserReaction] = useState(post.reactions.find(reaction => reaction.user_id === userID));
     if(!loggedIn) { localStorage.removeItem('userId'); }
-  /*
+  {/*
     useEffect(() => {
         const visualizePost = async () => {
           try {
@@ -47,8 +47,8 @@ export default function Post({post}) {
           visualizePost();
         }
     }, []);
-*/
 
+  */}
     const updateReactionCounts = (value, increment) => {
       setReactionCounts(prevCounts => {
         switch (value) {
@@ -168,13 +168,13 @@ export default function Post({post}) {
                           <CountUp end={reactionCounts.verySatisfied} />
                       </IconButton> 
                     </Grid>
-                    {/* 
+                    {
                     <Grid item>
                         <Typography variant="body2" color="textSecondary">
-                            Views: {views}
+                            Views: {views || 0}
                         </Typography>
                     </Grid>
-                    */}
+                    }
                 </Grid>
             </CardContent>
         </Card>
