@@ -155,7 +155,7 @@ function NewPost({ modalOpen, setModalOpen }) {
         position: position || undefined,
       },
       keywords: keywords || ['Default keyword'],
-      posted_on: channel,
+      posted_on: channel || null,
       popular: false,
     };
   

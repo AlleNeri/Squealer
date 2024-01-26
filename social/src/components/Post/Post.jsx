@@ -20,8 +20,9 @@ export default function Post({post}) {
         verySatisfied: reactions.filter(reaction => reaction.value === 2).length,
     });
     const userID = localStorage.getItem('userId');
-    const userReaction = post.reactions.find(reaction => reaction.user_id === userID);
-/*
+    const [userReaction, setUserReaction] = useState(post.reactions.find(reaction => reaction.user_id === userID));
+    if(!loggedIn) { localStorage.removeItem('userId'); }
+  /*
     useEffect(() => {
         const visualizePost = async () => {
           try {
@@ -46,7 +47,25 @@ export default function Post({post}) {
           visualizePost();
         }
     }, []);
-    */
+*/
+
+    const updateReactionCounts = (value, increment) => {
+      setReactionCounts(prevCounts => {
+        switch (value) {
+          case -2:
+            return { ...prevCounts, veryDissatisfied: prevCounts.veryDissatisfied + increment };
+          case -1:
+            return { ...prevCounts, dissatisfied: prevCounts.dissatisfied + increment };
+          case 1:
+            return { ...prevCounts, satisfied: prevCounts.satisfied + increment };
+          case 2:
+            return { ...prevCounts, verySatisfied: prevCounts.verySatisfied + increment };
+          default:
+            return prevCounts;
+        }
+      });
+    };
+
     useEffect(() => {
         if(content && content.position){
             if (!mapRef.current) return;
@@ -71,6 +90,19 @@ export default function Post({post}) {
     }, [content]);
 
     const handleReaction = async (reaction) => {
+        let previousValue = null;
+        if (userReaction) {
+          previousValue = userReaction.value;
+          updateReactionCounts(previousValue, -1);
+        }
+      
+        if (previousValue === reaction) {
+          setUserReaction(null);
+        } else {
+          setUserReaction({ user_id: userID, value: reaction });
+          updateReactionCounts(reaction, 1);
+        }
+
         try {
           const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/posts/${post._id}/react`, {
             method: 'PATCH',
@@ -119,24 +151,24 @@ export default function Post({post}) {
                 <Divider style={{ margin: '20px 0' }} />
                 <Grid container justify="space-between">
                     <Grid item>
-                    <IconButton onClick={() => handleReaction(-2)} disabled={!loggedIn}>
-                        <SentimentVeryDissatisfied style={{ color: userReaction && userReaction.value === -2 ? 'red' : 'grey' }} />
-                        <CountUp end={reactionCounts.veryDissatisfied} />
-                    </IconButton>
-                    <IconButton onClick={() => handleReaction(-1)} disabled={!loggedIn}>
-                        <SentimentDissatisfied style={{ color: userReaction && userReaction.value === -1 ? 'orange' : 'grey' }} />
-                        <CountUp end={reactionCounts.dissatisfied} />
-                    </IconButton>
-                    <IconButton onClick={() => handleReaction(1)} disabled={!loggedIn}>
-                        <SentimentSatisfied style={{ color: userReaction && userReaction.value === 1 ? 'lightgreen' : 'grey' }} />
-                        <CountUp end={reactionCounts.satisfied} />
-                    </IconButton>
-                    <IconButton onClick={() => handleReaction(2)} disabled={!loggedIn}>
-                        <SentimentVerySatisfied style={{ color: userReaction && userReaction.value === 2 ? 'green' : 'grey' }} />
-                        <CountUp end={reactionCounts.verySatisfied} />
-                    </IconButton>
+                      <IconButton onClick={() => handleReaction(-2)} disabled={!loggedIn}>
+                          <SentimentVeryDissatisfied style={{ color: userReaction && userReaction.value === -2 ? 'red' : 'grey' }} />
+                          <CountUp end={reactionCounts.veryDissatisfied} />
+                      </IconButton>
+                      <IconButton onClick={() => handleReaction(-1)} disabled={!loggedIn}>
+                          <SentimentDissatisfied style={{ color: userReaction && userReaction.value === -1 ? 'orange' : 'grey' }} />
+                          <CountUp end={reactionCounts.dissatisfied} />
+                      </IconButton>
+                      <IconButton onClick={() => handleReaction(1)} disabled={!loggedIn}>
+                          <SentimentSatisfied style={{ color: userReaction && userReaction.value === 1 ? 'lightgreen' : 'grey' }} />
+                          <CountUp end={reactionCounts.satisfied} />
+                      </IconButton>
+                      <IconButton onClick={() => handleReaction(2)} disabled={!loggedIn}>
+                          <SentimentVerySatisfied style={{ color: userReaction && userReaction.value === 2 ? 'green' : 'grey' }} />
+                          <CountUp end={reactionCounts.verySatisfied} />
+                      </IconButton> 
                     </Grid>
-                    {/*
+                    {/* 
                     <Grid item>
                         <Typography variant="body2" color="textSecondary">
                             Views: {views}

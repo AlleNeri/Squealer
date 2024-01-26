@@ -23,7 +23,7 @@ export default function ButtonAppBar({setModalOpen}) {
   const handleLogout = () => {
     // Clear the token from localStorage
     localStorage.removeItem('token');
-
+    localStorage.removeItem('userId');
     // Update the loggedIn state
     setLoggedIn(false);
 
