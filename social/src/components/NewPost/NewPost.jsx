@@ -35,35 +35,6 @@ function NewPost({ modalOpen, setModalOpen }) {
   }, [postType]);
 
   useEffect(() => {
-    if (token) {
-      fetch(`${import.meta.env.VITE_DEFAULT_URL}/posts/my`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': token,
-        },
-      })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Not logged in');
-        }
-        return response.json();
-      })
-      .then(data => {
-        setPosts(data);
-        console.log(data);
-        navigate('/Home');
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-        navigate('/login');
-      });
-    } else {
-      navigate('/login');
-    }
-  }, [token]);
-
-  useEffect(() => {
     if (loggedIn) {
       const fetchMyChannels = async () => {
         const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels/my`, {

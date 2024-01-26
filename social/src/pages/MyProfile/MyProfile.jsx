@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, Typography, Avatar, Box, Menu, MenuItem, Dialog, DialogContent, Button } from '@material-ui/core';
 import { PostsContext } from '../../context/PostsContext/PostsContext';
+import { LoginContext } from '../../context/LoginContext/LoginContext';
 import MyPosts from '../MyPosts/MyPosts';
 import './myProfile.css';
 
@@ -11,6 +12,7 @@ const MyProfile = () => {
     const fileInput = useRef(null);
     const token = localStorage.getItem('token');
     const { posts, setPosts } = useContext(PostsContext);
+    const {loggedIn} = useContext(LoginContext);
     const [anchorEl, setAnchorEl] = useState(null);
     const [openDialog, setOpenDialog] = useState(false);
     const navigate = useNavigate();
@@ -20,6 +22,34 @@ const MyProfile = () => {
             setUser(prevState => ({ ...prevState, img: `${import.meta.env.VITE_DEFAULT_URL}/media/image/${user.imgId}` }));
         }
     }, [user]);
+
+    useEffect(() => {
+        if (token) {
+          fetch(`${import.meta.env.VITE_DEFAULT_URL}/posts/my`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': token,
+            },
+          })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Not logged in');
+            }
+            return response.json();
+          })
+          .then(data => {
+            setPosts(data);
+            console.log(data);
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            navigate('/login');
+          });
+        } else {
+          navigate('/login');
+        }
+    }, [loggedIn, posts._id]);
 
     const handleChangeImage = () => {
         // Simula un click sull'input del file quando l'utente clicca su "Cambia immagine"

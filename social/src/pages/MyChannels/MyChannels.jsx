@@ -8,7 +8,7 @@ const MyChannels = () => {
   const [channel, setChannel] = useState(null);
   const [posts, setPosts] = useState([]);
   let reversedPosts = [...posts].reverse();
-
+  const token = localStorage.getItem('token');
   useEffect(() => {
     fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels/${id}`)
       .then(response => {
@@ -40,7 +40,7 @@ const MyChannels = () => {
       .catch(error => {
         console.error('There was an error!', error);
       });
-  }, [id, posts.length]); // Add posts.length as a dependency
+  }, [id, posts.length, posts._id, token]); // Add posts.length as a dependency
 
   if (!channel) {
     return <div>Loading...</div>;
