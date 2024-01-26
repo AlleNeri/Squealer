@@ -13,7 +13,8 @@ export default interface IUser {
   img?: string;
   b_date?: Date;
   appartenence?: string;
-  friends?: string[];
+  smm?: string;
+  client?: string[];
 };
 
 export interface IChar {

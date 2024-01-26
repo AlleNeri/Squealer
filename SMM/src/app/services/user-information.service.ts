@@ -14,19 +14,19 @@ import { BackendComunicationService } from './backend-comunication.service';
 export class UserInformationService {
   private userInformation?: IUser;
   @Output() public userInformationEvent: EventEmitter<IUser>;
-  private _clients: Client[];
+  private _client: Client[];
 
   constructor(private auth: AuthenticationService, private backendComunication: BackendComunicationService) {
-    this._clients=[];
+    this._client=[];
     this.userInformationEvent=new EventEmitter<IUser>();
     this.auth.logInEvent.subscribe(async (loggedInUser: ILoggedUser)=>  this.getUserInfo(loggedInUser.id, loggedInUser.jwt.token));
     if(this.auth.isLoggedIn() && this.userInformation===undefined) this.getUserInfo(this.auth.userId!, this.auth.token!);
     this.userInformationEvent.subscribe((user: IUser)=> {
-      this._clients=[];
-      if(user && user.friends) {
-        for(const friend of user.friends) {
-          if(friend) this.backendComunication.get(`users/${friend}`, this.auth.token!)
-            .subscribe((clientInfo: any)=> this._clients.push(new Client(clientInfo as IUser)));
+      this._client=[];
+      if(user && user.client) {
+        for(const c of user.client) {
+          if(c) this.backendComunication.get(`users/${c}`, this.auth.token!)
+            .subscribe((clientInfo: any)=> this._client.push(new Client(clientInfo as IUser)));
         }
       }
     });
@@ -45,7 +45,7 @@ export class UserInformationService {
   }
 
   public get clients(): Client[] {
-    return this._clients;
+    return this._client;
   }
 }
 
