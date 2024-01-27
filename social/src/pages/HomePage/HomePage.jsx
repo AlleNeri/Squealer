@@ -14,13 +14,9 @@ function HomePage() {
             'Authorization': token
           }
         };
-
-        // Get my posts
-        const myPostsResponse = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/posts/my`, options);
-        const myPosts = await myPostsResponse.json();
-
+        
         // Get my channels
-        const myChannelsResponse = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels/my`, options);
+        const myChannelsResponse = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels/all`);
         const myChannels = await myChannelsResponse.json();
 
         // Get all posts of my channels
@@ -33,17 +29,7 @@ function HomePage() {
         const allChannelsPosts = channelsPosts.flat();
         
         // Combine my posts and channel posts
-        let allPosts = [...myPosts, ...allChannelsPosts];
-        
-        // Remove duplicates
-        const ids = new Set();
-        allPosts = allPosts.filter(post => {
-            if (!ids.has(post._id)) {
-            ids.add(post._id);
-            return true;
-            }
-            return false;
-        });
+        let allPosts = [...allChannelsPosts];
         
         // Sort by date (most recent first)
         allPosts.sort((a, b) => new Date(b.date) - new Date(a.date));

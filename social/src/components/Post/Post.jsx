@@ -1,14 +1,16 @@
 import React, { useEffect, useRef, useContext, useState } from 'react';
-import { Card, CardContent, Divider, Typography, IconButton, Grid } from '@material-ui/core';
+import { Card, CardContent, Divider, Typography, IconButton, Grid, Avatar } from '@material-ui/core';
 import L, {Icon} from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import markerIconPng from "leaflet/dist/images/marker-icon.png";
 import { SentimentVeryDissatisfied, SentimentDissatisfied, SentimentSatisfied, SentimentVerySatisfied } from '@material-ui/icons';
 import { LoginContext } from '../../context/LoginContext/LoginContext';
 import CountUp from 'react-countup';
+import {Link} from 'react-router-dom';
 
 export default function Post({post}) {
-    const {title, content, keywords, reactions} = post;
+    const {title, content, keywords, reactions, posted_by} = post;
+    const [user, setUser] = useState(null);
     const mapRef = useRef(); // Assign useRef to a variable
     const token = localStorage.getItem('token');
     const { loggedIn } = useContext(LoginContext);
@@ -67,6 +69,21 @@ export default function Post({post}) {
     };
 
     useEffect(() => {
+      const fetchUser = async () => {
+          const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/${posted_by}`, {
+              headers: {
+                  'Authorization': token,
+                  'Content-Type': 'application/json',
+              },
+          });
+          const data = await response.json();
+          setUser(data);
+      };
+
+      fetchUser();
+    }, [posted_by]);
+
+    useEffect(() => {
         if(content && content.position){
             if (!mapRef.current) return;
             // If the map was already initialized, return early
@@ -99,7 +116,7 @@ export default function Post({post}) {
       if (previousValue === reaction) {
         setUserReaction(null);
         // Send a request to remove the reaction
-        await fetch(`${import.meta.env.VITE_DEFAULT_URL}/posts/${post._id}/visualize`, {
+        await fetch(`${import.meta.env.VITE_DEFAULT_URL}/posts/${post?._id}/visualize`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
@@ -111,7 +128,7 @@ export default function Post({post}) {
         setUserReaction({ user_id: userID, value: reaction });
         updateReactionCounts(reaction, 1);
         // Send a request to add the reaction
-        await fetch(`${import.meta.env.VITE_DEFAULT_URL}/posts/${post._id}/react`, {
+        await fetch(`${import.meta.env.VITE_DEFAULT_URL}/posts/${post?._id}/react`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
@@ -126,6 +143,13 @@ export default function Post({post}) {
     <div style={{ display: 'flex', justifyContent: 'center' }}>
         <Card style={{ margin: '20px', backgroundColor: '#f5f5f5', borderRadius: '10px', width:'600px' }}>
             <CardContent>
+                <div>
+                <Avatar alt="Profile" src={user && user.img ? `${import.meta.env.VITE_DEFAULT_URL}/media/image/${user.img}` : undefined} >
+                    {user?.u_name.charAt(0).toUpperCase()}
+                </Avatar>
+                {user?.u_name}
+                </div>
+                <Divider style={{ margin: '20px 0' }} />
                 <Typography variant="h5" component="h2">
                     {title}
                 </Typography>
