@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import Header from '../Header/Header';
 import NewPost from '../NewPost/NewPost';
 import Sidebar from '../Sidebar/Sidebar';

@@ -61,7 +61,7 @@ function Login() {
       const user = data.id;
       localStorage.setItem('user', JSON.stringify(user));
       console.log('token al login', token);
-      navigate('/Home');
+      navigate('/HomePage');
     } else {
       console.log("login failed!");
     }

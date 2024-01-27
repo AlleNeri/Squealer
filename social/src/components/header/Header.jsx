@@ -42,7 +42,7 @@ export default function ButtonAppBar({setModalOpen}) {
   };
 
   useEffect(() => {
-    if (location.pathname === '/Home') {
+    if (location.pathname === '/HomePage') {
       setIsProfileClicked(false);
     }
   }, [location]);
@@ -52,7 +52,7 @@ export default function ButtonAppBar({setModalOpen}) {
         <Toolbar className="Toolbar">
           
           <div>
-            <Link to="/Home" className="Link">
+            <Link to="/HomePage" className="Link">
               <Button className='button'>HOME</Button>
             </Link>
           </div>
