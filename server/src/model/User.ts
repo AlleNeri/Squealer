@@ -68,6 +68,17 @@ UserSchema.virtual('isNormal').get(function() {
 	return this.type===UserType.NORMAL;
 });
 
+UserSchema.virtual('isBot').get(function() {
+	return this.type===UserType.BOT;
+});
+
+UserSchema.virtual('isSubscribedTp').get(function(id: string) {
+	return this.appartenence.reduce((accumulatior: boolean, currVal: mongoose.Types.ObjectId)=> {
+		if(accumulatior) return true;
+		else return currVal.toString()==id;
+	});
+});
+
 UserSchema.methods.isClient=function(user_id: string): boolean {
 	if(!this.isSMM) return false;
 	else return this.client.reduce((accumulatior: boolean, currVal: mongoose.Types.ObjectId)=> {

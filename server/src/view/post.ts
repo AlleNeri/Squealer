@@ -11,7 +11,21 @@ export const postRoute: Router=Router();
 postRoute.get("/", Auth.authorize, (req: Request, res: Response) => {
 	if(req.query.of)
 		PostSchema.find({ posted_by: req.query.of })
-			.then((posts: Post[]) => res.status(200).json(posts))
+			.then((posts: Post[]) => {
+				//check if the post is public or not
+				const filteredPosts: Post[] = posts.filter(async (post: Post) => {
+					return await ChannelSchema.findById(post.posted_on)
+						.then((channel: Channel | null) => {
+							if(!channel) return false;
+							else if(!channel.private) return true;
+							//if the channel is private, check if the user is subscribed to it
+							else return req.user!.isSubscribed(channel._id);
+						})
+						.catch((_: Error) => false);
+				});
+				console.log(filteredPosts);
+				res.status(200).json(filteredPosts);
+			})
 			.catch((err: Error) => res.status(400).json({ msg: "Posts not found", err: err }));
 	else if(req.user!.type === UserType.MOD)
 		PostSchema.find()
