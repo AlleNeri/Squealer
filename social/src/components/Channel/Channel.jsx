@@ -1,5 +1,5 @@
-import React, { useState, useContext } from 'react';
-import { Box, Button, TextField, Typography, Dialog } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Button, TextField, Typography, Dialog, FormControlLabel, Checkbox } from '@mui/material';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
@@ -24,6 +24,7 @@ const useStyles = makeStyles((theme) => ({
 const Channel = ({ isOpen, onClose }) => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
+    const [isPrivate, setPrivate] = useState(false);
     const token = localStorage.getItem('token');
     const classes = useStyles();
 
@@ -41,7 +42,8 @@ const Channel = ({ isOpen, onClose }) => {
                     channel: {
                         name,
                         description,
-                        owners: [], // This will be filled in by the server
+                        private: isPrivate,
+                        owners: [],
                     },
                 }),
             });
@@ -49,8 +51,8 @@ const Channel = ({ isOpen, onClose }) => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-
             const data = await response.json();
+            console.log(data);
             onClose();
         } catch (error) {
             console.error('Error creating channel', error);
@@ -100,6 +102,17 @@ const Channel = ({ isOpen, onClose }) => {
                             margin="normal"
                         />
                     </Box>
+
+                    <FormControlLabel
+                        control={
+                        <Checkbox 
+                            checked={isPrivate} 
+                            onChange={(e) => setPrivate(e.target.checked)} 
+                            color="primary" 
+                        />
+                        }
+                        label="Private"
+                    />
 
                     <Box>
                         <Button className={classes.button} type="submit" variant="contained" color="primary">
