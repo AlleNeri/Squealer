@@ -38,7 +38,11 @@ const Profile = () => {
               },
             });
             const data = await response.json();
-            setUserPosts(data);
+            if (Array.isArray(data)) {
+              setUserPosts(data);
+            } else {
+              console.error('Expected data to be an array but received', data);
+            }
           };
     
           fetchUserPosts();
@@ -67,9 +71,7 @@ const Profile = () => {
             console.error('Error:', error);
             navigate('/login');
           });
-        } else {
-          navigate('/login');
-        }
+        } 
     }, [loggedIn, posts]);
 
     const handleChangeImage = () => {
@@ -262,6 +264,8 @@ const Profile = () => {
                     {user.name.last}
                 </Typography>
             </Box>
+            {id === currentUserId && 
+            <>
             <Box display="flex" alignItems="center">
                 <Typography variant="subtitle1" component="span" style={{ fontWeight: 'bold' }}>
                     Birth date:
@@ -315,25 +319,28 @@ const Profile = () => {
                 <Typography variant="body2" component="span" style={{ marginLeft: '8px' }}>
                     {user && user.quote && user.quote.dayly || 0}
                 </Typography>
-                </Box>
-                <Box display="flex" alignItems="center">
+              </Box>
+              <Box display="flex" alignItems="center">
                     <Typography variant="subtitle1" component="span" style={{ fontWeight: 'bold' }}>
                         Weekly quote:
                     </Typography>
                     <Typography variant="body2" component="span" style={{ marginLeft: '8px' }}>
                         {user && user.quote && user.quote.weekly || 0}
                     </Typography>
-                </Box>
-                <Box display="flex" alignItems="center">
+              </Box>
+              <Box display="flex" alignItems="center">
                     <Typography variant="subtitle1" component="span" style={{ fontWeight: 'bold' }}>
                         Monthly quote:
                     </Typography>
                     <Typography variant="body2" component="span" style={{ marginLeft: '8px' }}>
                         {user && user.quote && user.quote.monthly || 0}
                     </Typography>
-            </Box>
+              </Box>
+            </>
+          }
           </Box>
-          {user.type === 'vip' && (
+          
+          {user.type === 'vip' && id === currentUserId && (
             <Box ml={20}>
               <Button variant="contained" color="primary" onClick={() => navigate('/Smm')}>
                 Trova SMM
@@ -350,7 +357,7 @@ const Profile = () => {
         POST PUBBLICATI DA {user.u_name.toUpperCase()}
     </Typography>
     {id === currentUserId ? (
-            <MyPosts/>
+        <MyPosts/>
     ) : (
         userPosts.map(post => (
             <Post key={post._id} post={post} />

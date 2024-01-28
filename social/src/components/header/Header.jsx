@@ -3,6 +3,8 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from 'react-bootstrap/Button';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import HomeIcon from '@mui/icons-material/Home';
+import LogoutIcon from '@mui/icons-material/Logout';
 import './header.css';
 import { LoginContext } from "../../context/LoginContext/LoginContext";
 import { Link, useNavigate, useLocation } from 'react-router-dom';
@@ -52,9 +54,9 @@ export default function ButtonAppBar({setModalOpen}) {
         <Toolbar className="Toolbar">
           
           <div>
-            <Link to="/HomePage" className="Link">
-              <Button className='button'>HOME</Button>
-            </Link>
+          <Link to="/HomePage" className="Link">
+            <HomeIcon className='button' />
+          </Link>
           </div>
 
           <div>
@@ -79,7 +81,7 @@ export default function ButtonAppBar({setModalOpen}) {
 
             <Button className='button' onClick={handleNewPostClick}>NEW SQUEAL</Button>
             <Link to="/Login" className='Link'>
-              <Button className='button' onClick={handleLogout}>LOGOUT</Button>
+              <LogoutIcon className='button' onClick={handleLogout} />
             </Link>
 
             <Link to={`/Profile/${localStorage.getItem('userId')}`} className='Link'>
