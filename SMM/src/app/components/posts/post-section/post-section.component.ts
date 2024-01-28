@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 
-import { Post } from 'src/app/interfaces/post';
+import { IPost as Post } from 'src/app/interfaces/post';
 
 import { BackendComunicationService } from 'src/app/services/backend-comunication.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
@@ -30,7 +30,8 @@ export class PostSectionComponent implements OnInit, OnChanges {
   loadPosts(): void {
     if(this.authService.isLoggedIn())
       this.backendComunication.get(`posts/my?as=${this.client.id}`, this.authService.token!)
-        .subscribe((posts: Object)=> this.posts = posts as Post[])
+        //posts are sorted by date
+        .subscribe((posts: Object)=> this.posts = (posts as Post[]).sort((a: Post, b: Post)=> new Date(b.date).getTime() - new Date(a.date).getTime()));
   }
 
   popularPosts(): Post[] { return this.posts.filter((post: Post)=> post.popular); }

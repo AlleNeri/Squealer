@@ -1,6 +1,6 @@
 import { Component, OnChanges, OnInit } from '@angular/core';
 
-import IUser from 'src/app/interfaces/user';
+import { IUser } from 'src/app/interfaces/user';
 
 import Client from 'src/app/classes/client';
 

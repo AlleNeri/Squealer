@@ -27,11 +27,18 @@ import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzCommentModule } from 'ng-zorro-antd/comment';
 
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { IconDefinition } from '@ant-design/icons-angular';
 import {
-  InboxOutline
+  InboxOutline,
+  UserOutline,
+  EyeOutline,
+  LikeOutline,
+  DislikeOutline,
+  ExclamationCircleOutline,
+  HeartOutline,
 } from '@ant-design/icons-angular/icons';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -71,11 +78,18 @@ import it from '@angular/common/locales/it';
 import { PostSectionComponent } from './components/posts/post-section/post-section.component';
 import { UploadImageComponent } from './components/miscellaneous/upload-image/upload-image.component';
 import { MapComponent } from './components/miscellaneous/map/map.component';
+import { PostComponent } from './components/posts/post/post.component';
 
 registerLocaleData(it);
 
 const icons: IconDefinition[]= [
-  InboxOutline
+  InboxOutline,
+  UserOutline,
+  EyeOutline,
+  LikeOutline,
+  DislikeOutline,
+  ExclamationCircleOutline,
+  HeartOutline,
 ];
 
 @NgModule({
@@ -102,6 +116,7 @@ const icons: IconDefinition[]= [
     PostSectionComponent,
     UploadImageComponent,
     MapComponent,
+    PostComponent,
   ],
   imports: [
     BrowserModule,
@@ -133,6 +148,7 @@ const icons: IconDefinition[]= [
     NzInputModule,
     NzFormModule,
     NzDatePickerModule,
+    NzCommentModule,
     NzIconModule.forChild(icons),
   ],
   providers: [
