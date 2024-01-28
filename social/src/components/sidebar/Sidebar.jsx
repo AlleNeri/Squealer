@@ -8,7 +8,9 @@ import {
   CDBSidebarMenuItem,
 } from 'cdbreact';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Typography, Button, useMediaQuery } from '@material-ui/core'; // Import Typography from Material UI
+import { Typography } from '@material-ui/core';
+import Collapse from '@material-ui/core/Collapse';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import Channel from '../Channel/Channel';
 import { LoginContext } from '../../context/LoginContext/LoginContext';
@@ -23,20 +25,8 @@ const Sidebar = () => {
   const { loggedIn } = useContext(LoginContext);
   const location = useLocation();
   const token = localStorage.getItem('token');
-
-  const matches = useMediaQuery('(max-width:710px)');
-  const shouldHideButton = matches || isSidebarMinimized;
-  const buttonStyle = {
-    backgroundColor: '#007bff',
-    color: '#fff',
-    padding: '0.5rem 1rem',
-    cursor: 'pointer',
-    display: isSidebarMinimized ? 'none' : 'block', // Hide the button if the sidebar is minimized
-    '&:hover': {
-      backgroundColor: '#0062cc',
-    },
-  };
-
+  const [openExplore, setOpenExplore] = useState(false);
+  const [openMyChannels, setOpenMyChannels] = useState(false);
 
   const minimizeSidebar = () => {
     setSidebarMinimized(!isSidebarMinimized);
@@ -124,17 +114,19 @@ useEffect(() => {
             <CDBSidebarHeader prefix={<i className="fa fa-bars fa-large" onClick={minimizeSidebar}></i> }>
               <h6 className="text-decoration-none" style={{ color: 'inherit' }}>
                 CHANNELS
-                {loggedIn && <AddCircleIcon style={{ marginLeft: '10px', cursor: 'pointer' }} onClick={() => setChannelModalOpen(true)} />}
+                {loggedIn && <AddCircleIcon  style={{ marginLeft: '10px', cursor: 'pointer', color: '#54aedb' }} onClick={() => setChannelModalOpen(true)} />}
               </h6>
             </CDBSidebarHeader>
     
             <CDBSidebarContent className="sidebar-content" style={{ display: 'flex', flexDirection: 'column' }}>
-            <CDBSidebarMenu>
+            <CDBSidebarMenu style={{ overflowY: 'auto' }}>
               {!isSidebarMinimized ? (
-                <Typography variant="h6" style={{ fontWeight: 'bold' }}>
+                <Typography variant="h6" style={{ fontWeight: 'bold' }} onClick={() => setOpenExplore(!openExplore)}>
+                   <ExpandMoreIcon style={{ transform: openExplore ? 'rotate(0deg)' : 'rotate(-90deg)', transition: 'transform 0.3s' }}/>
                   <span style={{ marginLeft: '20px' }}>EXPLORE</span>
                 </Typography>
               ): <p></p>}
+              <Collapse in={openExplore}>
                 {allChannels.map(channel => (
                   <NavLink
                     key={channel._id}
@@ -152,13 +144,16 @@ useEffect(() => {
                     </CDBSidebarMenuItem>
                   </NavLink>
                 ))}
+              </Collapse>
                 {loggedIn ? (
                   <>
                   {!isSidebarMinimized ?(
-                    <Typography variant="h6" style={{ fontWeight: 'bold' }}>
+                    <Typography variant="h6" style={{ fontWeight: 'bold' }} onClick={() => setOpenMyChannels(!openMyChannels)}>
+                      <ExpandMoreIcon  style={{ transform: openMyChannels ? 'rotate(0deg)' : 'rotate(-90deg)', transition: 'transform 0.3s' }}/>
                       <span style={{ marginLeft: '20px' }}>MY CHANNELS</span>
                     </Typography>
                   ): <p></p>}
+                  <Collapse in={openMyChannels}>
                     {
                       myChannels.length > 0 ? (
                         myChannels.map((channel) => (
@@ -185,6 +180,7 @@ useEffect(() => {
                         )
                       )
                     }
+                  </Collapse>
                   </>
                 ) : <p></p>}
               </CDBSidebarMenu>      
