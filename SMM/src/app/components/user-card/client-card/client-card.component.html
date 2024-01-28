@@ -13,7 +13,11 @@
 </div>
 
 <ng-template #avatarTemplate>
-  <nz-avatar nzSrc="{{ client.image && backendComunication.at('media/image/'+client.image) }}" [nzSize]="'large'"></nz-avatar>
+  <nz-avatar
+    nzIcon="user"
+    nzSrc="{{ client.image && backendComunication.at('media/image/'+client.image) }}"
+    nzSize="large"
+  ></nz-avatar>
 </ng-template>
 
 <ng-template #characters>

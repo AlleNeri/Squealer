@@ -1,0 +1,72 @@
+<nz-comment
+  [nzAuthor]="user.username"
+  [nzDatetime]="postDate()"
+>
+  <nz-avatar
+    nz-comment-avatar
+    nzIcon="user"
+    nzSrc="{{ user.image && backendComunication.at('media/image/'+user.image) }}"
+    [nzSize]="'large'"
+  ></nz-avatar>
+  <nz-comment-content>
+    <p>{{ post.content }}</p>
+  </nz-comment-content>
+  <nz-comment-action nzTooltipTitle="Views">
+    <span
+      nz-tooltip
+      nz-title="Views"
+      nz-icon
+      nzType="eye"
+      nzTheme="outline"
+    >
+      {{ viewsCount() }}
+    </span>
+  </nz-comment-action>
+  <nz-comment-action>
+    <nz-divider nzType="vertical"></nz-divider>
+  </nz-comment-action>
+  <nz-comment-action nzTooltipTitle="Disappoint">
+    <span
+      nz-tooltip
+      nz-title="Disappoint"
+      nz-icon
+      nzType="exclamation-circle"
+      nzTheme="outline"
+    >
+      {{ disappointCount() }}
+    </span>
+  </nz-comment-action>
+  <nz-comment-action nzTooltipTitle="Dislike">
+    <span
+      nz-tooltip
+      nz-title="Dislike"
+      nz-icon
+      nzType="dislike"
+      nzTheme="outline"
+    >
+      {{ dislikesCount() }}
+    </span>
+  </nz-comment-action>
+  <nz-comment-action nzTooltipTitle="Like">
+    <span
+      nz-tooltip
+      nz-title="Like"
+      nz-icon
+      nzType="like"
+      nzTheme="outline"
+    >
+      {{ likesCount() }}
+    </span>
+  </nz-comment-action>
+  <nz-comment-action nzTooltipTitle="Heart">
+    <span
+      nz-tooltip
+      nz-title="Heart"
+      nz-icon
+      nzType="heart"
+      nzTheme="outline"
+    >
+      {{ heartCount() }}
+    </span>
+  </nz-comment-action>
+</nz-comment>

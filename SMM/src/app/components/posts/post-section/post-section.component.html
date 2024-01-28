@@ -1,6 +1,10 @@
 <nz-tabset [nzTabBarExtraContent]="addPost">
   <nz-tab nzTitle="Tutti">
-    <p>Tutti i post</p>
+    <app-post
+      *ngFor="let post of posts"
+      [post]="post"
+      [user]="this.client"
+    ></app-post>
   </nz-tab>
   <nz-tab nzTitle="Popolari">
     <p>I post popolari</p>
