@@ -16,7 +16,6 @@ const SmmPage = () => {
       });
       
       if (!response.ok) {
-        console.log(response);
         throw new Error('There was a problem selecting the SMM');
       }
   
@@ -56,13 +55,11 @@ const SmmPage = () => {
     })
       .then((response) => {
         if (!response.ok) {
-          console.log(response);
           throw new Error('Network response was not ok');
         }
         return response.json();
       })
       .then((data) => {
-        console.log(data);
         setSmms(data);
       })
       .catch((error) => {

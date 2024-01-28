@@ -4,9 +4,10 @@ import { Card, CardContent, Typography, Avatar, Box, Menu, MenuItem, Dialog, Dia
 import { PostsContext } from '../../context/PostsContext/PostsContext';
 import { LoginContext } from '../../context/LoginContext/LoginContext';
 import MyPosts from '../MyPosts/MyPosts';
-import './myProfile.css';
+import Post from '../../components/Post/Post';
+import './profile.css';
 
-const MyProfile = () => {
+const Profile = () => {
     const { id } = useParams();
     const [user, setUser] = useState(null);
     const fileInput = useRef(null);
@@ -16,6 +17,9 @@ const MyProfile = () => {
     const [anchorEl, setAnchorEl] = useState(null);
     const [openDialog, setOpenDialog] = useState(false);
     const [image, setImage] = useState(null);
+    const currentUserId = localStorage.getItem('userId');
+    const [userPosts, setUserPosts] = useState([]);
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -23,6 +27,23 @@ const MyProfile = () => {
           setUser(prevState => ({ ...prevState, img: `${import.meta.env.VITE_DEFAULT_URL}/media/image/${image}` }));
         }
       }, [image]);
+    
+    useEffect(() => {
+        if (id !== currentUserId) {
+          const fetchUserPosts = async () => {
+            const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/posts?of=${id}`, {
+              headers: {
+                'Authorization': token,
+                'Content-Type': 'application/json',
+              },
+            });
+            const data = await response.json();
+            setUserPosts(data);
+          };
+    
+          fetchUserPosts();
+        }
+    }, []);
 
     useEffect(() => {
         if (token) {
@@ -99,7 +120,6 @@ const MyProfile = () => {
             })
             .then(response => response.json())
             .then(data => {
-                console.log('User updated:', data);
                 // Aggiorna lo stato dell'utente con i nuovi dati
                 setUser(prevState => ({ ...prevState, img: null }));
             })
@@ -129,7 +149,6 @@ const MyProfile = () => {
                 })
                 .then(response => response.json())
                 .then(data => {
-                console.log('Success:', data);
                 // Aggiorna l'utente con l'ID dell'immagine
                 fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/${user._id}`, {
                     method: 'PUT',
@@ -141,7 +160,6 @@ const MyProfile = () => {
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log('User updated:', data);
                     // Aggiorna lo stato dell'utente con l'ID dell'immagine
                     setUser(prevState => ({ ...prevState, imgId: data.imgId }));
                     // Aggiorna l'URL dell'immagine
@@ -157,11 +175,8 @@ const MyProfile = () => {
         }
   };
 
-  useEffect(() => {
-    console.log('Token:', token); // Debug: stampa il token
-  
+  useEffect(() => {  
     const userId = id;
-    console.log('User ID:', userId); // Debug: stampa l'ID dell'utente
   
     fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/${userId}`, {
       method: 'GET',
@@ -177,7 +192,6 @@ const MyProfile = () => {
         return response.json();
       })
       .then(data => {
-        console.log('Data:', data); // Debug: stampa i dati
         setUser(data);
       })
       .catch(error => {
@@ -185,9 +199,6 @@ const MyProfile = () => {
       });
   }, [id]);
 
-  useEffect(() => {
-    console.log(posts);
-    }, [posts]);
   if (!user) {
     return <div>Loading...</div>;
   }
@@ -211,8 +222,12 @@ const MyProfile = () => {
                 onClose={handleClose}
             >
                 <MenuItem onClick={handleOpenDialog}>Visualizza immagine</MenuItem>
-                <MenuItem onClick={handleRemoveImage}>Rimuovi immagine</MenuItem>
-                <MenuItem onClick={handleChangeImage}>Cambia immagine</MenuItem>
+                {id === currentUserId && (
+                  <>
+                    <MenuItem onClick={handleRemoveImage}>Rimuovi immagine</MenuItem>
+                    <MenuItem onClick={handleChangeImage}>Cambia immagine</MenuItem>
+                  </>
+                )}
             </Menu>
             <Dialog open={openDialog} onClose={handleCloseDialog}>
                 <DialogContent>
@@ -334,10 +349,16 @@ const MyProfile = () => {
     <Typography variant="h4" component="h6" gutterBottom style={{ textAlign: 'center', marginTop:'20px' }}>
         POST PUBBLICATI DA {user.u_name.toUpperCase()}
     </Typography>
-    <MyPosts/>
+    {id === currentUserId ? (
+            <MyPosts/>
+    ) : (
+        userPosts.map(post => (
+            <Post key={post._id} post={post} />
+        ))
+    )}
     </>
 
   );
 };
 
-export default MyProfile;
+export default Profile;

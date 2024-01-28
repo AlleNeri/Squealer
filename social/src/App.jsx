@@ -4,7 +4,7 @@ import Layout from './components/Layout/Layout';
 import LoginPage from './pages/Login/Login';
 import RegisterPage from './pages/Register/Register';
 import { LoginContext } from "./context/LoginContext/LoginContext";
-import MyProfile from './pages/MyProfile/MyProfile';
+import Profile from './pages/Profile/Profile';
 import AllChannels from './pages/AllChannels/AllChannels';
 import Smm from './pages/Smm/Smm';
 import HomePage from './pages/HomePage/HomePage';
@@ -28,8 +28,8 @@ const routes = createBrowserRouter([
 				element: <RegisterPage />
 			},
 			{
-				path: '/MyProfile/:id',
-				element: <MyProfile />
+				path: '/Profile/:id',
+				element: <Profile />
 			},
 			{
 				path: '/AllChannels/:id',

@@ -144,10 +144,12 @@ export default function Post({post}) {
         <Card style={{ margin: '20px', backgroundColor: '#f5f5f5', borderRadius: '10px', width:'600px' }}>
             <CardContent>
                 <div>
-                <Avatar alt="Profile" src={user && user.img ? `${import.meta.env.VITE_DEFAULT_URL}/media/image/${user.img}` : undefined} >
-                    {user?.u_name.charAt(0).toUpperCase()}
-                </Avatar>
-                {user?.u_name}
+                <Grid container justifyContent="space-between">
+                  <Avatar alt="Profile" src={user && user.img ? `${import.meta.env.VITE_DEFAULT_URL}/media/image/${user.img}` : undefined} >
+                      {user?.u_name.charAt(0).toUpperCase()}
+                  </Avatar>
+                </Grid>
+                <Link to={`/Profile/${posted_by}`}>{user && user.u_name}</Link>
                 </div>
                 <Divider style={{ margin: '20px 0' }} />
                 <Typography variant="h5" component="h2">
@@ -167,7 +169,7 @@ export default function Post({post}) {
                     {keywords && keywords.join(', ')}
                 </Typography>
                 <Divider style={{ margin: '20px 0' }} />
-                <Grid container justify="space-between">
+                <Grid container justifyContent="space-between">
                     <Grid item>
                       <IconButton onClick={() => handleReaction(-2)} disabled={!loggedIn}>
                           <SentimentVeryDissatisfied style={{ color: userReaction && userReaction.value === -2 ? 'red' : 'grey' }} />

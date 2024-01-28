@@ -47,12 +47,10 @@ const Channel = ({ isOpen, onClose }) => {
             });
 
             if (!response.ok) {
-                console.log(response);
                 throw new Error('Network response was not ok');
             }
 
             const data = await response.json();
-            console.log(data);
             onClose();
         } catch (error) {
             console.error('Error creating channel', error);

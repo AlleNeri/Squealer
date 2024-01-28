@@ -1,4 +1,5 @@
 import React, {useState, useEffect, useContext} from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../Header/Header';
 import NewPost from '../NewPost/NewPost';
 import Sidebar from '../Sidebar/Sidebar';
@@ -7,7 +8,10 @@ import './layout.css';
 
 function Home() {
     const [modalOpen, setModalOpen] = useState(false);
-
+    const navigate = useNavigate();
+    useEffect(() => {
+        navigate('/HomePage')
+    }, []);
     return (
         <div className="body">
             <Header className="top" setModalOpen={setModalOpen} />

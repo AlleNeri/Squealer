@@ -54,16 +54,12 @@ function Register() {
       })
     });
 
-    console.log(user);
     const data = await response.json();
-    console.log(data);
 
     if(data.success) {
-      console.log('Registration successful!');
       localStorage.setItem('token', data.jwt.token);
       handleImageUpload(imageFile);
     } else {
-      console.log('Registration failed!'); 
     }
   }
 
@@ -89,7 +85,6 @@ function Register() {
     })
     .then(response => response.json())
     .then(data => {
-      console.log('Success:', data);
       // Update the user state with the returned image URL
       setUser(prevState => ({ ...prevState, img: data.url }));
       localStorage.removeItem('token');

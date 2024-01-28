@@ -51,7 +51,6 @@ function NewPost({ modalOpen, setModalOpen }) {
 
         const channels = await response.json();
         setMyChannels(channels);
-        console.log(channels);
       };
 
       fetchMyChannels();
@@ -140,13 +139,11 @@ function NewPost({ modalOpen, setModalOpen }) {
     });
   
     if (!postResponse.ok) {
-      console.log(postResponse);
       console.error('Error creating post');
       return;
     }
   
     const newPost = await postResponse.json();
-    console.log('Server response:', newPost);
   
     // Then, if an image was selected, upload the image with the post ID
     if (image) {

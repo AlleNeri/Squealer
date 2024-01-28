@@ -37,7 +37,7 @@ export default function ButtonAppBar({setModalOpen}) {
   };
 
   const handleProfileClick = () => {
-    navigate(`/MyProfile/${localStorage.getItem('userId')}`);
+    navigate(`/Profile/${localStorage.getItem('userId')}`);
     setIsProfileClicked(true);
   };
 
@@ -82,7 +82,7 @@ export default function ButtonAppBar({setModalOpen}) {
               <Button className='button' onClick={handleLogout}>LOGOUT</Button>
             </Link>
 
-            <Link to={`/MyProfile/${localStorage.getItem('userId')}`} className='Link'>
+            <Link to={`/Profile/${localStorage.getItem('userId')}`} className='Link'>
               <AccountCircleIcon onClick={handleProfileClick} />
             </Link>
             

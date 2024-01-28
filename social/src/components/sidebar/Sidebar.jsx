@@ -39,7 +39,6 @@ const Sidebar = () => {
 
 
   const minimizeSidebar = () => {
-    console.log('minimizeSidebar was called' + isSidebarMinimized);
     setSidebarMinimized(!isSidebarMinimized);
   };
 
@@ -138,7 +137,7 @@ useEffect(() => {
               ): <p></p>}
                 {allChannels.map(channel => (
                   <NavLink
-                    key={channel.id}
+                    key={channel._id}
                     to={`/AllChannels/${channel._id}`}
                     activeClassName="activeClicked"
                     onClick={() => handleChannelClick(channel._id)}

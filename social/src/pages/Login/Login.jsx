@@ -49,10 +49,8 @@ function Login() {
     const data = await response.json();
 
     if (data.success) {
-      console.log("login success!");
       // Salva l'ID dell'utente nel localStorage
       localStorage.setItem('userId', data.id);
-      console.log("userId", data.id);
       setLoggedInState(true);
       setLoggedIn(true);
       localStorage.setItem('loggedIn', true);
@@ -60,11 +58,8 @@ function Login() {
       localStorage.setItem('token', token);
       const user = data.id;
       localStorage.setItem('user', JSON.stringify(user));
-      console.log('token al login', token);
       navigate('/HomePage');
-    } else {
-      console.log("login failed!");
-    }
+    } 
   }
   const isDisabled = username.length === 0 || password.length === 0;
   return (
