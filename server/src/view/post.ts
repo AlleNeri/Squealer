@@ -7,11 +7,17 @@ import Auth from "../controller/Auth";
 
 export const postRoute: Router=Router();
 
-//get all posts
-postRoute.get("/", Auth.authorize, Auth.isMod, (_: Request, res: Response) => {
-	PostSchema.find()
-		.then((posts: Post[]) => res.status(200).json(posts))
-		.catch((err: Error) => res.status(400).json({ msg: 'Posts not found', err: err }));
+//get all posts or all the posts of a specific user if the id is provided in the 'of' query parameter
+postRoute.get("/", Auth.authorize, (req: Request, res: Response) => {
+	if(req.query.of)
+		PostSchema.find({ posted_by: req.query.of })
+			.then((posts: Post[]) => res.status(200).json(posts))
+			.catch((err: Error) => res.status(400).json({ msg: "Posts not found", err: err }));
+	else if(req.user!.type === UserType.MOD)
+		PostSchema.find()
+			.then((posts: Post[]) => res.status(200).json(posts))
+			.catch((err: Error) => res.status(400).json({ msg: 'Posts not found', err: err }));
+	else res.status(403).json({ msg: "Unauthorized" });
 });
 
 //get all my posts
