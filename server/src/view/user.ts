@@ -8,10 +8,22 @@ import { authenticationRoute } from './authentication';
 
 export const userRoute: Router=Router();
 
-//get all users
+//get all users, only a mod can do this
 userRoute.get('/', Auth.softAuthorize, Auth.isMod, (_: Request, res: Response) => {
 	UserSchema.find()
 		.then((users: User[]) => res.status(200).json(users))
+		.catch(err=> res.status(404).json({ msg: 'Users not found', err: err }));
+});
+
+//get all users for a mention list
+userRoute.get('/mention', Auth.authorize, (_: Request, res: Response) => {
+	//get only the user of type normal or vip
+	UserSchema.find({ $or: [{ type: UserType.NORMAL }, { type: UserType.VIP }] })
+		.then((users: User[]) => {
+			const usersPublicInfo: Partial<User>[] = [];
+			users.forEach((user: User) => usersPublicInfo.push(getUserPublicInfo(user)));
+			res.status(200).json(usersPublicInfo);
+		})
 		.catch(err=> res.status(404).json({ msg: 'Users not found', err: err }));
 });
 
