@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useContext } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, Typography, Avatar, Box, Menu, MenuItem, Dialog, DialogContent, Button } from '@material-ui/core';
 import { PostsContext } from '../../context/PostsContext/PostsContext';
 import { LoginContext } from '../../context/LoginContext/LoginContext';
@@ -352,10 +352,18 @@ const Profile = () => {
     </Card>
 
     
+    {loggedIn && 
+      <Typography variant="h4" component="h6" gutterBottom style={{ textAlign: 'center', marginTop:'20px' }}>
+          POST PUBBLICATI DA {user.u_name.toUpperCase()}
+      </Typography>
+    }
 
-    <Typography variant="h4" component="h6" gutterBottom style={{ textAlign: 'center', marginTop:'20px' }}>
-        POST PUBBLICATI DA {user.u_name.toUpperCase()}
-    </Typography>
+    {!loggedIn &&
+      <Typography variant="body1" style={{ marginTop: '50px', textAlign: 'center' }}>
+        Per vedere i post di questo utente, per favore <Link to="/login">accedi</Link> o <Link to="/register">registrati</Link>.
+      </Typography>     
+    }
+
     {id === currentUserId ? (
         <MyPosts/>
     ) : (
