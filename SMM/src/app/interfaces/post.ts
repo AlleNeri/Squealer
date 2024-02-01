@@ -11,6 +11,7 @@ export interface IPost {
   };
   keywords: string[];
   posted_by: string;
+  posted_on: string;
   appartains_to: string[];
   tagged: string[];
   date: string;

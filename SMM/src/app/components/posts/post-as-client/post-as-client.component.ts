@@ -4,7 +4,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
 import { LatLng } from 'leaflet';
 
-import { Channel } from 'src/app/interfaces/channel';
+import { IChannel } from 'src/app/interfaces/channel';
 
 import Client from 'src/app/classes/client';
 
@@ -20,7 +20,7 @@ export class PostAsClientComponent implements OnInit {
   @Input({required: true}) client!: Client;
   protected isDrawerVisible: boolean;
   protected postForm: FormGroup;
-  protected channels: Channel[];
+  protected channels: IChannel[];
 
   constructor(
     private fb: FormBuilder,
@@ -45,7 +45,7 @@ export class PostAsClientComponent implements OnInit {
       return;
     }
     this.backend.get(`channels/all`, this.auth.token!)
-      .subscribe(res => this.channels = res as Channel[]);
+      .subscribe(res => this.channels = res as IChannel[]);
   }
 
   private contentValidator(): ValidatorFn {
