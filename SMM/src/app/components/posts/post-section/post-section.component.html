@@ -1,19 +1,43 @@
 <nz-tabset [nzTabBarExtraContent]="addPost">
   <nz-tab nzTitle="Tutti">
-    <app-post
-      *ngFor="let post of posts"
-      [post]="post"
-      [user]="this.client"
-    ></app-post>
+    <ng-container *ngIf="this.posts.length > 0; then allPostsList else noPosts" />
   </nz-tab>
   <nz-tab nzTitle="Popolari">
-    <p>I post popolari</p>
+    <ng-container *ngIf="this.popularPosts.length > 0; then popularPostsList else noPosts" />
   </nz-tab>
   <nz-tab nzTitle="Impopolari">
-    <p>I post impopolari</p>
+    <ng-container *ngIf="this.unpopularPosts.length > 0; then unpopularPostsList else noPosts" />
   </nz-tab>
 </nz-tabset>
 
 <ng-template #addPost>
   <app-post-as-client [client]="client"/>
+</ng-template>
+
+<ng-template #allPostsList>
+  <app-post
+    *ngFor="let post of posts"
+    [post]="post"
+    [user]="this.client"
+  ></app-post>
+</ng-template>
+
+<ng-template #popularPostsList>
+  <app-post
+    *ngFor="let post of popularPosts"
+    [post]="post"
+    [user]="this.client"
+  ></app-post>
+</ng-template>
+
+<ng-template #unpopularPostsList>
+  <app-post
+    *ngFor="let post of unpopularPosts"
+    [post]="post"
+    [user]="this.client"
+  ></app-post>
+</ng-template>
+
+<ng-template #noPosts>
+  <p>L'utente {{ this.client.username }} non ha nessun post in questa sezione.</p>
 </ng-template>
