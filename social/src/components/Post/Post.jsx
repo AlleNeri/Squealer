@@ -15,7 +15,7 @@ export default function Post({post}) {
     const mapRef = useRef(); // Assign useRef to a variable
     const token = localStorage.getItem('token');
     const { loggedIn } = useContext(LoginContext);
-    const views = reactions.filter(reaction => reaction.value === 0).length;
+    const views = reactions.filter(reaction => [-2, -1, 0, 1, 2].includes(reaction.value)).length;
     const [reactionCounts, setReactionCounts] = useState({
         veryDissatisfied: reactions.filter(reaction => reaction.value === -2).length,
         dissatisfied: reactions.filter(reaction => reaction.value === -1).length,
@@ -25,10 +25,14 @@ export default function Post({post}) {
     const userID = localStorage.getItem('userId');
     const [userReaction, setUserReaction] = useState(post.reactions.find(reaction => reaction.user_id === userID));
     if(!loggedIn) { localStorage.removeItem('userId'); }
-  {/*
+    
     useEffect(() => {
-        const visualizePost = async () => {
-          try {
+      const visualizePost = async () => {
+        try {
+          // Check if the user has already reacted to the post
+          const userReaction = post.reactions.find(reaction => reaction.user_id === userID);
+          if (!userReaction) {
+            // Add a view to the post
             const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/posts/${post._id}/visualize`, {
               method: 'PATCH',
               headers: {
@@ -40,18 +44,18 @@ export default function Post({post}) {
             if (!response.ok) {
               throw new Error('There was a problem visualizing the post');
             }
-      
-          } catch (error) {
-            console.error(error);
           }
-        };
-      
-        if (loggedIn) {
-          visualizePost();
+  
+        } catch (error) {
+          console.error(error);
         }
-    }, []);
-
-  */}
+      };
+    
+      if (loggedIn) {
+        visualizePost();
+      }
+  }, []);
+    
     const updateReactionCounts = (value, increment) => {
       setReactionCounts(prevCounts => {
         switch (value) {
