@@ -79,6 +79,7 @@ import { PostSectionComponent } from './components/posts/post-section/post-secti
 import { UploadImageComponent } from './components/miscellaneous/upload-image/upload-image.component';
 import { MapComponent } from './components/miscellaneous/map/map.component';
 import { PostComponent } from './components/posts/post/post.component';
+import { ShowMapComponent } from './components/miscellaneous/show-map/show-map.component';
 
 registerLocaleData(it);
 
@@ -117,6 +118,7 @@ const icons: IconDefinition[]= [
     UploadImageComponent,
     MapComponent,
     PostComponent,
+    ShowMapComponent,
   ],
   imports: [
     BrowserModule,

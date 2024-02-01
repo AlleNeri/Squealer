@@ -18,8 +18,14 @@
         style="max-width: 500px;"
       />
     </div>
-    <div *ngIf="post.content.position">
-      <p>Actualy not implemented!</p>
+    <div
+      *ngIf="post.content.position"
+      style="height: 300px; width: 500px;"
+    >
+      <app-show-map
+        [lat]="post.content.position.latitude"
+        [lng]="post.content.position.longitude"
+      ></app-show-map>
     </div>
   </nz-comment-content>
   <nz-comment-action nzTooltipTitle="Views">

@@ -161,3 +161,16 @@ div.auth-card {
   align-items: center;
   padding-top: 4%;
 }
+
+.map-container {
+  height: 100%;
+}
+
+.map-frame {
+  border: 2px solid black;
+  height: 100%;
+}
+
+#map, .map-random {
+  height: 100%;
+}
