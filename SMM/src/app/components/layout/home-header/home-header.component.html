@@ -27,7 +27,7 @@
     <li nz-menu-item>
       <a routerLink="/login" routerLinkActive="actual">
         <!-- theoretically the logout has a specific path: `/logout`, but this path redirect to `/login` -->
-        <ng-template *ngIf="this.auth.isLoggedIn(); then logOutBlock else logInBlock" />
+        <ng-container *ngIf="this.auth.isLoggedIn(); then logOutBlock else logInBlock" />
       </a>
     </li>
     <li nz-menu-item>
