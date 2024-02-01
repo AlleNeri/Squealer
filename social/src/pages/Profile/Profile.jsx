@@ -225,10 +225,10 @@ const Profile = () => {
             >
                 <MenuItem onClick={handleOpenDialog}>Visualizza immagine</MenuItem>
                 {id === currentUserId && (
-                  <>
-                    <MenuItem onClick={handleRemoveImage}>Rimuovi immagine</MenuItem>
-                    <MenuItem onClick={handleChangeImage}>Cambia immagine</MenuItem>
-                  </>
+                  [
+                    <MenuItem key="remove" onClick={handleRemoveImage}>Rimuovi immagine</MenuItem>,
+                    <MenuItem key="change" onClick={handleChangeImage}>Cambia immagine</MenuItem>
+                  ]
                 )}
             </Menu>
             <Dialog open={openDialog} onClose={handleCloseDialog}>
