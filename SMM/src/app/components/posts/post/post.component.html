@@ -1,5 +1,5 @@
 <nz-comment
-  [nzAuthor]="user.username"
+  [nzAuthor]="user.username + ' su ' + this.channelName"
   [nzDatetime]="postDate()"
 >
   <nz-avatar
@@ -9,7 +9,18 @@
     [nzSize]="'large'"
   ></nz-avatar>
   <nz-comment-content>
-    <p>{{ post.content }}</p>
+    <h4>{{ post.title }}</h4>
+    <p *ngIf="post.content.text">{{ post.content.text }}</p>
+    <div *ngIf="post.content.img">
+      <img
+        src="{{ backendComunication.at('media/image/'+post.content.img) }}"
+        alt="image"
+        style="max-width: 500px;"
+      />
+    </div>
+    <div *ngIf="post.content.position">
+      <p>Actualy not implemented!</p>
+    </div>
   </nz-comment-content>
   <nz-comment-action nzTooltipTitle="Views">
     <span
