@@ -2,13 +2,16 @@ import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LoginContext } from '../../context/LoginContext/LoginContext';
 import { PostsContext } from '../../context/PostsContext/PostsContext';
-import { TextField, Button, InputLabel, FormControl, MenuItem, Select, Box, Typography } from '@material-ui/core';
+import { TextField, Button, InputLabel, FormControl, MenuItem, Select, Box, Typography, Avatar } from '@material-ui/core';
+import FaceIcon from '@material-ui/icons/Face';
+import { MentionsInput, Mention } from 'react-mentions';
 import './newPost.css';
 
 function NewPost({ modalOpen, setModalOpen }) {
   const { loggedIn } = useContext(LoginContext);
   const [subject, setSubject] = useState('');
-  const [text, setText] = useState('');
+  const [postText, setPostText] = useState('');
+  const [users, setUsers] = useState([]);
   const [image, setImage] = useState('');
   const [preview, setPreview] = useState(null);
   const [video, setVideo] = useState(null);
@@ -23,16 +26,31 @@ function NewPost({ modalOpen, setModalOpen }) {
   const token = localStorage.getItem('token');
 
   useEffect(() => {
-    setIsFormValid(subject !== '' && (text !== '' || image !== null || video !== null || position ) && keywords !== '');
-  }, [subject, text, image, video, position, keywords]);
+    setIsFormValid(subject !== '' && (postText !== '' || image !== null || video !== null || position ) && keywords !== '');
+  }, [subject, postText, image, video, position, keywords]);
 
   useEffect(() => {
     // This function runs whenever postType changes
     setImage(null);
     setVideo(null);
-    setText('');
+    setPostText('');
     setPosition(null);
   }, [postType]);
+
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/mention`, {
+      headers: {
+        'Authorization': token,
+      },
+    })
+      .then(response => response.json())
+      .then(data => {
+        setUsers(data);
+      })
+      .catch(error => {
+        console.error('There was an error!', error);
+      });
+  }, []);
 
   useEffect(() => {
     if (loggedIn) {
@@ -69,6 +87,10 @@ function NewPost({ modalOpen, setModalOpen }) {
     setPostType(event.target.value);
   };
 
+  const handlePostTextChange = (event) => {
+    setPostText(event.target.value);
+  };
+
   const handlePositionChange = () => {
     if(postType==='geolocation'){
       navigator.geolocation.getCurrentPosition(
@@ -85,10 +107,6 @@ function NewPost({ modalOpen, setModalOpen }) {
         }
       );
     }
-  };
-
-  const handleTextChange = (event) => {
-    setText(event.target.value);
   };
 
   const handleImageChange = (event) => {
@@ -119,7 +137,7 @@ function NewPost({ modalOpen, setModalOpen }) {
     const data = {
       title: subject || 'Default title',
       content: {
-        text: text || null,
+        text: postText || null,
         img: null,
         video: video || null,
         position: position || undefined,
@@ -174,14 +192,13 @@ function NewPost({ modalOpen, setModalOpen }) {
     setSubject('');
     setImage(null);
     setVideo(null);
-    setText('');
+    setPostText('');
     setPosition(null);
     setKeywords('');
     setPostType('text');
   };
 
   return (
-    
     <div className="new-post">
       {loggedIn ? (
         <div>
@@ -221,15 +238,50 @@ function NewPost({ modalOpen, setModalOpen }) {
                 </FormControl>
 
                 {postType === 'text' && (
-                  <TextField
-                    label="Text"
-                    value={text}
-                    onChange={(e) => handleTextChange(e)}
-                    multiline
-                    minRows={4}
-                    variant="outlined"
-                    fullWidth
-                  />
+                  <Box position="relative" width="100%">
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                    />
+                    <MentionsInput 
+                      value={postText} 
+                      onChange={handlePostTextChange} 
+                      placeholder="Squeal text" 
+                      style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none', padding: '18.5px 14px' }}
+                    >
+                      <Mention
+                        trigger="@"
+                        data={(query, callback) => {
+                          if (Array.isArray(users)) {
+                            const matches = users
+                              .filter(user => typeof user.u_name === 'string' && user.u_name.includes(query))
+                              .map(user => ({ id: user.id, display: user.u_name, img: user.img }));
+                            callback(matches);
+                          } else {
+                            console.error('Users is not an array:', users);
+                          }
+                        }}
+                        renderSuggestion={(suggestion) => {
+                          return (
+                            <div className="user-suggestion" style={{ color:'#000', display: 'flex', alignItems: 'center' }}>
+                              { suggestion.img && 
+                                <Avatar 
+                                src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${suggestion.img}`} 
+                                alt="img" 
+                                style={{ width: '20px', height: '20px' }}
+                              >
+                                <FaceIcon />
+                              </Avatar>
+                              }
+                              {suggestion.display} 
+                            </div>
+                          );
+                        }}
+                        markup="@[__display__](__id__)"
+                        displayTransform={(id, u_name) => `@${u_name}`}
+                      />
+                    </MentionsInput>
+                  </Box>
                 )}
 
                 {postType === 'image' && (

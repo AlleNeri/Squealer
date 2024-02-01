@@ -38,3 +38,8 @@
 @media (max-width: 600px) {
   /* Adjust modal for smaller screens */
 } 
+
+.user-suggestion {
+  border: 1px solid #000;
+  color: #000; 
+}

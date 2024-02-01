@@ -7,6 +7,7 @@ import { SentimentVeryDissatisfied, SentimentDissatisfied, SentimentSatisfied, S
 import { LoginContext } from '../../context/LoginContext/LoginContext';
 import CountUp from 'react-countup';
 import {Link} from 'react-router-dom';
+import reactStringReplace from 'react-string-replace';
 
 export default function Post({post}) {
     const {title, content, keywords, reactions, posted_by} = post;
@@ -68,6 +69,29 @@ export default function Post({post}) {
       });
     };
 
+    function replaceMentionsWithLinks(text) {
+      if(!text) return [];
+      // Dividi il testo in parti utilizzando la menzione come separatore
+      const parts = text.split(/(@\[[^\]]+\]\([^)]+\))/g);
+    
+      // Mappa ogni parte in un elemento React
+      return parts.map((part, i) => {
+        // Se la parte è una menzione, sostituiscila con un link
+        const match = part.match(/@\[([^\]]+)\]\(([^)]+)\)/);
+        if (match) {
+          return (
+            <Link to={`/profile/${match[2]}`} key={i}>
+              @{match[1]}
+            </Link>
+          );
+        }
+    
+        // Altrimenti, restituisci la parte come testo
+        return part;
+      });
+    }
+
+    const replacedText = replaceMentionsWithLinks(content.text);
     useEffect(() => {
       const fetchUser = async () => {
           const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/${posted_by}`, {
@@ -158,7 +182,7 @@ export default function Post({post}) {
                 <Divider style={{ margin: '20px 0' }} />
                 {content && content.text ?
                     <Typography variant="body2" component="p">
-                        {content.text}
+                        {replacedText}
                     </Typography>
                     : <p></p>
                 }
