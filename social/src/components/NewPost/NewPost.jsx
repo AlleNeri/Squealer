@@ -1,5 +1,4 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { LoginContext } from '../../context/LoginContext/LoginContext';
 import { PostsContext } from '../../context/PostsContext/PostsContext';
 import { TextField, Button, InputLabel, FormControl, MenuItem, Select, Box, Typography, Avatar } from '@material-ui/core';
@@ -21,7 +20,6 @@ function NewPost({ modalOpen, setModalOpen }) {
   const [isFormValid, setIsFormValid] = useState(false);
   const [channel, setChannel] = useState(''); // New state variable for the selected channel
   const [myChannels, setMyChannels] = useState([]); // New state variable for the user's channels
-  const navigate = useNavigate();
   const { posts, setPosts } = useContext(PostsContext);
   const token = localStorage.getItem('token');
 
@@ -239,16 +237,12 @@ function NewPost({ modalOpen, setModalOpen }) {
 
                 {postType === 'text' && (
                   <Box position="relative" width="100%">
-                    <TextField
-                      fullWidth
-                      variant="outlined"
-                    />
                     <MentionsInput 
-                      value={postText} 
-                      onChange={handlePostTextChange} 
-                      placeholder="Squeal text" 
-                      style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none', padding: '18.5px 14px' }}
-                    >
+                        value={postText} 
+                        onChange={handlePostTextChange} 
+                        placeholder="Squeal text" 
+                        style={{ width: '100%', height: '100%', border: 'none', padding: '18.5px 14px' }}
+                      >
                       <Mention
                         trigger="@"
                         data={(query, callback) => {
