@@ -75,15 +75,20 @@ postRoute.post("/", Auth.authorize, (req: Request, res: Response) => {
 			if(!channel) return res.status(404).json({ msg: "Channel not found" });
 			else if(!channel.private) {
 				UserSchema.findById(post.posted_by)
-					.then((user: User | null) => {
+					.then(async (user: User | null) => {
 						if(!user) return res.status(404).json({ msg: "User not found" });
-						const content=post.content;
-						//TODO: non è attualmente previstio e gestito il poter postare contenuti di diverso tipo(testo/immagini/posizione)
-						if(content.text && !user.canPost(content.text.length)) return res.status(500).json({ msg: "User can't post" });
-						else if((content.img || content.position) && !user.canPost(100)) return res.status(500).json({ msg: "User can't post" });
+						let charCount: number = post.title.length;
+						if(post.content.text) charCount += post.content.text.length;
+						if(post.content.img) charCount += 100;
+						if(post.content.position) charCount += 100;
+						//keywords are an array of strings, so sum the length of all the strings
+						if(post.keywords) charCount += post.keywords.reduce((acc: number, curr: string) => acc + curr.length, 0);
+						if(!user.canPost(charCount)) return res.status(500).json({ msg: "User can't post" });
+						console.log("User can post", user.char_availability);
+						await user.save();
 						const newPost: Post=new PostSchema(req.body.post);
 						newPost.save()
-							.then((post: Post) => res.status(200).json(post))
+							.then((post: Post) => res.status(200).json({ post, user_char_availability: user.char_availability }))
 							.catch((err: Error) => res.status(500).json({ msg: "Error creating post", err: err }));
 					})
 					.catch((err: Error) => res.status(500).json({ msg: "Error while find the user", err: err }));
