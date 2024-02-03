@@ -77,9 +77,31 @@ function NewPost({ modalOpen, setModalOpen }) {
     setSubject(event.target.value);
   };
 
-  const handleKeywordsChange = (event) => {
-    setKeywords(event.target.value);
-  };
+  const handleKeywordsChange = (e) => {
+    const value = e.target.value;
+    const lastChar = value.charAt(value.length - 1);
+  
+    // Se l'utente sta cercando di inserire '#' dopo '#', non permetterlo
+    if (value.length > 1 && lastChar === '#' && value.charAt(value.length - 2) === '#') {
+      alert('Ogni keyword deve avere un solo cancelletto!')
+      return;
+    }
+  
+    // Se l'utente sta cercando di inserire un carattere non valido dopo '#', non permetterlo
+    if (value.startsWith('#') && !lastChar.match(/[a-zA-Z0-9#]/)) {
+      alert('Non puoi scrivere simboli nella keyword, ma solo lettere e numeri!')
+      return;
+    }
+  
+    // Se l'utente sta cercando di inserire un carattere prima di '#', non permetterlo
+    if (!value.startsWith('#') && value.length > 0) {
+      alert('Inizia la keyword con #!')
+      return;
+    }
+  
+    // Aggiorna lo stato con il nuovo valore
+    setKeywords(value);
+  }
 
   const handlePostTypeChange = (event) => {
     setPostType(event.target.value);
@@ -126,24 +148,36 @@ function NewPost({ modalOpen, setModalOpen }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    // Dividi la stringa di input in base al carattere '#'
+    const splitKeywords = keywords.split('#');
+
+    // Rimuovi la stringa vuota all'inizio dell'array, se presente
+    if (splitKeywords[0] === '') {
+      splitKeywords.shift();
+    }
+
+    // Rimuovi qualsiasi keyword che sia solo '#'
+    const validKeywords = splitKeywords.filter(keyword => keyword.length > 1);
     
+
     if (!channel) {
       alert('Please select a channel.');
-      return;
-    }
-    // First, create the post without the image ID
-    const data = {
-      title: subject || 'Default title',
-      content: {
-        text: postText || null,
-        img: null,
-        video: video || null,
-        position: position || undefined,
-      },
-      keywords: keywords || ['Default keyword'],
-      posted_on: channel || null,
-      popular: false,
-    };
+      setModalOpen(true);
+    }else{
+      // First, create the post without the image ID
+      const data = {
+        title: subject || 'Default title',
+        content: {
+          text: postText || null,
+          img: null,
+          video: video || null,
+          position: position || undefined,
+        },
+        keywords: validKeywords || [],
+        posted_on: channel || null,
+        popular: false,
+      };
   
     const postResponse = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/posts`, {
       method: 'POST',
@@ -195,6 +229,7 @@ function NewPost({ modalOpen, setModalOpen }) {
     setKeywords('');
     setPostType('text');
   };
+}
 
   return (
     <div className="new-post">

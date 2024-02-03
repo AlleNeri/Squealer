@@ -4,7 +4,7 @@ import { PostsContext } from '../../context/PostsContext/PostsContext';
 
 function HomePage() {
     const { posts, setPosts } = useContext(PostsContext);
-  const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');
 
    useEffect(() => {
     const fetchPosts = async () => {
@@ -45,11 +45,13 @@ function HomePage() {
 
   return (
     <div>
-      {posts.map((post) => (
-        <div key={post._id}>
-          <Post post={post} />
-        </div>
-      ))}
+      {Array.isArray(posts) && 
+        posts.map((post) => (
+          <div key={post._id}>
+            <Post post={post} />
+          </div>
+        ))
+      }
     </div>
   );
 }

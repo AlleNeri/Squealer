@@ -8,6 +8,7 @@ import Profile from './pages/Profile/Profile';
 import AllChannels from './pages/AllChannels/AllChannels';
 import Smm from './pages/Smm/Smm';
 import HomePage from './pages/HomePage/HomePage';
+import Keywords from './pages/Keywords/Keywords'
 import { PostsContext } from './context/PostsContext/PostsContext';
 
 const routes = createBrowserRouter([
@@ -38,6 +39,10 @@ const routes = createBrowserRouter([
 			{
 				path: '/Smm',
 				element: <Smm />
+			},
+			{
+				path: '/Keywords/:keyword',
+				element : <Keywords />
 			},
 		],
 	},

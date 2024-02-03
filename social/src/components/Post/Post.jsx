@@ -5,9 +5,10 @@ import 'leaflet/dist/leaflet.css';
 import markerIconPng from "leaflet/dist/images/marker-icon.png";
 import { SentimentVeryDissatisfied, SentimentDissatisfied, SentimentSatisfied, SentimentVerySatisfied } from '@material-ui/icons';
 import { LoginContext } from '../../context/LoginContext/LoginContext';
+import { useTheme } from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import CountUp from 'react-countup';
 import {Link} from 'react-router-dom';
-import reactStringReplace from 'react-string-replace';
 
 export default function Post({post}) {
     const {title, content, keywords, reactions, posted_by} = post;
@@ -25,7 +26,9 @@ export default function Post({post}) {
     const userID = localStorage.getItem('userId');
     const [userReaction, setUserReaction] = useState(post.reactions.find(reaction => reaction.user_id === userID));
     if(!loggedIn) { localStorage.removeItem('userId'); }
-    
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
     useEffect(() => {
       const visualizePost = async () => {
         try {
@@ -56,85 +59,96 @@ export default function Post({post}) {
       }
   }, []);
     
-    const updateReactionCounts = (value, increment) => {
-      setReactionCounts(prevCounts => {
-        switch (value) {
-          case -2:
-            return { ...prevCounts, veryDissatisfied: prevCounts.veryDissatisfied + increment };
-          case -1:
-            return { ...prevCounts, dissatisfied: prevCounts.dissatisfied + increment };
-          case 1:
-            return { ...prevCounts, satisfied: prevCounts.satisfied + increment };
-          case 2:
-            return { ...prevCounts, verySatisfied: prevCounts.verySatisfied + increment };
-          default:
-            return prevCounts;
-        }
-      });
+  const renderKeywords = (keywords) => {
+    return keywords.map((keyword, index) => (
+      <span key={index}>
+        <Link to={`/Keywords/${keyword}`}>
+          #{keyword}
+        </Link>
+        {index < keywords.length - 1 ? ', ' : ''}
+      </span>
+    ));
+  }
+
+  const updateReactionCounts = (value, increment) => {
+    setReactionCounts(prevCounts => {
+      switch (value) {
+        case -2:
+          return { ...prevCounts, veryDissatisfied: prevCounts.veryDissatisfied + increment };
+        case -1:
+          return { ...prevCounts, dissatisfied: prevCounts.dissatisfied + increment };
+        case 1:
+          return { ...prevCounts, satisfied: prevCounts.satisfied + increment };
+        case 2:
+          return { ...prevCounts, verySatisfied: prevCounts.verySatisfied + increment };
+        default:
+          return prevCounts;
+      }
+    });
+  };
+
+  function replaceMentionsWithLinks(text) {
+    if(!text) return [];
+    // Dividi il testo in parti utilizzando la menzione come separatore
+    const parts = text.split(/(@\[[^\]]+\]\([^)]+\))/g);
+  
+    // Mappa ogni parte in un elemento React
+    return parts.map((part, i) => {
+      // Se la parte è una menzione, sostituiscila con un link
+      const match = part.match(/@\[([^\]]+)\]\(([^)]+)\)/);
+      if (match) {
+        return (
+          <Link to={`/profile/${match[2]}`} key={i}>
+            @{match[1]}
+          </Link>
+        );
+      }
+  
+      // Altrimenti, restituisci la parte come testo
+      return part;
+    });
+  }
+
+  const replacedText = replaceMentionsWithLinks(content.text);
+  useEffect(() => {
+    const fetchUser = async () => {
+        const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/${posted_by}`, {
+            headers: {
+                'Authorization': token,
+                'Content-Type': 'application/json',
+            },
+        });
+        const data = await response.json();
+        setUser(data);
     };
 
-    function replaceMentionsWithLinks(text) {
-      if(!text) return [];
-      // Dividi il testo in parti utilizzando la menzione come separatore
-      const parts = text.split(/(@\[[^\]]+\]\([^)]+\))/g);
-    
-      // Mappa ogni parte in un elemento React
-      return parts.map((part, i) => {
-        // Se la parte è una menzione, sostituiscila con un link
-        const match = part.match(/@\[([^\]]+)\]\(([^)]+)\)/);
-        if (match) {
-          return (
-            <Link to={`/profile/${match[2]}`} key={i}>
-              @{match[1]}
-            </Link>
-          );
-        }
-    
-        // Altrimenti, restituisci la parte come testo
-        return part;
-      });
-    }
+    fetchUser();
+  }, [posted_by]);
 
-    const replacedText = replaceMentionsWithLinks(content.text);
-    useEffect(() => {
-      const fetchUser = async () => {
-          const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/${posted_by}`, {
-              headers: {
-                  'Authorization': token,
-                  'Content-Type': 'application/json',
-              },
-          });
-          const data = await response.json();
-          setUser(data);
-      };
+  useEffect(() => {
+      if(content && content.position){
+          if (!mapRef.current) return;
+          // If the map was already initialized, return early
+          if (mapRef.current && mapRef.current.leafletElement) return;
+      
+          try {
+              const map = L.map(mapRef.current).setView([content.position.latitude, content.position.longitude], 13);
+      
+              L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              }).addTo(map);
+      
+              L.marker([content.position.latitude, content.position.longitude], {icon: new Icon({iconUrl: markerIconPng, iconSize: [25, 41], iconAnchor: [12, 41]})}).addTo(map);
+      
+              // Save the map instance to the ref
+              mapRef.current.leafletElement = map;
+          } catch (error) {
+              console.error('Error creating map', error);
+          }
+      }
+  }, [content]);
 
-      fetchUser();
-    }, [posted_by]);
-
-    useEffect(() => {
-        if(content && content.position){
-            if (!mapRef.current) return;
-            // If the map was already initialized, return early
-            if (mapRef.current && mapRef.current.leafletElement) return;
-        
-            try {
-                const map = L.map(mapRef.current).setView([content.position.latitude, content.position.longitude], 13);
-        
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                }).addTo(map);
-        
-                L.marker([content.position.latitude, content.position.longitude], {icon: new Icon({iconUrl: markerIconPng, iconSize: [25, 41], iconAnchor: [12, 41]})}).addTo(map);
-        
-                // Save the map instance to the ref
-                mapRef.current.leafletElement = map;
-            } catch (error) {
-                console.error('Error creating map', error);
-            }
-        }
-    }, [content]);
-
-    const handleReaction = async (reaction) => {
+  const handleReaction = async (reaction) => {
       let previousValue = null;
       if (userReaction) {
         previousValue = userReaction.value;
@@ -169,7 +183,7 @@ export default function Post({post}) {
 
     return (
     <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <Card style={{ margin: '20px', backgroundColor: '#f5f5f5', borderRadius: '10px', width:'600px' }}>
+        <Card style={{ margin: '20px', backgroundColor: '#f5f5f5', borderRadius: '10px', width: isMobile ? '100%' : '600px' }}>
             <CardContent>
                 <div>
                 <Grid container justifyContent="space-between">
@@ -194,7 +208,7 @@ export default function Post({post}) {
                 {content && content.img && <img src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${content.img}`} alt="description" width="100%" height="500px" />}
                 <Divider style={{ margin: '20px 0' }} />
                 <Typography variant="body2" component="p">
-                    {keywords && keywords.join(', ')}
+                    {keywords && renderKeywords(keywords)}
                 </Typography>
                 <Divider style={{ margin: '20px 0' }} />
                 <Grid container justifyContent="space-between">
