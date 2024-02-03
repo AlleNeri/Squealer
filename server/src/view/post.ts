@@ -94,15 +94,14 @@ postRoute.post("/", Auth.authorize, (req: Request, res: Response) => {
 				UserSchema.findById(post.posted_by)
 					.then(async (user: User | null) => {
 						if(!user) return res.status(404).json({ msg: "User not found" });
+						//subtract the char count from the user's availability
 						let charCount: number = post.title.length;
 						if(post.content.text) charCount += post.content.text.length;
-						if(post.content.img) charCount += 100;
-						if(post.content.position) charCount += 100;
-						//keywords are an array of strings, so sum the length of all the strings
+						if(post.content.position) charCount += 50;
 						if(post.keywords) charCount += post.keywords.reduce((acc: number, curr: string) => acc + curr.length, 0);
 						if(!user.canPost(charCount)) return res.status(500).json({ msg: "User can't post" });
-						console.log("User can post", user.char_availability);
 						await user.save();
+						//save the post
 						const newPost: Post=new PostSchema(req.body.post);
 						newPost.save()
 							.then((post: Post) => res.status(200).json({ post, user_char_availability: user.char_availability }))
@@ -137,11 +136,12 @@ postRoute.put("/:id", Auth.authorize, (req: Request, res: Response) => {
 });
 
 //delete a post
-postRoute.delete("/:id", (req: Request, res: Response) => {
+postRoute.delete("/:id", Auth.authorize, (req: Request, res: Response) => {
 	PostSchema.findByIdAndDelete(req.params.id)
 		.then((post: Post | null) => {
-			if(!post) res.status(404).json({ msg: "Post not found" });
-			else res.status(200).json({ msg: "Post deleted" });
+			if(!post) return res.status(404).json({ msg: "Post not found" });
+			if(post.posted_by != req.user?._id) return res.status(401).json({ msg: "Unauthorized" });
+			res.status(200).json({ msg: "Post deleted" });
 		})
 		.catch((err: Error) => res.status(500).json({ msg: "Error deleting post", err: err }));
 });

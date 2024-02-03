@@ -26,11 +26,23 @@ mediaRoute.put("/image", upload.single("image"), Auth.authorize, async (req: Req
 	if(req.body.postId) {
 		const post: Post | null = await PostSchema.findById(req.body.postId);
 		if(!post) return res.status(404).json({ msg: "Post not found." });
-
+		
 		if(req.user?.type === UserType.SMM && !req.user?.isClient(post._id))
 			return res.status(403).json({ msg: "You are not allowed to edit the post." });
 		else if(req.user?.type !== UserType.VIP && req.user?.type !== UserType.NORMAL)
 			return res.status(403).json({ msg: "You are not allowed to edit the post." });
+
+		//check if the post was posted today
+		const today: Date = new Date();
+		const postDate: Date = new Date(post.date);
+		if(today.getDate() !== postDate.getDate() || today.getMonth() !== postDate.getMonth() || today.getFullYear() !== postDate.getFullYear())
+			return res.status(406).json({ msg: "You can't edit a post that was not posted today." });
+
+		if(!req.user.canPost(100)) {
+			await PostSchema.findByIdAndDelete(post._id);
+			return res.status(500).json({ msg: "User can't post. The post has been deleted." });
+		}
+		req.user.save();
 
 		//delete the old image
 		if(post.content.img) {
@@ -39,7 +51,7 @@ mediaRoute.put("/image", upload.single("image"), Auth.authorize, async (req: Req
 		}
 
 		image.save()
-			.then((image: Image) => res.status(200).json({ imgId: image._id }))
+			.then((image: Image) => res.status(200).json({ imgId: image._id, user_char_availability: req.user!.char_availability }))
 			.catch((err: Error) => res.status(500).json(err));
 
 		post.content.img = image._id;
