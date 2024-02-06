@@ -15,11 +15,10 @@ function NewPost({ modalOpen, setModalOpen }) {
   const [users, setUsers] = useState([]);
   const [image, setImage] = useState('');
   const [preview, setPreview] = useState(null);
-  const [video, setVideo] = useState(null);
   const [error, setError] = useState(null);
   const [position, setPosition] = useState(undefined);
   const [keywords, setKeywords] = useState('');
-  const [postType, setPostType] = useState('text'); // ['text', 'image', 'video', 'geo']
+  const [postType, setPostType] = useState('text'); // ['text', 'image', 'geo']
   const [isFormValid, setIsFormValid] = useState(false);
   const [channel, setChannel] = useState(''); // New state variable for the selected channel
   const [myChannels, setMyChannels] = useState([]); // New state variable for the user's channels
@@ -27,8 +26,8 @@ function NewPost({ modalOpen, setModalOpen }) {
   const token = localStorage.getItem('token');
 
   useEffect(() => {
-    setIsFormValid(subject !== '' && (postText !== '' || image !== null || video !== null || position ) && keywords !== '');
-  }, [subject, postText, image, video, position, keywords]);
+    setIsFormValid(subject !== '' && (postText !== '' || image !== null || position ) && keywords !== '');
+  }, [subject, postText, image, position, keywords]);
 
   useEffect(() => {
     const options = {
@@ -51,7 +50,6 @@ function NewPost({ modalOpen, setModalOpen }) {
   useEffect(() => {
     // This function runs whenever postType changes
     setImage(null);
-    setVideo(null);
     setPostText('');
     setPosition(null);
     setError(null);
@@ -196,10 +194,6 @@ function NewPost({ modalOpen, setModalOpen }) {
     setImage(file);
   };
 
-  const handleVideoChange = (event) => {
-    setVideo(event.target.files[0]);
-  };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -227,7 +221,6 @@ function NewPost({ modalOpen, setModalOpen }) {
         content: {
           text: postText || null,
           img: null,
-          video: video || null,
           position: position || undefined,
         },
         timed: false,
@@ -281,7 +274,6 @@ function NewPost({ modalOpen, setModalOpen }) {
     // Reset form fields
     setSubject('');
     setImage(null);
-    setVideo(null);
     setPostText('');
     setError(null);
     setPosition(null);
@@ -324,7 +316,6 @@ function NewPost({ modalOpen, setModalOpen }) {
                   >
                     <MenuItem value="text">Text</MenuItem>
                     <MenuItem value="image">Image</MenuItem>
-                    <MenuItem value="video">Video</MenuItem>
                     <MenuItem value="geolocation">Geolocation</MenuItem>
                   </Select>
                 </FormControl>
@@ -380,13 +371,6 @@ function NewPost({ modalOpen, setModalOpen }) {
                     </Button>
                     {image && <img src={preview} alt="preview" style={{height:"100px", width:"100px"}}/>}
                   </>
-                )}
-
-                {postType === 'video' && (
-                  <Button variant="contained" component="label">
-                    Upload Video
-                    <input type="file" hidden accept="video/*" onChange={handleVideoChange} />
-                  </Button>
                 )}
 
                 {postType === 'geolocation' && (
