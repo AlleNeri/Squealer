@@ -27,11 +27,20 @@ import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzCommentModule } from 'ng-zorro-antd/comment';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { IconDefinition } from '@ant-design/icons-angular';
 import {
-  InboxOutline
+  InboxOutline,
+  UserOutline,
+  EyeOutline,
+  LikeOutline,
+  DislikeOutline,
+  ExclamationCircleOutline,
+  HeartOutline,
+  ClockCircleOutline,
 } from '@ant-design/icons-angular/icons';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -71,11 +80,20 @@ import it from '@angular/common/locales/it';
 import { PostSectionComponent } from './components/posts/post-section/post-section.component';
 import { UploadImageComponent } from './components/miscellaneous/upload-image/upload-image.component';
 import { MapComponent } from './components/miscellaneous/map/map.component';
+import { PostComponent } from './components/posts/post/post.component';
+import { ShowMapComponent } from './components/miscellaneous/show-map/show-map.component';
 
 registerLocaleData(it);
 
 const icons: IconDefinition[]= [
-  InboxOutline
+  InboxOutline,
+  UserOutline,
+  EyeOutline,
+  LikeOutline,
+  DislikeOutline,
+  ExclamationCircleOutline,
+  HeartOutline,
+  ClockCircleOutline,
 ];
 
 @NgModule({
@@ -102,6 +120,8 @@ const icons: IconDefinition[]= [
     PostSectionComponent,
     UploadImageComponent,
     MapComponent,
+    PostComponent,
+    ShowMapComponent,
   ],
   imports: [
     BrowserModule,
@@ -133,6 +153,8 @@ const icons: IconDefinition[]= [
     NzInputModule,
     NzFormModule,
     NzDatePickerModule,
+    NzCommentModule,
+    NzToolTipModule,
     NzIconModule.forChild(icons),
   ],
   providers: [

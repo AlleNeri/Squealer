@@ -1,6 +1,6 @@
 import { Injectable, EventEmitter, Output } from '@angular/core';
 
-import IUser from '../interfaces/user';
+import { IUser } from '../interfaces/user';
 import { ILoggedUser } from '../interfaces/auth-user';
 
 import Client from '../classes/client';

@@ -4,7 +4,7 @@ import { BackendComunicationService } from 'src/app/services/backend-comunicatio
 
 import Client from 'src/app/classes/client';
 
-import IUser from 'src/app/interfaces/user';
+import { IUser } from 'src/app/interfaces/user';
 
 @Component({
   selector: 'app-user-card',
