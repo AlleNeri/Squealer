@@ -6,6 +6,9 @@ import PostSchema, { Post } from "../model/Post";
 import Auth from "../controller/Auth";
 import UserSchema, { User, UserType } from "../model/User";
 
+if(!process.env.CHAR_FOR_SPECIAL_POSTS) throw new Error("CHAR_FOR_SPECIAL_POSTS is not defined in the .env file");
+const numCharForSpecialPosts: number=parseInt(process.env.CHAR_FOR_SPECIAL_POSTS);
+
 /*** Multer initialization ***/
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -38,7 +41,7 @@ mediaRoute.put("/image", upload.single("image"), Auth.authorize, async (req: Req
 		if(today.getDate() !== postDate.getDate() || today.getMonth() !== postDate.getMonth() || today.getFullYear() !== postDate.getFullYear())
 			return res.status(406).json({ msg: "You can't edit a post that was not posted today." });
 
-		if(!req.user.canPost(100)) {
+		if(!req.user.canPost(numCharForSpecialPosts)) {
 			await PostSchema.findByIdAndDelete(post._id);
 			return res.status(500).json({ msg: "User can't post. The post has been deleted." });
 		}

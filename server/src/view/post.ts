@@ -5,6 +5,9 @@ import UserSchema, { User, UserType } from '../model/User';
 import ChannelSchema, { Channel } from "../model/Channel";
 import Auth from "../controller/Auth";
 
+if(!process.env.CHAR_FOR_SPECIAL_POSTS) throw new Error("CHAR_FOR_SPECIAL_POSTS is not defined in the .env file");
+const numCharForSpecialPosts: number=parseInt(process.env.CHAR_FOR_SPECIAL_POSTS);
+
 export const postRoute: Router=Router();
 
 //get all posts or all the posts of a specific user if the id is provided in the 'of' query parameter
@@ -80,7 +83,7 @@ postRoute.post("/", Auth.authorize, (req: Request, res: Response) => {
 						//subtract the char count from the user's availability
 						let charCount: number = post.title.length;
 						if(post.content.text) charCount += post.content.text.length;
-						if(post.content.position) charCount += 50;
+						if(post.content.position) charCount += numCharForSpecialPosts;
 						if(post.keywords) charCount += post.keywords.reduce((acc: number, curr: string) => acc + curr.length, 0);
 						if(!user.canPost(charCount)) return res.status(500).json({ msg: "User can't post" });
 						await user.save();
@@ -102,15 +105,19 @@ postRoute.post("/", Auth.authorize, (req: Request, res: Response) => {
 		.catch((err: Error) => res.status(500).json({ msg: "Error while find the channel", err: err }));
 });
 
-//update a post
-postRoute.put("/:id", Auth.authorize, (req: Request, res: Response) => {
+//update the position of a post
+//used for the timed position post
+//the body must contain the 'position' field in that way: { latitude: Number, longitude: Number }
+postRoute.put("/:id/position", Auth.authorize, (req: Request, res: Response) => {
+	if(!req.body.position) res.status(400).json({ msg: "Bad request, no position provided" });
 	PostSchema.findById(req.params.id)
 		.then((post: Post | null) => {
 			if(!post) res.status(404).json({ msg: "Post not found" });
-			else if(post.author!=req.user?._id) res.status(401).json({ msg: "Unauthorized" });
+			else if(post.posted_by!=req.user?._id) res.status(401).json({ msg: "Unauthorized" });
+			else if(!post.content.position) res.status(400).json({ msg: "Bad request, no position in the post" });
 			else {
-				post=Object.assign(post, req.body.post);
-				post!.save()
+				post.content.position=req.body.position;
+				post.save()
 					.then((post: Post) => res.status(200).json({ msg: "Post updated", post: post }))
 					.catch((err: Error) => res.status(500).json({ msg: "Error updating post", err: err }));
 			}
