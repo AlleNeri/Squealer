@@ -114,6 +114,7 @@ postRoute.put("/:id/position", Auth.authorize, (req: Request, res: Response) => 
 		.then((post: Post | null) => {
 			if(!post) res.status(404).json({ msg: "Post not found" });
 			else if(post.posted_by!=req.user?._id) res.status(401).json({ msg: "Unauthorized" });
+			else if(!post.timed) res.status(400).json({ msg: "Bad request, the post is not a timed post" });
 			else if(!post.content.position) res.status(400).json({ msg: "Bad request, no position in the post" });
 			else {
 				post.content.position=req.body.position;
