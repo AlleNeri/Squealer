@@ -8,12 +8,15 @@ import './newPost.css';
 
 function NewPost({ modalOpen, setModalOpen }) {
   const { loggedIn } = useContext(LoginContext);
+  const [charAvailability, setCharAvailability] = useState({ dayly: 0, weekly: 0, monthly: 0 });
+  const [initialCharAvailability, setInitialCharAvailability] = useState({ dayly: 0, weekly: 0, monthly: 0 });
   const [subject, setSubject] = useState('');
   const [postText, setPostText] = useState('');
   const [users, setUsers] = useState([]);
   const [image, setImage] = useState('');
   const [preview, setPreview] = useState(null);
   const [video, setVideo] = useState(null);
+  const [error, setError] = useState(null);
   const [position, setPosition] = useState(undefined);
   const [keywords, setKeywords] = useState('');
   const [postType, setPostType] = useState('text'); // ['text', 'image', 'video', 'geo']
@@ -28,11 +31,30 @@ function NewPost({ modalOpen, setModalOpen }) {
   }, [subject, postText, image, video, position, keywords]);
 
   useEffect(() => {
+    const options = {
+      headers: {
+        'Authorization': token
+      }
+    };
+
+    fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/${localStorage.getItem('userId')}`, options)
+      .then(response => response.json())
+      .then(data => {
+        setCharAvailability(data.quote);
+        setInitialCharAvailability(data.quote);
+      })
+      .catch(error => {
+        console.error('Error fetching user data', error);
+      });
+  }, []);
+
+  useEffect(() => {
     // This function runs whenever postType changes
     setImage(null);
     setVideo(null);
     setPostText('');
     setPosition(null);
+    setError(null);
   }, [postType]);
 
   useEffect(() => {
@@ -73,8 +95,44 @@ function NewPost({ modalOpen, setModalOpen }) {
     }
   }, [loggedIn, token]);
 
-  const handleSubjectChange = (event) => {
-    setSubject(event.target.value);
+  const handlePostTextChange = event => {
+    const newPostText = event.target.value;
+    const diff = postText.length - newPostText.length;
+    if (diff > 0 && charAvailability.dayly < initialCharAvailability.dayly) {
+      setCharAvailability(prevState => ({
+        ...prevState,
+        dayly: prevState.dayly + diff,
+      }));
+    } else if (diff < 0 && charAvailability.dayly > 0) {
+      setCharAvailability(prevState => ({
+        ...prevState,
+        dayly: prevState.dayly + diff, // diff is negative, so this decreases dayly
+      }));
+    }else{
+      setError('You have reached your daily character limit');
+      return;
+    }
+    setPostText(newPostText);
+  };
+  
+  const handleSubjectChange = event => {
+    const newSubject = event.target.value;
+    const diff = subject.length - newSubject.length;
+    if (diff > 0 && charAvailability.dayly < initialCharAvailability.dayly) {
+      setCharAvailability(prevState => ({
+        ...prevState,
+        dayly: prevState.dayly + diff,
+      }));
+    } else if (diff < 0 && charAvailability.dayly > 0) {
+      setCharAvailability(prevState => ({
+        ...prevState,
+        dayly: prevState.dayly + diff, // diff is negative, so this decreases dayly
+      }));
+    }else{
+      setError('You have reached your daily character limit');
+      return;
+    }
+    setSubject(newSubject);
   };
 
   const handleKeywordsChange = (e) => {
@@ -105,10 +163,6 @@ function NewPost({ modalOpen, setModalOpen }) {
 
   const handlePostTypeChange = (event) => {
     setPostType(event.target.value);
-  };
-
-  const handlePostTextChange = (event) => {
-    setPostText(event.target.value);
   };
 
   const handlePositionChange = () => {
@@ -164,6 +218,8 @@ function NewPost({ modalOpen, setModalOpen }) {
     if (!channel) {
       alert('Please select a channel.');
       setModalOpen(true);
+    }else if(charAvailability.dayly <= 0) {
+      setError('You have reached your daily character limit');
     }else{
       // First, create the post without the image ID
       const data = {
@@ -174,6 +230,7 @@ function NewPost({ modalOpen, setModalOpen }) {
           video: video || null,
           position: position || undefined,
         },
+        timed: false,
         keywords: validKeywords || [],
         posted_on: channel || null,
         popular: false,
@@ -190,6 +247,7 @@ function NewPost({ modalOpen, setModalOpen }) {
   
     if (!postResponse.ok) {
       console.error('Error creating post');
+      console.log(postResponse);
       return;
     }
   
@@ -225,6 +283,7 @@ function NewPost({ modalOpen, setModalOpen }) {
     setImage(null);
     setVideo(null);
     setPostText('');
+    setError(null);
     setPosition(null);
     setKeywords('');
     setPostType('text');
@@ -238,21 +297,21 @@ function NewPost({ modalOpen, setModalOpen }) {
           <div className="modal" style={{ display: modalOpen ? 'block' : 'none' }}>      
             <div className="modal-content">
               <form onSubmit={handleSubmit} >
-              <Typography variant="h4" component="h2" gutterBottom>
-                NEW SQUEAL
-              </Typography>
+                <Typography variant="h4" component="h2" gutterBottom>
+                  NEW SQUEAL
+                </Typography>
 
-              <Box marginBottom={2}>
-                <TextField
-                  label="Subject"
-                  value={subject}
-                  onChange={(e) => handleSubjectChange(e)}
-                  variant="outlined"
-                  fullWidth
-                  margin="normal"
-                  className='modal-form input'
-                />
-              </Box>
+                <Box marginBottom={2}>
+                  <TextField
+                    label="Subject"
+                    value={subject}
+                    onChange={(e) => handleSubjectChange(e)}
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    className='modal-form input'
+                  />
+                </Box>
 
               <Box marginBottom={2}>
                 <FormControl fullWidth margin="normal">
@@ -367,11 +426,21 @@ function NewPost({ modalOpen, setModalOpen }) {
                   margin="normal"
                 />    
               </Box>
-                
+              {error && <p style={{ color: 'red' }}>{error}</p>}
               <Box marginBottom={2}>
-                <Button type="submit" variant="contained" color="primary" disabled={!isFormValid} onClick={
-                  () => setModalOpen(false)
-                }>Submit</Button>
+                <div style={{display:"flex", justifyContent:"space-between"}}>
+                    <div>
+                      <Button type="submit" variant="contained" color="primary" disabled={!isFormValid} onClick={
+                        () => setModalOpen(false)
+                      }>Submit</Button>
+                    </div>
+                    <div>
+                    <Box fontWeight="fontWeightBold">
+                      Characters remaining: {charAvailability?.dayly}
+                    </Box>
+                    </div>
+                </div>
+                
               </Box>
               </form>
             </div>
