@@ -5,8 +5,6 @@ import 'leaflet/dist/leaflet.css';
 import markerIconPng from "leaflet/dist/images/marker-icon.png";
 import { SentimentVeryDissatisfied, SentimentDissatisfied, SentimentSatisfied, SentimentVerySatisfied } from '@material-ui/icons';
 import { LoginContext } from '../../context/LoginContext/LoginContext';
-import { useTheme } from '@material-ui/core/styles';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
 import CountUp from 'react-countup';
 import {Link} from 'react-router-dom';
 
@@ -26,8 +24,6 @@ export default function Post({post}) {
     const userID = localStorage.getItem('userId');
     const [userReaction, setUserReaction] = useState(post.reactions.find(reaction => reaction.user_id === userID));
     if(!loggedIn) { localStorage.removeItem('userId'); }
-    const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     useEffect(() => {
       const visualizePost = async () => {
@@ -183,7 +179,7 @@ export default function Post({post}) {
 
     return (
     <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <Card style={{ margin: '20px', backgroundColor: '#f5f5f5', borderRadius: '10px', width: isMobile ? '100%' : '600px' }}>
+        <Card style={{ margin: '20px', backgroundColor: '#f5f5f5', borderRadius: '10px', width: '100%' }}>
             <CardContent>
                 <div>
                 <Grid container justifyContent="space-between">

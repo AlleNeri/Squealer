@@ -10,6 +10,7 @@ import Smm from './pages/Smm/Smm';
 import HomePage from './pages/HomePage/HomePage';
 import Keywords from './pages/Keywords/Keywords'
 import { PostsContext } from './context/PostsContext/PostsContext';
+import { SidebarProvider } from './context/SidebarContext/SidebarContext';
 
 const routes = createBrowserRouter([
 	{
@@ -54,11 +55,13 @@ function App() {
 	const [posts, setPosts] = useState([]);
 	const postsContextValue = useMemo(() => ({ posts, setPosts }), [posts, setPosts]);
 	return (
-		<LoginContext.Provider value={loginContextValue}>
-			<PostsContext.Provider value={postsContextValue}>
-				<RouterProvider router={routes} />
-			</PostsContext.Provider>
-		</LoginContext.Provider>
+		<SidebarProvider>
+			<LoginContext.Provider value={loginContextValue}>
+				<PostsContext.Provider value={postsContextValue}>
+					<RouterProvider router={routes} />
+				</PostsContext.Provider>
+			</LoginContext.Provider>
+		</SidebarProvider>
 	);
 }
 

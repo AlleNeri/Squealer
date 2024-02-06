@@ -13,13 +13,13 @@ import Collapse from '@material-ui/core/Collapse';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import Channel from '../Channel/Channel';
+import { SidebarContext } from '../../context/SidebarContext/SidebarContext';
 import { LoginContext } from '../../context/LoginContext/LoginContext';
 import './sidebar.css';
 const Sidebar = () => {
   const [allChannels, setAllChannels] = useState([]);
   const [myChannels, setMyChannels] = useState([]);
   const [isChannelModalOpen, setChannelModalOpen] = useState(false);
-  const [isSidebarMinimized, setSidebarMinimized] = useState(false);
   const [selectedChannel, setSelectedChannel] = useState(null);
   const [hoveredChannel, setHoveredChannel] = useState(null);
   const { loggedIn } = useContext(LoginContext);
@@ -27,10 +27,30 @@ const Sidebar = () => {
   const token = localStorage.getItem('token');
   const [openExplore, setOpenExplore] = useState(false);
   const [openMyChannels, setOpenMyChannels] = useState(false);
+  const { isSidebarMinimized, setSidebarMinimized } = useContext(SidebarContext);
 
   const minimizeSidebar = () => {
     setSidebarMinimized(!isSidebarMinimized);
   };
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 719) { 
+        setSidebarMinimized(true);
+      } else {
+        setSidebarMinimized(false);
+      }
+    };
+
+    // Attach the event listener
+    window.addEventListener('resize', handleResize);
+
+    // Call the handler right away so the state gets updated with the initial window size
+    handleResize();
+
+    // Remove the event listener when the component is unmounted
+    return () => window.removeEventListener('resize', handleResize);
+  }, [setSidebarMinimized]);
 
   const handleChannelClick = (channelId) => {
     setSelectedChannel(channelId);
@@ -109,7 +129,7 @@ useEffect(() => {
 
     return (
       <>
-      <div style={{ position: 'fixed', display: 'flex', justifyContent: 'flex-start', height: '100vh', marginTop:'64px' }}>
+      <div style={{ position: 'fixed', display: 'flex', justifyContent: 'flex-start', height: '100vh', marginTop:'56px' }}>
           <CDBSidebar textColor="#fff" backgroundColor="#333" >
             <CDBSidebarHeader prefix={<i className="fa fa-bars fa-large" onClick={minimizeSidebar}></i> }>
               <h6 className="text-decoration-none" style={{ color: 'inherit' }}>
@@ -131,7 +151,7 @@ useEffect(() => {
                   <NavLink
                     key={channel._id}
                     to={`/AllChannels/${channel._id}`}
-                    activeClassName="activeClicked"
+                    activeclassname="activeClicked"
                     onClick={() => handleChannelClick(channel._id)}
                     style={{ textDecoration: 'none' }}>
                     <CDBSidebarMenuItem 
@@ -160,7 +180,7 @@ useEffect(() => {
                           <NavLink
                             key={channel._id}
                             to={`/AllChannels/${channel._id}`}
-                            activeClassName="activeClicked"
+                            activeclassname="activeClicked"
                             style={{ textDecoration: 'none' }}
                             onClick={() => handleChannelClick(channel._id)}
                           >
