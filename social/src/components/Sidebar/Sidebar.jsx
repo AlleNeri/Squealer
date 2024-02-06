@@ -9,6 +9,7 @@ import {
 } from 'cdbreact';
 import { NavLink, useLocation } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
+import Tooltip from '@material-ui/core/Tooltip';
 import Collapse from '@material-ui/core/Collapse';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
@@ -40,7 +41,7 @@ const Sidebar = () => {
       } else {
         setSidebarMinimized(false);
       }
-    };
+  };
 
     // Attach the event listener
     window.addEventListener('resize', handleResize);
@@ -129,12 +130,12 @@ useEffect(() => {
 
     return (
       <>
-      <div style={{ position: 'fixed', display: 'flex', justifyContent: 'flex-start', height: '100vh', marginTop:'56px' }}>
+      <div style={{ position: 'fixed', display: 'flex', justifyContent: 'flex-start', height: '100vh', zIndex: '1001'}}>
           <CDBSidebar textColor="#fff" backgroundColor="#333" >
             <CDBSidebarHeader prefix={<i className="fa fa-bars fa-large" onClick={minimizeSidebar}></i> }>
               <h6 className="text-decoration-none" style={{ color: 'inherit' }}>
                 CHANNELS
-                {loggedIn && <AddCircleIcon  style={{ marginLeft: '10px', cursor: 'pointer', color: '#54aedb' }} onClick={() => setChannelModalOpen(true)} />}
+                {loggedIn && <Tooltip title="New channel"><AddCircleIcon  style={{ marginLeft: '10px', cursor: 'pointer' }} onClick={() => setChannelModalOpen(true)} /></Tooltip>}
               </h6>
             </CDBSidebarHeader>
     
@@ -142,7 +143,7 @@ useEffect(() => {
             <CDBSidebarMenu style={{ overflowY: 'auto' }}>
               {!isSidebarMinimized ? (
                 <Typography variant="h6" style={{ fontWeight: 'bold' }} onClick={() => setOpenExplore(!openExplore)}>
-                   <ExpandMoreIcon style={{ transform: openExplore ? 'rotate(0deg)' : 'rotate(-90deg)', transition: 'transform 0.3s' }}/>
+                   <ExpandMoreIcon style={{ transform: openExplore ? 'rotate(0deg)' : 'rotate(-90deg)', transition: 'transform 0.3s', cursor:'pointer' }}/>
                   <span style={{ marginLeft: '20px' }}>EXPLORE</span>
                 </Typography>
               ): <p></p>}
@@ -169,7 +170,7 @@ useEffect(() => {
                   <>
                   {!isSidebarMinimized ?(
                     <Typography variant="h6" style={{ fontWeight: 'bold' }} onClick={() => setOpenMyChannels(!openMyChannels)}>
-                      <ExpandMoreIcon  style={{ transform: openMyChannels ? 'rotate(0deg)' : 'rotate(-90deg)', transition: 'transform 0.3s' }}/>
+                      <ExpandMoreIcon  style={{ transform: openMyChannels ? 'rotate(0deg)' : 'rotate(-90deg)', transition: 'transform 0.3s', cursor:'pointer'}}/>
                       <span style={{ marginLeft: '20px' }}>MY CHANNELS</span>
                     </Typography>
                   ): <p></p>}
