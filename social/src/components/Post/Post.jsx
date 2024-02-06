@@ -6,6 +6,7 @@ import markerIconPng from "leaflet/dist/images/marker-icon.png";
 import { SentimentVeryDissatisfied, SentimentDissatisfied, SentimentSatisfied, SentimentVerySatisfied } from '@material-ui/icons';
 import { LoginContext } from '../../context/LoginContext/LoginContext';
 import CountUp from 'react-countup';
+import Linkify from 'react-linkify';
 import {Link} from 'react-router-dom';
 
 export default function Post({post}) {
@@ -178,64 +179,65 @@ export default function Post({post}) {
     };
 
     return (
-    <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
         <Card style={{ margin: '20px', backgroundColor: '#f5f5f5', borderRadius: '10px', width: '100%' }}>
-            <CardContent>
-                <div>
-                <Grid container justifyContent="space-between">
-                  <Avatar alt="Profile" src={user && user.img ? `${import.meta.env.VITE_DEFAULT_URL}/media/image/${user.img}` : undefined} >
-                      {user?.u_name.charAt(0).toUpperCase()}
-                  </Avatar>
-                </Grid>
+          <CardContent>
+            <Grid container>
+              <Grid item xs={2}>
+                <Avatar alt="Profile" src={user && user.img ? `${import.meta.env.VITE_DEFAULT_URL}/media/image/${user.img}` : undefined} >
+                  {user?.u_name.charAt(0).toUpperCase()}
+                </Avatar>
                 <Link to={`/Profile/${posted_by}`}>{user && user.u_name}</Link>
-                </div>
-                <Divider style={{ margin: '20px 0' }} />
+              </Grid>
+              <Grid item xs={10}>
                 <Typography variant="h5" component="h2">
-                    {title}
+                  {title}
                 </Typography>
                 <Divider style={{ margin: '20px 0' }} />
                 {content && content.text ?
-                    <Typography variant="body2" component="p">
-                        {replacedText}
-                    </Typography>
-                    : <p></p>
+                  <Typography variant="body2" component="p">
+                    <Linkify>
+                      {replacedText}
+                    </Linkify>
+                  </Typography>
+                  : <p></p>
                 }
                 {content && content.position && <div ref={mapRef} style={{ height: '500px', width: '100%', zIndex: 500 }}></div>}
                 {content && content.img && <img src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${content.img}`} alt="description" width="100%" height="500px" />}
                 <Divider style={{ margin: '20px 0' }} />
                 <Typography variant="body2" component="p">
-                    {keywords && renderKeywords(keywords)}
+                  {keywords && renderKeywords(keywords)}
                 </Typography>
                 <Divider style={{ margin: '20px 0' }} />
                 <Grid container justifyContent="space-between">
-                    <Grid item>
-                      <IconButton onClick={() => handleReaction(-2)} disabled={!loggedIn}>
-                          <SentimentVeryDissatisfied style={{ color: userReaction && userReaction.value === -2 ? 'red' : 'grey' }} />
-                          <CountUp end={reactionCounts.veryDissatisfied} />
-                      </IconButton>
-                      <IconButton onClick={() => handleReaction(-1)} disabled={!loggedIn}>
-                          <SentimentDissatisfied style={{ color: userReaction && userReaction.value === -1 ? 'orange' : 'grey' }} />
-                          <CountUp end={reactionCounts.dissatisfied} />
-                      </IconButton>
-                      <IconButton onClick={() => handleReaction(1)} disabled={!loggedIn}>
-                          <SentimentSatisfied style={{ color: userReaction && userReaction.value === 1 ? 'lightgreen' : 'grey' }} />
-                          <CountUp end={reactionCounts.satisfied} />
-                      </IconButton>
-                      <IconButton onClick={() => handleReaction(2)} disabled={!loggedIn}>
-                          <SentimentVerySatisfied style={{ color: userReaction && userReaction.value === 2 ? 'green' : 'grey' }} />
-                          <CountUp end={reactionCounts.verySatisfied} />
-                      </IconButton> 
-                    </Grid>
-                    {
-                    <Grid item>
-                        <Typography variant="body2" color="textSecondary">
-                            Views: {views || 0}
-                        </Typography>
-                    </Grid>
-                    }
+                  <Grid item>
+                    <IconButton onClick={() => handleReaction(-2)} disabled={!loggedIn}>
+                      <SentimentVeryDissatisfied style={{ color: userReaction && userReaction.value === -2 ? 'red' : 'grey' }} />
+                      <CountUp end={reactionCounts.veryDissatisfied} />
+                    </IconButton>
+                    <IconButton onClick={() => handleReaction(-1)} disabled={!loggedIn}>
+                      <SentimentDissatisfied style={{ color: userReaction && userReaction.value === -1 ? 'orange' : 'grey' }} />
+                      <CountUp end={reactionCounts.dissatisfied} />
+                    </IconButton>
+                    <IconButton onClick={() => handleReaction(1)} disabled={!loggedIn}>
+                      <SentimentSatisfied style={{ color: userReaction && userReaction.value === 1 ? 'lightgreen' : 'grey' }} />
+                      <CountUp end={reactionCounts.satisfied} />
+                    </IconButton>
+                    <IconButton onClick={() => handleReaction(2)} disabled={!loggedIn}>
+                      <SentimentVerySatisfied style={{ color: userReaction && userReaction.value === 2 ? 'green' : 'grey' }} />
+                      <CountUp end={reactionCounts.verySatisfied} />
+                    </IconButton> 
+                  </Grid>
+                  <Grid item>
+                    <Typography variant="body2" color="textSecondary">
+                      Views: {views || 0}
+                    </Typography>
+                  </Grid>
                 </Grid>
-            </CardContent>
+              </Grid>
+            </Grid>
+          </CardContent>
         </Card>
-    </div>
+</div>
     );
 }
