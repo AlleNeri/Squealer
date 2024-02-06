@@ -9,7 +9,20 @@
     [nzSize]="'large'"
   ></nz-avatar>
   <nz-comment-content>
-    <h4>{{ post.title }}</h4>
+    <nz-space>
+      <div *ngIf="post.timed">
+        <span
+          nz-tooltip
+          nzTooltipTitle="Post temporizzato"
+          nz-icon
+          nzType="clock-circle"
+          nzTheme="outline"
+          style="color: dodgerblue"
+        ></span>
+        <nz-divider nzType="vertical"></nz-divider>
+      </div>
+      <h4>{{ post.title }}</h4>
+    </nz-space>
     <p *ngIf="post.content.text">{{ post.content.text }}</p>
     <div *ngIf="post.content.img">
       <img
@@ -87,3 +100,7 @@
     </span>
   </nz-comment-action>
 </nz-comment>
+
+<ng-template #iconTemplate>
+  <span nz-icon nzType="clock-circle" class="ant-scroll-number-custom-component" style="color: #f5222d"></span>
+</ng-template>
