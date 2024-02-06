@@ -24,7 +24,7 @@ export default function ButtonAppBar({setModalOpen}) {
 
   const headerStyle = {
     paddingLeft: isSidebarMinimized ? '80px' : '270px', // Adjust this value as needed
-    height: isSidebarMinimized ? '66.5px' : '80.5px',
+    height: isSidebarMinimized ? '66.5px' : '76px',
   };
 
   useEffect(() => {
@@ -66,9 +66,14 @@ export default function ButtonAppBar({setModalOpen}) {
         <Toolbar className="Toolbar">
           
           <div>
-          <Link to="/HomePage" className="Link">
-            <Tooltip title="Home"><HomeIcon className='button' /></Tooltip>
-          </Link>
+          <Link to='/HomePage' className="Link">
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <Tooltip title="Homepage">
+                  <HomeIcon/>
+                </Tooltip>
+                <span style={{ fontSize: '0.8rem' }}>Home</span>
+              </div>
+            </Link>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -81,25 +86,50 @@ export default function ButtonAppBar({setModalOpen}) {
           {!loggedIn &&
           <div className='regLog'>
             <Link to='/Register' className="Link">
-              <Tooltip title="Register"><AppRegistrationIcon /></Tooltip>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <Tooltip title="Register">
+                  <AppRegistrationIcon />
+                </Tooltip>
+                <span style={{ fontSize: '0.8rem' }}>Register</span>
+              </div>
             </Link>
             
             <Link to='/Login' className="Link">
-            <Tooltip title="Login"><LoginIcon /></Tooltip>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <Tooltip title="Login">
+                  <LoginIcon />
+                </Tooltip>
+                <span style={{ fontSize: '0.8rem' }}>Login</span>
+              </div>
             </Link>
           </div>
           
           }
           {loggedIn && 
           <div className='newLog'>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <Tooltip title="New squeal">
+                <CreateIcon style={{ cursor:"pointer" }} onClick={handleNewPostClick} />
+              </Tooltip>
+              <span style={{ fontSize: '0.8rem' }}>New squeal</span> {/* Adjust as needed */}
+            </div>
 
-            <Tooltip title="New squeal"><CreateIcon style={{ cursor:"pointer" }} onClick={handleNewPostClick} /></Tooltip>
-            <Link to="/Login" className='Link'>
-            <Tooltip title="Logout"><LogoutIcon className='button' onClick={handleLogout} /></Tooltip>
+            <Link to='/Login' className="Link">
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <Tooltip title="Logout">
+                  <LogoutIcon onClick={handleLogout}/>
+                </Tooltip>
+                <span style={{ fontSize: '0.8rem' }}>Logout</span>
+              </div>
             </Link>
 
             <Link to={`/Profile/${localStorage.getItem('userId')}`} className='Link'>
-              <Tooltip title="Your profile"><AccountCircleIcon onClick={handleProfileClick} /></Tooltip>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <Tooltip title="Profile">
+                  <AccountCircleIcon onClick={handleProfileClick} />
+                </Tooltip>
+                <span style={{ fontSize: '0.8rem' }}>Profile</span>
+              </div>
             </Link>
             
           </div>}
