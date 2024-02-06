@@ -40,6 +40,15 @@
         [lng]="post.content.position.longitude"
       ></app-show-map>
     </div>
+    <div *ngIf="post.keywords.length > 0" style="padding-top: 1%;">
+      <nz-space>
+        <div *ngFor="let keyword of post.keywords">
+          <nz-tag nzColor="processing">
+            #{{ keyword }}
+          </nz-tag>
+        </div>
+      </nz-space>
+    </div>
   </nz-comment-content>
   <nz-comment-action nzTooltipTitle="Views">
     <span
