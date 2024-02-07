@@ -304,7 +304,7 @@ export default function Post({post}) {
                         </Grid>
                       </Grid>
                       <Grid container alignItems="flex-end" justifyContent="flex-end">
-                        {!timed &&
+                        {timed &&
                           <Tooltip title="Timed squeal"><AlarmIcon /></Tooltip>
                         }
                         <Typography variant="body2" color="textSecondary">
