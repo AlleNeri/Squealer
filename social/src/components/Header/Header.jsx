@@ -78,7 +78,7 @@ export default function ButtonAppBar({setModalOpen}) {
 
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <img src={logo} alt="Logo" style={{ height: '50px', marginRight: '10px' }} />
-            <Typography className="Typography">
+            <Typography className="Typography" fontWeight="fontWeightBold">
               SQUEALER
             </Typography>
           </div>

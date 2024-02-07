@@ -11,6 +11,7 @@ import HomePage from './pages/HomePage/HomePage';
 import Keywords from './pages/Keywords/Keywords'
 import { PostsContext } from './context/PostsContext/PostsContext';
 import { SidebarProvider } from './context/SidebarContext/SidebarContext';
+import { TimeProvider } from './context/TimeContext/TimeContext';
 
 const routes = createBrowserRouter([
 	{
@@ -51,17 +52,23 @@ const routes = createBrowserRouter([
 
 function App() {
 	const [loggedIn, setLoggedIn] = useState(false);
-	const loginContextValue = useMemo(() => ({ loggedIn, setLoggedIn }), [loggedIn, setLoggedIn]);
 	const [posts, setPosts] = useState([]);
+	const [updateInterval, setUpdateInterval] = useState(0);
+	const [updateTimes, setUpdateTimes] = useState(0);
+	const loginContextValue = useMemo(() => ({ loggedIn, setLoggedIn }), [loggedIn, setLoggedIn]);
 	const postsContextValue = useMemo(() => ({ posts, setPosts }), [posts, setPosts]);
+	const timeContextValue = useMemo(() => ({ updateInterval, setUpdateInterval, updateTimes, setUpdateTimes }), [updateInterval, setUpdateInterval, updateTimes, setUpdateTimes]);
+
 	return (
-		<SidebarProvider>
-			<LoginContext.Provider value={loginContextValue}>
-				<PostsContext.Provider value={postsContextValue}>
-					<RouterProvider router={routes} />
-				</PostsContext.Provider>
-			</LoginContext.Provider>
-		</SidebarProvider>
+		<TimeProvider value={{timeContextValue}}>
+			<SidebarProvider>
+				<LoginContext.Provider value={loginContextValue}>
+					<PostsContext.Provider value={postsContextValue}>
+						<RouterProvider router={routes} />
+					</PostsContext.Provider>
+				</LoginContext.Provider>
+			</SidebarProvider>
+		</TimeProvider>
 	);
 }
 

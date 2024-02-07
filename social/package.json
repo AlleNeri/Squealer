@@ -27,6 +27,7 @@
     "react-bootstrap": "^2.9.0",
     "react-countup": "^6.5.0",
     "react-dom": "^18.2.0",
+    "react-helmet": "^6.1.0",
     "react-linkify": "^1.0.0-alpha",
     "react-media-hook": "^0.5.0",
     "react-mentions": "^4.4.10",

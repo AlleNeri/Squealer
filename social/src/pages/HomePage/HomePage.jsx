@@ -1,11 +1,13 @@
 import React, { useEffect, useContext } from 'react';
 import Post from '../../components/Post/Post';
 import { PostsContext } from '../../context/PostsContext/PostsContext';
+import { Typography, Divider,  createTheme, ThemeProvider, responsiveFontSizes } from '@material-ui/core';
 
 function HomePage() {
     const { posts, setPosts } = useContext(PostsContext);
     const token = localStorage.getItem('token');
-
+    let theme = createTheme();
+    theme = responsiveFontSizes(theme);
    useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -45,6 +47,11 @@ function HomePage() {
 
   return (
     <div>
+      <ThemeProvider theme={theme}>
+        <Typography variant="h2" component="h1" gutterBottom style={{ textAlign: 'center', padding: '20px 0' }}>
+          HOMEPAGE
+        </Typography>
+      <Divider style={{ backgroundColor: 'black', width: '30%', margin: '0 auto' }} />
       {Array.isArray(posts) && 
         posts.map((post) => (
           <div key={post._id}>
@@ -52,6 +59,7 @@ function HomePage() {
           </div>
         ))
       }
+      </ThemeProvider>
     </div>
   );
 }
