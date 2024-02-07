@@ -317,7 +317,7 @@ const Profile = () => {
                     Daily quote:
                 </Typography>
                 <Typography variant="body2" component="span" style={{ marginLeft: '8px' }}>
-                    {user && user.quote && user.quote.dayly || 0}
+                    {user && user.quote && user.char_availability.dayly || 0}
                 </Typography>
               </Box>
               <Box display="flex" alignItems="center">
@@ -325,7 +325,7 @@ const Profile = () => {
                         Weekly quote:
                     </Typography>
                     <Typography variant="body2" component="span" style={{ marginLeft: '8px' }}>
-                        {user && user.quote && user.quote.weekly || 0}
+                        {user && user.quote && user.char_availability.weekly || 0}
                     </Typography>
               </Box>
               <Box display="flex" alignItems="center">
@@ -333,7 +333,7 @@ const Profile = () => {
                         Monthly quote:
                     </Typography>
                     <Typography variant="body2" component="span" style={{ marginLeft: '8px' }}>
-                        {user && user.quote && user.quote.monthly || 0}
+                        {user && user.quote && user.char_availability.monthly || 0}
                     </Typography>
               </Box>
             </>

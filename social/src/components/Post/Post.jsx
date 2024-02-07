@@ -247,7 +247,7 @@ export default function Post({post}) {
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         <Grid container justifyContent="center">
           <Grid item xs={12} sm={10} md={8} lg={6}>
-            <Card style={{ margin: '20px', backgroundColor: '#fafeff', borderRadius: '60px' }}>
+            <Card style={{ margin: '20px', padding: '20px', backgroundColor: '#fafeff' }}>
               <CardContent>
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={2}>
@@ -260,7 +260,6 @@ export default function Post({post}) {
                     <Typography variant="h5" component="h2">
                       {title}
                     </Typography>
-                    <Divider style={{ margin: '20px 0' }} />
                     {content && content.text ?
                       <Typography variant="body2" component="p">
                         <Linkify>
@@ -269,13 +268,11 @@ export default function Post({post}) {
                       </Typography>
                       : <p></p>
                     }
-                    {content && content.position && <div ref={mapRef} style={{ height: '500px', width: '100%', zIndex: 500 }}></div>}
-                    {content && content.img && <img src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${content.img}`} alt="description" width="100%" height="500px" />}
-                    <Divider style={{ margin: '20px 0' }} />
+                    {content && content.position && <div ref={mapRef} style={{ width: '100%', height: '300px', zIndex: 500 }}></div>}
+                    {content && content.img && <img src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${content.img}`} alt="description" style={{ width: '100%', height: 'auto' }} />}
                     <Typography variant="body2" component="p">
                       {keywords && renderKeywords(keywords)}
                     </Typography>
-                    <Divider style={{ margin: '20px 0' }} />
                     <Grid container justifyContent="space-between">
                       <Grid container spacing={1}>
                         <Grid item xs={3} sm={3}>

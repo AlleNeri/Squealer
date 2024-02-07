@@ -39,8 +39,8 @@ function NewPost({ modalOpen, setModalOpen }) {
     fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/${localStorage.getItem('userId')}`, options)
       .then(response => response.json())
       .then(data => {
-        setCharAvailability(data.quote);
-        setInitialCharAvailability(data.quote);
+        setCharAvailability(data?.char_availability);
+        setInitialCharAvailability(data?.char_availability);
       })
       .catch(error => {
         console.error('Error fetching user data', error);
@@ -96,15 +96,15 @@ function NewPost({ modalOpen, setModalOpen }) {
   const handlePostTextChange = event => {
     const newPostText = event.target.value;
     const diff = postText.length - newPostText.length;
-    if (diff > 0 && charAvailability.dayly < initialCharAvailability.dayly) {
+    if (diff > 0 && charAvailability?.dayly < initialCharAvailability?.dayly) {
       setCharAvailability(prevState => ({
         ...prevState,
-        dayly: prevState.dayly + diff,
+        dayly: prevState?.dayly + diff,
       }));
-    } else if (diff < 0 && charAvailability.dayly > 0) {
+    } else if (diff < 0 && charAvailability?.dayly > 0) {
       setCharAvailability(prevState => ({
         ...prevState,
-        dayly: prevState.dayly + diff, // diff is negative, so this decreases dayly
+        dayly: prevState?.dayly + diff, // diff is negative, so this decreases dayly
       }));
     }else{
       setError('You have reached your daily character limit');
@@ -116,15 +116,15 @@ function NewPost({ modalOpen, setModalOpen }) {
   const handleSubjectChange = event => {
     const newSubject = event.target.value;
     const diff = subject.length - newSubject.length;
-    if (diff > 0 && charAvailability.dayly < initialCharAvailability.dayly) {
+    if (diff > 0 && charAvailability?.dayly < initialCharAvailability?.dayly) {
       setCharAvailability(prevState => ({
         ...prevState,
-        dayly: prevState.dayly + diff,
+        dayly: prevState?.dayly + diff,
       }));
-    } else if (diff < 0 && charAvailability.dayly > 0) {
+    } else if (diff < 0 && charAvailability?.dayly > 0) {
       setCharAvailability(prevState => ({
         ...prevState,
-        dayly: prevState.dayly + diff, // diff is negative, so this decreases dayly
+        dayly: prevState?.dayly + diff, // diff is negative, so this decreases dayly
       }));
     }else{
       setError('You have reached your daily character limit');
@@ -212,7 +212,7 @@ function NewPost({ modalOpen, setModalOpen }) {
     if (!channel) {
       alert('Please select a channel.');
       setModalOpen(true);
-    }else if(charAvailability.dayly <= 0) {
+    }else if(charAvailability?.dayly <= 0) {
       setError('You have reached your daily character limit');
     }else{
       // First, create the post without the image ID
@@ -241,6 +241,7 @@ function NewPost({ modalOpen, setModalOpen }) {
     if (!postResponse.ok) {
       console.error('Error creating post');
       console.log(postResponse);
+      console.log(postResponse.json());
       return;
     }
   
