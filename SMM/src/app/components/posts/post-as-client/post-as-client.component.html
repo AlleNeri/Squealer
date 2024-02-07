@@ -70,6 +70,31 @@
       </div>
     </div>
     <div nz-row nzGutter="8">
+      <div nz-col nzSpan="24">
+        <nz-form-item>
+          <nz-form-label>Keywords</nz-form-label>
+          <nz-form-control>
+            <nz-input-group nzPrefix="#">
+              <nz-tag
+                *ngFor="let keyword of this.keywords"
+                nzColor="processing"
+                nzMode="closeable"
+                (nzOnClose)="this.removeKeyword(keyword)"
+              >
+                #{{ keyword }}
+              </nz-tag>
+              <input
+                type="text"
+                nz-input
+                placeholder="Scrivi le keywords..."
+                (input)="this.getKeywords($event)"
+              />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row nzGutter="8">
       <div nz-col nzSpan="12">
         <nz-form-item>
           <nz-form-label nzRequired>Canale</nz-form-label>
