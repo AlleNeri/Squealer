@@ -21,7 +21,7 @@ userRoute.get('/mention', Auth.authorize, (_: Request, res: Response) => {
 	UserSchema.find({ $or: [{ type: UserType.NORMAL }, { type: UserType.VIP }] })
 		.then((users: User[]) => {
 			const usersPublicInfo: Partial<User>[] = [];
-			users.forEach((user: User) => usersPublicInfo.push(getUserPublicInfo(user)));
+			users.map((user: User) => usersPublicInfo.push(getUserPublicInfo(user)));
 			res.status(200).json(usersPublicInfo);
 		})
 		.catch(err=> res.status(404).json({ msg: 'Users not found', err: err }));

@@ -1,10 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ViewEncapsulation, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
 import { LatLng } from 'leaflet';
 
 import { IChannel } from 'src/app/interfaces/channel';
+import { IUser } from 'src/app/interfaces/user';
 
 import Client from 'src/app/classes/client';
 
@@ -13,6 +14,7 @@ import { BackendComunicationService } from 'src/app/services/backend-comunicatio
 
 @Component({
   selector: 'app-post-as-client',
+  encapsulation: ViewEncapsulation.None,
   templateUrl: './post-as-client.component.html',
   styleUrls: ['./post-as-client.component.css']
 })
@@ -21,15 +23,17 @@ export class PostAsClientComponent implements OnInit {
   protected isDrawerVisible: boolean;
   protected postForm: FormGroup;
   protected channels: IChannel[];
+  protected mentions: IUser[];
 
   constructor(
     private fb: FormBuilder,
     private auth: AuthenticationService,
-    private backend: BackendComunicationService,
+    protected backend: BackendComunicationService,
     private msgService: NzMessageService
   ) {
     this.isDrawerVisible = false;
     this.channels = [];
+    this.mentions = [];
     this.postForm = this.fb.group({
       title: ['', [Validators.required]],
       text: [''],
@@ -47,7 +51,14 @@ export class PostAsClientComponent implements OnInit {
     }
     this.backend.get(`channels/all`, this.auth.token!)
       .subscribe(res => this.channels = res as IChannel[]);
+    this.backend.get(`users/mention`, this.auth.token!)
+      .subscribe(res => {
+        this.mentions = res as IUser[]
+        console.log("mentions:", this.mentions);
+      });
   }
+
+  protected mentionFunction = (data: IUser) => data.u_name;
 
   private contentValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {

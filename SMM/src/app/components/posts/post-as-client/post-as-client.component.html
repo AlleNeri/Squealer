@@ -41,13 +41,28 @@
         <nz-form-item>
           <nz-form-label>Testo</nz-form-label>
           <nz-form-control style="width: 100%;">
-            <textarea
-            nz-input
-            formControlName="text"
-            [nzAutosize]="{ minRows: 3, maxRows: 4 }"
-            placeHolder="Scrivi lo squeal..."
-            class="full-width"
-            ></textarea>
+            <nz-mention
+              [nzSuggestions]="this.mentions"
+              [nzValueWith]="this.mentionFunction"
+            >
+              <textarea
+                nz-input
+                nzMentionTrigger
+                formControlName="text"
+                [nzAutosize]="{ minRows: 3, maxRows: 4 }"
+                placeHolder="Scrivi lo squeal..."
+                class="full-width"
+              ></textarea>
+              <ng-container *nzMentionSuggestion="let mention">
+                <nz-avatar
+                  nzSize="small"
+                  nzIcon="user"
+                  nzText="{{ mention.username }}"
+                  nzSrc="{{ mention.img && this.backend.at('media/image/'+mention.img) }}"
+                ></nz-avatar>
+                <span style="margin-left: 8px;">{{ mention.u_name }}</span>
+              </ng-container>
+            </nz-mention>
           </nz-form-control>
         </nz-form-item>
       </div>

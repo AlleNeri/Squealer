@@ -30,6 +30,7 @@ import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzCommentModule } from 'ng-zorro-antd/comment';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzMentionModule } from 'ng-zorro-antd/mention';
 
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { IconDefinition } from '@ant-design/icons-angular';
@@ -157,6 +158,7 @@ const icons: IconDefinition[]= [
     NzCommentModule,
     NzToolTipModule,
     NzTagModule,
+    NzMentionModule,
     NzIconModule.forChild(icons),
   ],
   providers: [
