@@ -23,7 +23,7 @@
       </div>
       <h4>{{ post.title }}</h4>
     </nz-space>
-    <p *ngIf="post.content.text">{{ post.content.text }}</p>
+    <p *ngIf="post.content.text" [innerHTML]="this.underlineMention(post.content.text)"></p>
     <div *ngIf="post.content.img">
       <img
         src="{{ backendComunication.at('media/image/'+post.content.img) }}"

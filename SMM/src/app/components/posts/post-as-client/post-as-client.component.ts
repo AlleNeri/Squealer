@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
@@ -14,7 +14,6 @@ import { BackendComunicationService } from 'src/app/services/backend-comunicatio
 
 @Component({
   selector: 'app-post-as-client',
-  encapsulation: ViewEncapsulation.None,
   templateUrl: './post-as-client.component.html',
   styleUrls: ['./post-as-client.component.css']
 })

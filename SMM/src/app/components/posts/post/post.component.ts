@@ -70,4 +70,8 @@ export class PostComponent implements OnInit {
     this.backendComunication.get(`channels/${this.post.posted_on}`)
       .subscribe((channel: Object) => this.channelName = (channel as IChannel).name);
   }
+
+  protected underlineMention(text: string): string {
+    return text.replace(/@(\w+)/g, '<u style="color: dodgerblue;">@$1</u>');
+  }
 }
