@@ -28,6 +28,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzCommentModule } from 'ng-zorro-antd/comment';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { IconDefinition } from '@ant-design/icons-angular';
@@ -39,6 +40,7 @@ import {
   DislikeOutline,
   ExclamationCircleOutline,
   HeartOutline,
+  ClockCircleOutline,
 } from '@ant-design/icons-angular/icons';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -91,6 +93,7 @@ const icons: IconDefinition[]= [
   DislikeOutline,
   ExclamationCircleOutline,
   HeartOutline,
+  ClockCircleOutline,
 ];
 
 @NgModule({
@@ -151,6 +154,7 @@ const icons: IconDefinition[]= [
     NzFormModule,
     NzDatePickerModule,
     NzCommentModule,
+    NzToolTipModule,
     NzIconModule.forChild(icons),
   ],
   providers: [

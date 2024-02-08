@@ -9,6 +9,7 @@ export interface IPost {
       longitude: number;
     };
   };
+  timed?: boolean;
   keywords: string[];
   posted_by: string;
   posted_on: string;
