@@ -36,6 +36,7 @@ export class PostAsClientComponent implements OnInit {
       img: [null],
       position: [null],
       channel: ['', [Validators.required]],
+      keywords: [[]],
     }, { validators: this.contentValidator() });
   }
 
@@ -80,6 +81,34 @@ export class PostAsClientComponent implements OnInit {
       });
   }
 
+  getKeywords(event: Event): void {
+    const input = (event.target as HTMLInputElement).value;
+    if(input.endsWith(' ')) {
+      const keywords: string[] = this.postForm.get('keywords')?.value;
+      if(!keywords.includes(input.trim())) {
+        keywords.push(input.trim());
+        this.postForm.setValue({
+          ...this.postForm.getRawValue(),
+          keywords
+        });
+      }
+      (event.target as HTMLInputElement).value = '';
+    }
+  }
+
+  removeKeyword(keyword: string): void {
+    const keywords: string[] = this.postForm.get('keywords')?.value;
+    keywords.splice(keywords.indexOf(keyword), 1);
+    this.postForm.setValue({
+      ...this.postForm.getRawValue(),
+      keywords
+    });
+  }
+
+  get keywords(): string[] {
+    return this.postForm.get('keywords')?.value;
+  }
+
   protected post() {
     if(!this.auth.isLoggedIn()) {
       this.msgService.error("Non sei loggato");
@@ -94,6 +123,7 @@ export class PostAsClientComponent implements OnInit {
           position: this.postForm.value.position
         },
         posted_on: this.postForm.value.channel,
+        keywords: this.postForm.value.keywords,
       }
     };
     console.log("body:", body);

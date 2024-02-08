@@ -11,6 +11,7 @@ const numCharForSpecialPosts: number=parseInt(process.env.CHAR_FOR_SPECIAL_POSTS
 export const postRoute: Router=Router();
 
 //get all posts or all the posts of a specific user if the id is provided in the 'of' query parameter
+//it can be used to get all the posts of a specific keyword if a string is provided in the 'keyword' query parameter
 postRoute.get("/", Auth.authorize, (req: Request, res: Response) => {
 	if(req.query.of)
 		PostSchema.find({ posted_by: req.query.of })
@@ -26,7 +27,23 @@ postRoute.get("/", Auth.authorize, (req: Request, res: Response) => {
 						})
 						.catch((_: Error) => false);
 				});
-				console.log(filteredPosts);
+				res.status(200).json(filteredPosts);
+			})
+			.catch((err: Error) => res.status(400).json({ msg: "Posts not found", err: err }));
+	else if(req.query.keyword)
+		PostSchema.find({ keywords: { $in: [req.query.keyword] } })
+			.then((posts: Post[]) => {
+				//check if the post is public or not
+				const filteredPosts: Post[] = posts.filter(async (post: Post) => {
+					return await ChannelSchema.findById(post.posted_on)
+						.then((channel: Channel | null) => {
+							if(!channel) return false;
+							else if(!channel.private) return true;
+							//if the channel is private, check if the user is subscribed to it
+							else return req.user!.isSubscribed(channel._id);
+						})
+						.catch((_: Error) => false);
+				});
 				res.status(200).json(filteredPosts);
 			})
 			.catch((err: Error) => res.status(400).json({ msg: "Posts not found", err: err }));
