@@ -1,4 +1,4 @@
-export interface Post {
+export interface IPost {
   _id: string;
   title: string;
   content: {
@@ -9,8 +9,10 @@ export interface Post {
       longitude: number;
     };
   };
+  timed?: boolean;
   keywords: string[];
   posted_by: string;
+  posted_on: string;
   appartains_to: string[];
   tagged: string[];
   date: string;

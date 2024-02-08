@@ -1,4 +1,4 @@
-import IUser, { IChar } from "../interfaces/user"
+import { IUser, IChar } from "../interfaces/user"
 
 export default class Client {
   private user?: IUser;

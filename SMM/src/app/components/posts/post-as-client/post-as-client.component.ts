@@ -4,7 +4,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
 import { LatLng } from 'leaflet';
 
-import { Channel } from 'src/app/interfaces/channel';
+import { IChannel } from 'src/app/interfaces/channel';
 
 import Client from 'src/app/classes/client';
 
@@ -20,7 +20,7 @@ export class PostAsClientComponent implements OnInit {
   @Input({required: true}) client!: Client;
   protected isDrawerVisible: boolean;
   protected postForm: FormGroup;
-  protected channels: Channel[];
+  protected channels: IChannel[];
 
   constructor(
     private fb: FormBuilder,
@@ -36,6 +36,7 @@ export class PostAsClientComponent implements OnInit {
       img: [null],
       position: [null],
       channel: ['', [Validators.required]],
+      keywords: [[]],
     }, { validators: this.contentValidator() });
   }
 
@@ -45,7 +46,7 @@ export class PostAsClientComponent implements OnInit {
       return;
     }
     this.backend.get(`channels/all`, this.auth.token!)
-      .subscribe(res => this.channels = res as Channel[]);
+      .subscribe(res => this.channels = res as IChannel[]);
   }
 
   private contentValidator(): ValidatorFn {
@@ -80,6 +81,34 @@ export class PostAsClientComponent implements OnInit {
       });
   }
 
+  getKeywords(event: Event): void {
+    const input = (event.target as HTMLInputElement).value;
+    if(input.endsWith(' ')) {
+      const keywords: string[] = this.postForm.get('keywords')?.value;
+      if(!keywords.includes(input.trim())) {
+        keywords.push(input.trim());
+        this.postForm.setValue({
+          ...this.postForm.getRawValue(),
+          keywords
+        });
+      }
+      (event.target as HTMLInputElement).value = '';
+    }
+  }
+
+  removeKeyword(keyword: string): void {
+    const keywords: string[] = this.postForm.get('keywords')?.value;
+    keywords.splice(keywords.indexOf(keyword), 1);
+    this.postForm.setValue({
+      ...this.postForm.getRawValue(),
+      keywords
+    });
+  }
+
+  get keywords(): string[] {
+    return this.postForm.get('keywords')?.value;
+  }
+
   protected post() {
     if(!this.auth.isLoggedIn()) {
       this.msgService.error("Non sei loggato");
@@ -94,6 +123,7 @@ export class PostAsClientComponent implements OnInit {
           position: this.postForm.value.position
         },
         posted_on: this.postForm.value.channel,
+        keywords: this.postForm.value.keywords,
       }
     };
     console.log("body:", body);

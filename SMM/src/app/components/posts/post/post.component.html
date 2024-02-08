@@ -1,0 +1,115 @@
+<nz-comment
+  [nzAuthor]="user.username + ' su ' + this.channelName"
+  [nzDatetime]="postDate()"
+>
+  <nz-avatar
+    nz-comment-avatar
+    nzIcon="user"
+    nzSrc="{{ user.image && backendComunication.at('media/image/'+user.image) }}"
+    [nzSize]="'large'"
+  ></nz-avatar>
+  <nz-comment-content>
+    <nz-space>
+      <div *ngIf="post.timed">
+        <span
+          nz-tooltip
+          nzTooltipTitle="Post temporizzato"
+          nz-icon
+          nzType="clock-circle"
+          nzTheme="outline"
+          style="color: dodgerblue"
+        ></span>
+        <nz-divider nzType="vertical"></nz-divider>
+      </div>
+      <h4>{{ post.title }}</h4>
+    </nz-space>
+    <p *ngIf="post.content.text">{{ post.content.text }}</p>
+    <div *ngIf="post.content.img">
+      <img
+        src="{{ backendComunication.at('media/image/'+post.content.img) }}"
+        alt="image"
+        style="max-width: 500px;"
+      />
+    </div>
+    <div
+      *ngIf="post.content.position"
+      style="height: 300px; width: 500px;"
+    >
+      <app-show-map
+        [lat]="post.content.position.latitude"
+        [lng]="post.content.position.longitude"
+      ></app-show-map>
+    </div>
+    <div *ngIf="post.keywords.length > 0" style="padding-top: 1%;">
+      <nz-space>
+        <div *ngFor="let keyword of post.keywords">
+          <nz-tag nzColor="processing">
+            #{{ keyword }}
+          </nz-tag>
+        </div>
+      </nz-space>
+    </div>
+  </nz-comment-content>
+  <nz-comment-action nzTooltipTitle="Views">
+    <span
+      nz-tooltip
+      nz-title="Views"
+      nz-icon
+      nzType="eye"
+      nzTheme="outline"
+    >
+      {{ viewsCount() }}
+    </span>
+  </nz-comment-action>
+  <nz-comment-action>
+    <nz-divider nzType="vertical"></nz-divider>
+  </nz-comment-action>
+  <nz-comment-action nzTooltipTitle="Disappoint">
+    <span
+      nz-tooltip
+      nz-title="Disappoint"
+      nz-icon
+      nzType="exclamation-circle"
+      nzTheme="outline"
+    >
+      {{ disappointCount() }}
+    </span>
+  </nz-comment-action>
+  <nz-comment-action nzTooltipTitle="Dislike">
+    <span
+      nz-tooltip
+      nz-title="Dislike"
+      nz-icon
+      nzType="dislike"
+      nzTheme="outline"
+    >
+      {{ dislikesCount() }}
+    </span>
+  </nz-comment-action>
+  <nz-comment-action nzTooltipTitle="Like">
+    <span
+      nz-tooltip
+      nz-title="Like"
+      nz-icon
+      nzType="like"
+      nzTheme="outline"
+    >
+      {{ likesCount() }}
+    </span>
+  </nz-comment-action>
+  <nz-comment-action nzTooltipTitle="Heart">
+    <span
+      nz-tooltip
+      nz-title="Heart"
+      nz-icon
+      nzType="heart"
+      nzTheme="outline"
+    >
+      {{ heartCount() }}
+    </span>
+  </nz-comment-action>
+</nz-comment>
+
+<ng-template #iconTemplate>
+  <span nz-icon nzType="clock-circle" class="ant-scroll-number-custom-component" style="color: #f5222d"></span>
+</ng-template>

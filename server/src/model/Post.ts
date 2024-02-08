@@ -30,6 +30,7 @@ const PostSchema: mongoose.Schema=new mongoose.Schema({
 			}
 		}
 	},
+	timed: Boolean,
 	keywords: [String],
 	date: {type: Date, default: Date.now, required: true, immutable: true},
 	reactions: {

@@ -5,9 +5,13 @@ import UserSchema, { User, UserType } from '../model/User';
 import ChannelSchema, { Channel } from "../model/Channel";
 import Auth from "../controller/Auth";
 
+if(!process.env.CHAR_FOR_SPECIAL_POSTS) throw new Error("CHAR_FOR_SPECIAL_POSTS is not defined in the .env file");
+const numCharForSpecialPosts: number=parseInt(process.env.CHAR_FOR_SPECIAL_POSTS);
+
 export const postRoute: Router=Router();
 
 //get all posts or all the posts of a specific user if the id is provided in the 'of' query parameter
+//it can be used to get all the posts of a specific keyword if a string is provided in the 'keyword' query parameter
 postRoute.get("/", Auth.authorize, (req: Request, res: Response) => {
 	if(req.query.of)
 		PostSchema.find({ posted_by: req.query.of })
@@ -23,7 +27,23 @@ postRoute.get("/", Auth.authorize, (req: Request, res: Response) => {
 						})
 						.catch((_: Error) => false);
 				});
-				console.log(filteredPosts);
+				res.status(200).json(filteredPosts);
+			})
+			.catch((err: Error) => res.status(400).json({ msg: "Posts not found", err: err }));
+	else if(req.query.keyword)
+		PostSchema.find({ keywords: { $in: [req.query.keyword] } })
+			.then((posts: Post[]) => {
+				//check if the post is public or not
+				const filteredPosts: Post[] = posts.filter(async (post: Post) => {
+					return await ChannelSchema.findById(post.posted_on)
+						.then((channel: Channel | null) => {
+							if(!channel) return false;
+							else if(!channel.private) return true;
+							//if the channel is private, check if the user is subscribed to it
+							else return req.user!.isSubscribed(channel._id);
+						})
+						.catch((_: Error) => false);
+				});
 				res.status(200).json(filteredPosts);
 			})
 			.catch((err: Error) => res.status(400).json({ msg: "Posts not found", err: err }));
@@ -75,15 +95,19 @@ postRoute.post("/", Auth.authorize, (req: Request, res: Response) => {
 			if(!channel) return res.status(404).json({ msg: "Channel not found" });
 			else if(!channel.private) {
 				UserSchema.findById(post.posted_by)
-					.then((user: User | null) => {
+					.then(async (user: User | null) => {
 						if(!user) return res.status(404).json({ msg: "User not found" });
-						const content=post.content;
-						//TODO: non è attualmente previstio e gestito il poter postare contenuti di diverso tipo(testo/immagini/posizione)
-						if(content.text && !user.canPost(content.text.length)) return res.status(500).json({ msg: "User can't post" });
-						else if((content.img || content.position) && !user.canPost(100)) return res.status(500).json({ msg: "User can't post" });
+						//subtract the char count from the user's availability
+						let charCount: number = post.title.length;
+						if(post.content.text) charCount += post.content.text.length;
+						if(post.content.position) charCount += numCharForSpecialPosts;
+						if(post.keywords) charCount += post.keywords.reduce((acc: number, curr: string) => acc + curr.length, 0);
+						if(!user.canPost(charCount)) return res.status(500).json({ msg: "User can't post" });
+						await user.save();
+						//save the post
 						const newPost: Post=new PostSchema(req.body.post);
 						newPost.save()
-							.then((post: Post) => res.status(200).json(post))
+							.then((post: Post) => res.status(200).json({ post, user_char_availability: user.char_availability }))
 							.catch((err: Error) => res.status(500).json({ msg: "Error creating post", err: err }));
 					})
 					.catch((err: Error) => res.status(500).json({ msg: "Error while find the user", err: err }));
@@ -98,15 +122,20 @@ postRoute.post("/", Auth.authorize, (req: Request, res: Response) => {
 		.catch((err: Error) => res.status(500).json({ msg: "Error while find the channel", err: err }));
 });
 
-//update a post
-postRoute.put("/:id", Auth.authorize, (req: Request, res: Response) => {
+//update the position of a post
+//used for the timed position post
+//the body must contain the 'position' field in that way: { latitude: Number, longitude: Number }
+postRoute.put("/:id/position", Auth.authorize, (req: Request, res: Response) => {
+	if(!req.body.position) res.status(400).json({ msg: "Bad request, no position provided" });
 	PostSchema.findById(req.params.id)
 		.then((post: Post | null) => {
 			if(!post) res.status(404).json({ msg: "Post not found" });
-			else if(post.author!=req.user?._id) res.status(401).json({ msg: "Unauthorized" });
+			else if(post.posted_by!=req.user?._id) res.status(401).json({ msg: "Unauthorized" });
+			else if(!post.timed) res.status(400).json({ msg: "Bad request, the post is not a timed post" });
+			else if(!post.content.position) res.status(400).json({ msg: "Bad request, no position in the post" });
 			else {
-				post=Object.assign(post, req.body.post);
-				post!.save()
+				post.content.position=req.body.position;
+				post.save()
 					.then((post: Post) => res.status(200).json({ msg: "Post updated", post: post }))
 					.catch((err: Error) => res.status(500).json({ msg: "Error updating post", err: err }));
 			}
@@ -115,11 +144,12 @@ postRoute.put("/:id", Auth.authorize, (req: Request, res: Response) => {
 });
 
 //delete a post
-postRoute.delete("/:id", (req: Request, res: Response) => {
+postRoute.delete("/:id", Auth.authorize, (req: Request, res: Response) => {
 	PostSchema.findByIdAndDelete(req.params.id)
 		.then((post: Post | null) => {
-			if(!post) res.status(404).json({ msg: "Post not found" });
-			else res.status(200).json({ msg: "Post deleted" });
+			if(!post) return res.status(404).json({ msg: "Post not found" });
+			if(post.posted_by != req.user?._id) return res.status(401).json({ msg: "Unauthorized" });
+			res.status(200).json({ msg: "Post deleted" });
 		})
 		.catch((err: Error) => res.status(500).json({ msg: "Error deleting post", err: err }));
 });
