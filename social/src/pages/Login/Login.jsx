@@ -22,16 +22,6 @@ function Login() {
     }
   }, [setLoggedIn]);
 
-  useEffect(() => {
-    // Prevent scrolling when component mounts
-    document.body.style.overflow = 'hidden';
-
-    // Allow scrolling when component unmounts
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, []);
-
   const handleSubmit = async (event) => {
     event.preventDefault();
 

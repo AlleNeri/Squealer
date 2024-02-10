@@ -97,16 +97,6 @@ function Register() {
 
   const isDisabled = !isEmailValid(user.email) || user.u_name?.length === 0 || user.email?.length === 0 ||user.name.first?.length === 0 || 
   user.name?.last.length === 0 || user.u_name?.length === 0 || password?.length === 0;
-  
-  useEffect(() => {
-    // Prevent scrolling when component mounts
-    document.body.style.overflow = 'hidden';
-
-    // Allow scrolling when component unmounts
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, []);
 
   return (
     <Container maxWidth="sm" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', height: '100vh', marginTop:'70px' }}>
