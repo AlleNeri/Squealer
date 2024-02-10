@@ -44,4 +44,10 @@ export class PostSectionComponent implements OnInit, OnChanges {
 
   getPopularPosts(): Post[] { return this.posts.filter((post: Post)=> post.popular); }
   getUnpopularPosts(): Post[] { return this.posts.filter((post: Post)=> post.unpopular); }
+
+  protected addNewPost(post: Post): void {
+    this.posts.unshift(post);
+    this.popularPosts = this.getPopularPosts();
+    this.unpopularPosts = this.getUnpopularPosts();
+  }
 }

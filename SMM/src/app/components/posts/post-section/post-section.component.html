@@ -11,7 +11,10 @@
 </nz-tabset>
 
 <ng-template #addPost>
-  <app-post-as-client [client]="client"/>
+  <app-post-as-client
+    [client]="client"
+    (newPost)="addNewPost($event)"
+  />
 </ng-template>
 
 <ng-template #allPostsList>

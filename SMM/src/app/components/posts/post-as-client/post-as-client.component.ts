@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
@@ -6,6 +6,7 @@ import { LatLng } from 'leaflet';
 
 import { IChannel } from 'src/app/interfaces/channel';
 import { IUser } from 'src/app/interfaces/user';
+import { IPost } from 'src/app/interfaces/post';
 
 import Client from 'src/app/classes/client';
 
@@ -19,6 +20,7 @@ import { BackendComunicationService } from 'src/app/services/backend-comunicatio
 })
 export class PostAsClientComponent implements OnInit {
   @Input({required: true}) client!: Client;
+  @Output() newPost: EventEmitter<IPost>;
   protected isDrawerVisible: boolean;
   protected postForm: FormGroup;
   protected channels: IChannel[];
@@ -33,6 +35,7 @@ export class PostAsClientComponent implements OnInit {
     this.isDrawerVisible = false;
     this.channels = [];
     this.mentions = [];
+    this.newPost = new EventEmitter<IPost>();
     this.postForm = this.fb.group({
       title: ['', [Validators.required]],
       text: [''],
@@ -138,7 +141,10 @@ export class PostAsClientComponent implements OnInit {
     };
     console.log("body:", body);
     this.backend.post(`posts?as=${this.client.id}`, body, this.auth.token!)
-      .subscribe(_ => {
+      .subscribe((res: any) => {
+          console.log(res);
+          if(res.user_char_availability) this.client.charNumber = res.user_char_availability;
+          if(res.post) this.newPost.emit(res.post);
           this.postForm.reset();
           this.toggleDrawer();
         }

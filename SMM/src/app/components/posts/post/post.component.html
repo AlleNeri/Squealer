@@ -40,7 +40,7 @@
         [lng]="post.content.position.longitude"
       ></app-show-map>
     </div>
-    <div *ngIf="post.keywords.length > 0" style="padding-top: 1%;">
+    <div *ngIf="post.keywords && post.keywords.length > 0" style="padding-top: 1%;">
       <nz-space>
         <div *ngFor="let keyword of post.keywords">
           <nz-tag nzColor="processing">
