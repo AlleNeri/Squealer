@@ -35,6 +35,10 @@ export default class Client {
     return this.user?.char_availability!;
   }
 
+  public set charNumber(value: IChar) {
+    this.user!.char_availability = value;
+  }
+
   public get quoteNumber(): IChar | undefined {
     return this.user?.quote!;
   }

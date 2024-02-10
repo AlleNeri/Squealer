@@ -25,7 +25,8 @@ export class ClientCardComponent {
       nzCentered: true,
       nzTitle: "Compra caratteri per il tuo cliente",
       nzContent: BuyCharFormComponent,
-      nzData: { userId: this.client.id },
+      nzMaskClosable: true,
+      nzData: { user: this.client },
       nzOkText: "Compra",
       nzOnOk: ()=> modal.getContentComponent().onSubmit()
     });

@@ -100,7 +100,7 @@ userRoute.patch('/:id/char', Auth.softAuthorize, (req: Request, res: Response) =
 						break;
 				}
 				user.save()
-					.then((_: User) => res.status(200).json({ msg: 'Char availability added' }))
+					.then((_: User) => res.status(200).json({ msg: 'Char availability added', new_char_availability: user.char_availability }))
 					.catch((err: any) => res.status(400).json({ msg: 'Bad request', err: err }));
 			}
 		})
