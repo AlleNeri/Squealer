@@ -13,3 +13,15 @@ button:hover {
 .selectedChannel {
     background-color: #72B2F4 !important;
   }
+
+  /* Nascondi l'icona del menu di default */
+.menu-icon {
+    display: none;
+  }
+  
+  /* Mostra l'icona del menu quando la larghezza del viewport è 375px o inferiore */
+  @media screen and (max-width: 375px) {
+    .menu-icon {
+      display: block;
+    }
+  }

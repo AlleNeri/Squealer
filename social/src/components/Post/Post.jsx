@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useContext, useState } from 'react';
-import { Card, CardContent, Divider, Typography, IconButton, Grid, Avatar, Tooltip } from '@material-ui/core';
+import { Card, CardContent, TextField, Typography, IconButton, Grid, Avatar, Tooltip } from '@material-ui/core';
 import L, {Icon} from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import markerIconPng from "leaflet/dist/images/marker-icon.png";
@@ -17,96 +17,36 @@ export default function Post({post}) {
     const mapRef = useRef(); // Assign useRef to a variable
     const token = localStorage.getItem('token');
     const { loggedIn } = useContext(LoginContext);
-    const views = reactions.filter(reaction => [-2, -1, 0, 1, 2].includes(reaction.value)).length;
+    const views = reactions?.filter(reaction => [-2, -1, 0, 1, 2].includes(reaction.value)).length;
     const [reactionCounts, setReactionCounts] = useState({
-        veryDissatisfied: reactions.filter(reaction => reaction.value === -2).length,
-        dissatisfied: reactions.filter(reaction => reaction.value === -1).length,
-        satisfied: reactions.filter(reaction => reaction.value === 1).length,
-        verySatisfied: reactions.filter(reaction => reaction.value === 2).length,
+        veryDissatisfied: reactions?.filter(reaction => reaction.value === -2).length,
+        dissatisfied: reactions?.filter(reaction => reaction.value === -1).length,
+        satisfied: reactions?.filter(reaction => reaction.value === 1).length,
+        verySatisfied: reactions?.filter(reaction => reaction.value === 2).length,
     });
     const userID = localStorage.getItem('userId');
-    const [userReaction, setUserReaction] = useState(post.reactions.find(reaction => reaction.user_id === userID));
-    const { updateInterval, updateTimes } = useContext(TimeContext);
-    const [updateCount, setUpdateCount] = useState(0);
+    const [userReaction, setUserReaction] = useState(post?.reactions?.find(reaction => reaction.user_id === userID));
     if(!loggedIn) { localStorage.removeItem('userId'); }
-
-    async function updatePostPosition(postId, newPosition, token) {
-      const response = await fetch(`/posts/${postId}/position`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': token,
-        },
-        body: JSON.stringify({ position: newPosition })
-      });
-    
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-    
-      return response.json();
-    }
-    
-    async function deletePost(postId, token) {
-      const response = await fetch(`/posts/${postId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': token,
-        }
-      });
-    
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-    
-      return response.json();
-    }
-    
-    function getCurrentPosition() {
-      return new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject);
-      });
-    }
-
-    useEffect(() => {
-      if (timed) {
-        const intervalId = setInterval(async () => {
-          try {
-            const position = await getCurrentPosition();
-            const newPosition = { latitude: position.coords.latitude, longitude: position.coords.longitude };
-        
-            await updatePostPosition(post._id, newPosition, token);
-            setUpdateCount(updateCount + 1);
-        
-            if (updateCount >= updateTimes) {
-              await deletePost(post._id, token);
-              clearInterval(intervalId); // Pulisci l'intervallo quando il post è stato eliminato
-            }
-          } catch (error) {
-            console.error(error);
-          }
-        }, updateInterval * 60 * 1000); // Converti updateInterval da minuti a millisecondi
-    
-        return () => clearInterval(intervalId); // Pulisci l'intervallo quando il componente si smonta
-      }
-    }, [updateInterval, updateTimes, post._id, token, updateCount, timed]);
 
     useEffect(() => {
       const visualizePost = async () => {
         try {
           // Check if the user has already reacted to the post
-          const userReaction = post.reactions.find(reaction => reaction.user_id === userID);
+          const userReaction = post?.reactions?.find(reaction => reaction.user_id === userID);
           if (!userReaction) {
             // Add a view to the post
-            const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/posts/${post._id}/visualize`, {
+            const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/posts/${post?._id}/visualize`, {
               method: 'PATCH',
               headers: {
-                'Authorization': token,
                 'Content-Type': 'application/json',
+                'Authorization': token,
               },
             });
       
             if (!response.ok) {
+              const data = await response.json();
+              console.log(response);
+              console.log('There was a problem visualizing the post' + (data));
               throw new Error('There was a problem visualizing the post');
             }
           }
@@ -119,8 +59,8 @@ export default function Post({post}) {
       if (loggedIn) {
         visualizePost();
       }
-  }, []);
-    
+  }, [post]);
+
   const renderKeywords = (keywords) => {
     return keywords.map((keyword, index) => (
       <span key={index}>
@@ -171,7 +111,7 @@ export default function Post({post}) {
     });
   }
 
-  const replacedText = replaceMentionsWithLinks(content.text);
+  const replacedText = replaceMentionsWithLinks(content?.text);
   useEffect(() => {
     const fetchUser = async () => {
         const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/${posted_by}`, {
@@ -252,7 +192,7 @@ export default function Post({post}) {
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={2}>
                     <Avatar alt="Profile" src={user && user.img ? `${import.meta.env.VITE_DEFAULT_URL}/media/image/${user.img}` : undefined} >
-                      {user?.u_name.charAt(0).toUpperCase()}
+                      {user?.u_name?.charAt(0).toUpperCase()}
                     </Avatar>
                     <Link to={`/Profile/${posted_by}`}>{user && user.u_name}</Link>
                   </Grid>

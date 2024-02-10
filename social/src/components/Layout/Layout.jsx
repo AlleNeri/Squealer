@@ -13,7 +13,7 @@ function Home() {
     const { isSidebarMinimized } = useContext(SidebarContext);
 
     const mainStyle = {
-        marginLeft: isSidebarMinimized ? '100px' : '300px', // Adjust this value as needed
+        marginLeft: isSidebarMinimized ? '0' : '200px', // Adjust this value as needed
         paddingTop: '100px',
     };
 
