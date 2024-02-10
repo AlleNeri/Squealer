@@ -1,34 +1,42 @@
 import React, {useState, useEffect, useContext} from 'react';
-import {
-  CDBSidebar,
-  CDBSidebarContent,
-  CDBSidebarFooter,
-  CDBSidebarHeader,
-  CDBSidebarMenu,
-  CDBSidebarMenuItem,
-} from 'cdbreact';
+import { Drawer, List, ListItem, ListItemText, IconButton, Tooltip, Typography, Collapse, Divider, makeStyles } from '@material-ui/core';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Typography } from '@material-ui/core';
-import Tooltip from '@material-ui/core/Tooltip';
-import Collapse from '@material-ui/core/Collapse';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import ChevronRightIcon from '@material-ui/icons/ChevronLeft';
+import MenuIcon from '@material-ui/icons/Menu';
 import Channel from '../Channel/Channel';
 import { SidebarContext } from '../../context/SidebarContext/SidebarContext';
 import { LoginContext } from '../../context/LoginContext/LoginContext';
 import './sidebar.css';
+
 const Sidebar = () => {
   const [allChannels, setAllChannels] = useState([]);
   const [myChannels, setMyChannels] = useState([]);
   const [isChannelModalOpen, setChannelModalOpen] = useState(false);
   const [selectedChannel, setSelectedChannel] = useState(null);
-  const [hoveredChannel, setHoveredChannel] = useState(null);
+  const [isChannelsExpanded, setChannelsExpanded] = useState(false);
+  const [isExplore, setExplore] = useState(false);
   const { loggedIn } = useContext(LoginContext);
   const location = useLocation();
   const token = localStorage.getItem('token');
-  const [openExplore, setOpenExplore] = useState(false);
-  const [openMyChannels, setOpenMyChannels] = useState(false);
   const { isSidebarMinimized, setSidebarMinimized } = useContext(SidebarContext);
+
+  const useStyles = makeStyles({
+    paper: {
+      background: '#333',
+    },
+    channel: {
+      '&:hover': {
+        backgroundColor: '#444',
+      },
+    },
+    link: {
+      textDecoration: 'none',
+    },
+  });
+
+  const classes = useStyles();
 
   const minimizeSidebar = () => {
     setSidebarMinimized(!isSidebarMinimized);
@@ -36,7 +44,7 @@ const Sidebar = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth <= 719) { 
+      if (window.innerWidth <= 445) { 
         setSidebarMinimized(true);
       } else {
         setSidebarMinimized(false);
@@ -55,15 +63,16 @@ const Sidebar = () => {
 
   const handleChannelClick = (channelId) => {
     setSelectedChannel(channelId);
+    setSidebarMinimized(true);
     localStorage.setItem('selectedChannel', channelId); // Store the selected channel ID in local storage
   };
   
-  const handleMouseEnter = (channelId) => {
-    setHoveredChannel(channelId);
+  const toggleChannels = () => {
+    setChannelsExpanded(!isChannelsExpanded);
   };
-  
-  const handleMouseLeave = () => {
-    setHoveredChannel(null);
+
+  const toggleExplore = () => {
+    setExplore(!isExplore);
   };
 
   useEffect(() => {
@@ -128,96 +137,90 @@ useEffect(() => {
   }, [loggedIn, token]);
 
 
-    return (
-      <>
-      <div style={{ position: 'fixed', display: 'flex', justifyContent: 'flex-start', height: '100vh', zIndex: '1001'}}>
-          <CDBSidebar textColor="#fff" backgroundColor="#333" >
-            <CDBSidebarHeader prefix={<i className="fa fa-bars fa-large" onClick={minimizeSidebar}></i> }>
-              <h6 className="text-decoration-none" style={{ color: 'inherit' }}>
-                CHANNELS
-                {loggedIn && <Tooltip title="New channel"><AddCircleIcon  style={{ marginLeft: '10px', cursor: 'pointer' }} onClick={() => setChannelModalOpen(true)} /></Tooltip>}
-              </h6>
-            </CDBSidebarHeader>
-    
-            <CDBSidebarContent className="sidebar-content" style={{ display: 'flex', flexDirection: 'column' }}>
-            <CDBSidebarMenu style={{ overflowY: 'auto' }}>
-              {!isSidebarMinimized ? (
-                <Typography variant="h6" style={{ fontWeight: 'bold' }} onClick={() => setOpenExplore(!openExplore)}>
-                   <ExpandMoreIcon style={{ transform: openExplore ? 'rotate(0deg)' : 'rotate(-90deg)', transition: 'transform 0.3s', cursor:'pointer' }}/>
-                  <span style={{ marginLeft: '20px' }}>EXPLORE</span>
-                </Typography>
-              ): <p></p>}
-              <Collapse in={openExplore}>
-                {allChannels.map(channel => (
-                  <NavLink
-                    key={channel._id}
-                    to={`/AllChannels/${channel._id}`}
-                    activeclassname="activeClicked"
-                    onClick={() => handleChannelClick(channel._id)}
-                    style={{ textDecoration: 'none' }}>
-                    <CDBSidebarMenuItem 
-                      key={channel._id}
-                      onMouseEnter={() => handleMouseEnter(channel._id)}
-                      onMouseLeave={handleMouseLeave}
-                      style={{ backgroundColor: (selectedChannel === channel._id || hoveredChannel === channel._id) && !isSidebarMinimized ? '#72B2F4' : 'transparent' }}
-                    >
-                      {channel.name}
-                    </CDBSidebarMenuItem>
-                  </NavLink>
-                ))}
+  return (
+    <>
+    <div style={{ display: 'flex' }}>
+    <IconButton
+      color="inherit"
+      aria-label="open drawer"
+      onClick={minimizeSidebar}
+      edge="start"
+    >
+
+    </IconButton>
+
+      <Drawer
+      variant="persistent"
+      open={!isSidebarMinimized}
+      classes={{ paper: classes.paper }}
+    >
+        <List>
+        <ListItem className={classes.channel}>
+            <MenuIcon onClick={minimizeSidebar} style={{color:'white', cursor:'pointer'}}>
+              <ExpandMoreIcon />
+            </MenuIcon>
+            <ListItemText primary="CHANNELS" style={{color:'white'}}/>
+            {loggedIn && (
+              <Tooltip title="New channel" >
+                <IconButton onClick={() => setChannelModalOpen(true)} style={{color:'white'}}>
+                  <AddCircleIcon />
+                </IconButton>
+              </Tooltip>
+            )}
+          </ListItem>
+  
+          <Divider />
+  
+          <ListItem button onClick={toggleExplore} className={classes.channel}>
+          <ListItemText primary="EXPLORE" style={{color:'white'}}/>
+          {isExplore ? <ExpandMoreIcon style={{color:'white'}}/> : <ChevronRightIcon style={{color:'white'}}/>}
+          </ListItem>
+          <Collapse in={isExplore}>
+            {allChannels.map(channel => (
+              <NavLink key={channel._id} className={classes.link} to={`/AllChannels/${channel._id}`} onClick={() => handleChannelClick(channel._id)}>
+                <ListItem button >
+                  <ListItemText primary={channel.name} style={{color:'white'}}/>
+                </ListItem>
+              </NavLink>
+            ))}
+          </Collapse>
+  
+          {loggedIn && (
+            <>
+              <ListItem button onClick={toggleChannels} className={classes.channel}>
+                <ListItemText primary="MY CHANNELS" style={{color:'white'}}/>
+                {isChannelsExpanded ? <ExpandMoreIcon style={{color:'white'}}/> : <ChevronRightIcon style={{color:'white'}}/>}
+              </ListItem>
+              <Collapse in={isChannelsExpanded}>
+                {myChannels.length > 0 ? (
+                  myChannels.map(channel => (
+                    <NavLink key={channel._id} className={classes.link} to={`/AllChannels/${channel._id}`} onClick={() => handleChannelClick(channel._id)}>
+                      <ListItem button>
+                        <ListItemText primary={channel.name} style={{color:'white'}}/>
+                      </ListItem>
+                    </NavLink>
+                  ))
+                ) : (
+                  !isSidebarMinimized && (
+                    <ListItem>
+                      <ListItemText primary="You have not channels" />
+                    </ListItem>
+                  )
+                )}
               </Collapse>
-                {loggedIn ? (
-                  <>
-                  {!isSidebarMinimized ?(
-                    <Typography variant="h6" style={{ fontWeight: 'bold' }} onClick={() => setOpenMyChannels(!openMyChannels)}>
-                      <ExpandMoreIcon  style={{ transform: openMyChannels ? 'rotate(0deg)' : 'rotate(-90deg)', transition: 'transform 0.3s', cursor:'pointer'}}/>
-                      <span style={{ marginLeft: '20px' }}>MY CHANNELS</span>
-                    </Typography>
-                  ): <p></p>}
-                  <Collapse in={openMyChannels}>
-                    {
-                      myChannels.length > 0 ? (
-                        myChannels.map((channel) => (
-                          <NavLink
-                            key={channel._id}
-                            to={`/AllChannels/${channel._id}`}
-                            activeclassname="activeClicked"
-                            style={{ textDecoration: 'none' }}
-                            onClick={() => handleChannelClick(channel._id)}
-                          >
-                          <CDBSidebarMenuItem 
-                            key={channel._id}
-                            onMouseEnter={() => handleMouseEnter(channel._id)}
-                            onMouseLeave={handleMouseLeave}
-                            style={{ backgroundColor: (selectedChannel === channel._id || hoveredChannel === channel._id) && !isSidebarMinimized ? '#72B2F4' : 'transparent' }}
-                          >
-                            {channel.name}
-                          </CDBSidebarMenuItem>
-                          </NavLink>
-                        ))
-                      ) : (
-                        !isSidebarMinimized && (
-                          <Typography variant="body1"> <span style={{ marginLeft: '20px' }}>You have not channels</span></Typography>
-                        )
-                      )
-                    }
-                  </Collapse>
-                  </>
-                ) : <p></p>}
-              </CDBSidebarMenu>      
-            </CDBSidebarContent>
-          </CDBSidebar>
-        </div>
+            </>
+          )}
+        </List>
+      </Drawer>
+  </div>
+      {isChannelModalOpen && (
+        <Channel
+          isOpen={isChannelModalOpen}
+          onClose={() => setChannelModalOpen(false)}
+        />
+      )}
+    </>
+  );
 
-        {isChannelModalOpen && (
-          <Channel
-            isOpen={isChannelModalOpen}
-            onClose={() => setChannelModalOpen(false)}
-          />
-        )}
-
-      </>
-      );
-};
-
+}
 export default Sidebar;
