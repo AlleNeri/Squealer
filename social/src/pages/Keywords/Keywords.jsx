@@ -18,7 +18,6 @@ const KeywordPosts = () => {
           }
         });
         const data = await response.json();
-        console.log('Posts:', data);
         setPosts(data);
       } catch (error) {
         console.error('Failed to fetch posts:', error);

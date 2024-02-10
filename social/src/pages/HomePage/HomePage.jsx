@@ -43,7 +43,7 @@ function HomePage() {
     };
 
     fetchPosts();
-  }, [posts]);
+  }, [posts.length]);
 
   return (
     <div>
@@ -53,8 +53,8 @@ function HomePage() {
         </Typography>
       <Divider style={{ backgroundColor: 'black', width: '30%', margin: '0 auto' }} />
       {Array.isArray(posts) && 
-        posts.map((post) => (
-          <div key={post._id}>
+        posts.map((post, index) => (
+          <div key={index}>
             <Post post={post} />
           </div>
         ))

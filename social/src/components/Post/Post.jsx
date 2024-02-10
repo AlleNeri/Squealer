@@ -1,18 +1,17 @@
 import React, { useEffect, useRef, useContext, useState } from 'react';
-import { Card, CardContent, TextField, Typography, IconButton, Grid, Avatar, Tooltip } from '@material-ui/core';
+import { Card, CardContent, Typography, IconButton, Grid, Avatar, Tooltip } from '@material-ui/core';
 import L, {Icon} from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import markerIconPng from "leaflet/dist/images/marker-icon.png";
 import { SentimentVeryDissatisfied, SentimentDissatisfied, SentimentSatisfied, SentimentVerySatisfied } from '@material-ui/icons';
 import AlarmIcon from '@mui/icons-material/Alarm';
 import { LoginContext } from '../../context/LoginContext/LoginContext';
-import { TimeContext } from '../../context/TimeContext/TimeContext';
 import CountUp from 'react-countup';
 import Linkify from 'react-linkify';
 import {Link} from 'react-router-dom';
 
 export default function Post({post}) {
-    const {title, content, keywords, reactions, posted_by, timed} = post;
+  const {title, content, keywords, reactions, posted_by, timed} = post;
     const [user, setUser] = useState(null);
     const mapRef = useRef(); // Assign useRef to a variable
     const token = localStorage.getItem('token');
@@ -35,7 +34,7 @@ export default function Post({post}) {
           const userReaction = post?.reactions?.find(reaction => reaction.user_id === userID);
           if (!userReaction) {
             // Add a view to the post
-            const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/posts/${post?._id}/visualize`, {
+            const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/posts/${post?.post._id}/visualize`, {
               method: 'PATCH',
               headers: {
                 'Content-Type': 'application/json',
@@ -45,21 +44,18 @@ export default function Post({post}) {
       
             if (!response.ok) {
               const data = await response.json();
-              console.log(response);
-              console.log('There was a problem visualizing the post' + (data));
-              throw new Error('There was a problem visualizing the post');
             }
           }
   
         } catch (error) {
-          console.error(error);
+          
         }
       };
     
       if (loggedIn) {
         visualizePost();
       }
-  }, [post]);
+  }, []);
 
   const renderKeywords = (keywords) => {
     return keywords.map((keyword, index) => (

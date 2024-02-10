@@ -3,6 +3,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import LoginIcon from '@mui/icons-material/Login';
 import Tooltip from '@material-ui/core/Tooltip';
 import CreateIcon from '@mui/icons-material/Create';
@@ -77,7 +78,6 @@ export default function ButtonAppBar({setModalOpen}) {
     setAnchorEl(null);
   };
   return (
-    
     <div className="header" style={headerStyle}>
         <Toolbar className="Toolbar">
           {isSidebarMinimized && 
@@ -121,7 +121,7 @@ export default function ButtonAppBar({setModalOpen}) {
               SQUEALER
             </Typography>
           </div>
-
+          
           {!loggedIn &&
           <div className='regLog'>
             <Link to='/Register' className="Link">
@@ -175,6 +175,15 @@ export default function ButtonAppBar({setModalOpen}) {
           
           {loggedIn && isSidebarMinimized && matches && 
             <div>
+              <IconButton style={{color: 'white'}}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <Tooltip title="Notifications">
+                    <NotificationsIcon />
+                  </Tooltip>
+                  <span style={{ fontSize: '0.8rem' }}>Notifications</span>
+                </div>
+              </IconButton>
+
               <IconButton onClick={handleClick} style={{color: 'white'}}>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                   <Tooltip title="Other">
