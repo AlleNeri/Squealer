@@ -1,31 +1,36 @@
 import React, {useState, useContext, useEffect} from 'react';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Button from 'react-bootstrap/Button';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
 import LoginIcon from '@mui/icons-material/Login';
 import Tooltip from '@material-ui/core/Tooltip';
 import CreateIcon from '@mui/icons-material/Create';
 import HomeIcon from '@mui/icons-material/Home';
+import MenuIcon from '@mui/icons-material/Menu';
+import AppsIcon from '@mui/icons-material/Apps';
 import LogoutIcon from '@mui/icons-material/Logout';
 import logo from '../../../assets/logo.png'
 import './header.css';
 import { LoginContext } from "../../context/LoginContext/LoginContext";
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { SidebarContext } from '../../context/SidebarContext/SidebarContext';
+import { Menu, MenuItem, IconButton} from '@mui/material';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 export default function ButtonAppBar({setModalOpen}) {
   const navigate = useNavigate();
   const { loggedIn, setLoggedIn } = useContext(LoginContext);
   const {isSidebarMinimized, setSidebarMinimized} = useContext(SidebarContext);
+  const [anchorEl, setAnchorEl] = useState(null);
   const [isProfileClicked, setIsProfileClicked] = useState(false);
   const location = useLocation();
 
   const headerStyle = {
-    paddingLeft: isSidebarMinimized ? '80px' : '270px', // Adjust this value as needed
-    height: isSidebarMinimized ? '66.5px' : '76px',
+    paddingLeft: isSidebarMinimized ? '0' : '200px',
   };
+
+  const matches = useMediaQuery('(max-width:445px)');
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -41,17 +46,20 @@ export default function ButtonAppBar({setModalOpen}) {
     // Update the loggedIn state
     setLoggedIn(false);
 
+    handleClose();
     // Redirect to the login page
     navigate('/login');
   }
 
   const handleNewPostClick = () => {
     setModalOpen(true);
+    handleClose();
     setIsProfileClicked(false);
   };
 
   const handleProfileClick = () => {
     navigate(`/Profile/${localStorage.getItem('userId')}`);
+    handleClose();
     setIsProfileClicked(true);
   };
 
@@ -60,24 +68,55 @@ export default function ButtonAppBar({setModalOpen}) {
       setIsProfileClicked(false);
     }
   }, [location]);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   return (
     
     <div className="header" style={headerStyle}>
         <Toolbar className="Toolbar">
-          
-          <div>
-          <Link to='/HomePage' className="Link">
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <Tooltip title="Homepage">
-                  <HomeIcon/>
-                </Tooltip>
-                <span style={{ fontSize: '0.8rem' }}>Home</span>
-              </div>
-            </Link>
+          {isSidebarMinimized && 
+          <div style={{ display: 'flex', alignItems:'center', justifyContent:'space-between' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <Tooltip title="Channels">
+                <MenuIcon onClick={() => setSidebarMinimized(false)} style={{color: 'white', cursor:'pointer'}}/>
+              </Tooltip>
+              <span style={{ fontSize: '0.8rem' }}>Channels</span>
+            </div>
+
+            <div>
+              <Link to='/HomePage' className="Link">
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginLeft:'10px' }}>
+                  <Tooltip title="Homepage">
+                    <HomeIcon/>
+                  </Tooltip>
+                  <span style={{ fontSize: '0.8rem' }}>Home</span>
+                </div>
+              </Link>
+            </div>
           </div>
+          }
+
+          {!isSidebarMinimized &&
+            <div>
+              <Link to='/HomePage' className="Link">
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <Tooltip title="Homepage">
+                    <HomeIcon/>
+                  </Tooltip>
+                  <span style={{ fontSize: '0.8rem' }}>Home</span>
+                </div>
+              </Link>
+            </div>
+          }
 
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <img src={logo} alt="Logo" style={{ height: '50px', marginRight: '10px' }} />
+            {!matches && <img src={logo} alt="Logo" style={{ height: '50px', marginRight: '10px' }} />}
             <Typography className="Typography" fontWeight="fontWeightBold">
               SQUEALER
             </Typography>
@@ -105,7 +144,7 @@ export default function ButtonAppBar({setModalOpen}) {
           </div>
           
           }
-          {loggedIn && 
+          {loggedIn && !matches &&
           <div className='newLog'>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <Tooltip title="New squeal">
@@ -134,6 +173,38 @@ export default function ButtonAppBar({setModalOpen}) {
             
           </div>}
           
+          {loggedIn && isSidebarMinimized && matches && 
+            <div>
+              <IconButton onClick={handleClick} style={{color: 'white'}}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <Tooltip title="Other">
+                    <AppsIcon />
+                  </Tooltip>
+                  <span style={{ fontSize: '0.8rem' }}>Other</span>
+                </div>
+              </IconButton>
+
+              <Menu
+                anchorEl={anchorEl}
+                keepMounted
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+              >
+                <MenuItem onClick={handleNewPostClick}>
+                  <CreateIcon />
+                  New Squeal
+                </MenuItem>
+                <MenuItem onClick={handleProfileClick}>
+                  <AccountCircleIcon />
+                  Profile
+                </MenuItem>
+                <MenuItem onClick={handleLogout}>
+                  <LogoutIcon />
+                  Logout
+                </MenuItem>
+              </Menu>
+            </div>
+          }
         </Toolbar>
         
     </div>
