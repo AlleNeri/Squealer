@@ -17,6 +17,7 @@ const Sidebar = () => {
   const [selectedChannel, setSelectedChannel] = useState(null);
   const [isChannelsExpanded, setChannelsExpanded] = useState(false);
   const [isExplore, setExplore] = useState(false);
+  const [isTrending, setTrending] = useState(false);
   const { loggedIn } = useContext(LoginContext);
   const location = useLocation();
   const token = localStorage.getItem('token');
@@ -33,6 +34,8 @@ const Sidebar = () => {
     },
     link: {
       textDecoration: 'none',
+      color: 'inherit',
+      marginLeft: '20px', 
     },
   });
 
@@ -73,6 +76,10 @@ const Sidebar = () => {
 
   const toggleExplore = () => {
     setExplore(!isExplore);
+  };
+
+  const toggleTrending = () => {
+    setTrending(!isTrending);
   };
 
   useEffect(() => {
@@ -170,16 +177,48 @@ useEffect(() => {
           </ListItem>
   
           <Divider />
-  
+          
+          <ListItem button onClick={toggleTrending} className={classes.channel}>
+          <ListItemText 
+            primary="TRENDING" 
+            style={{color:'white'}} 
+            primaryTypographyProps={{ style: { fontWeight: 700, textDecoration: 'underline' } }}
+          />
+          {isTrending ? <ExpandMoreIcon style={{color:'white'}}/> : <ChevronRightIcon style={{color:'white'}}/>}
+          </ListItem>
+          <Collapse in={isTrending}>
+              <NavLink className={classes.link} to={`/AllChannels/Controversial`}>
+                <ListItem button>
+                  <ListItemText primary={`§CONTROVERSIAL`} style={{color:'white'}}/>
+                </ListItem>
+              </NavLink>
+
+              <NavLink className={classes.link} to={`/AllChannels/Popular`}>
+                <ListItem button>
+                  <ListItemText primary={`§POPULAR`} style={{color:'white'}}/>
+                </ListItem>
+              </NavLink>
+
+              <NavLink className={classes.link} to={`/AllChannels/Unpopular`}>
+                <ListItem button>
+                  <ListItemText primary={`§UNPOPULAR`} style={{color:'white'}}/>
+                </ListItem>
+              </NavLink>
+          </Collapse>
+
           <ListItem button onClick={toggleExplore} className={classes.channel}>
-          <ListItemText primary="EXPLORE" style={{color:'white'}}/>
+          <ListItemText 
+            primary="EXPLORE" 
+            style={{color:'white'}} 
+            primaryTypographyProps={{ style: { fontWeight: 700, textDecoration: 'underline' } }}
+          />
           {isExplore ? <ExpandMoreIcon style={{color:'white'}}/> : <ChevronRightIcon style={{color:'white'}}/>}
           </ListItem>
           <Collapse in={isExplore}>
             {allChannels.map(channel => (
               <NavLink key={channel._id} className={classes.link} to={`/AllChannels/${channel._id}`} onClick={() => handleChannelClick(channel._id)}>
-                <ListItem button >
-                  <ListItemText primary={channel.name} style={{color:'white'}}/>
+                <ListItem button>
+                  <ListItemText primary={`§${channel.name}`} style={{color:'white'}}/>
                 </ListItem>
               </NavLink>
             ))}
@@ -188,7 +227,11 @@ useEffect(() => {
           {loggedIn && (
             <>
               <ListItem button onClick={toggleChannels} className={classes.channel}>
-                <ListItemText primary="MY CHANNELS" style={{color:'white'}}/>
+                <ListItemText 
+                  primary="MY CHANNELS" 
+                  style={{color:'white'}} 
+                  primaryTypographyProps={{ style: { fontWeight: 700, textDecoration: 'underline' } }}
+                />
                 {isChannelsExpanded ? <ExpandMoreIcon style={{color:'white'}}/> : <ChevronRightIcon style={{color:'white'}}/>}
               </ListItem>
               <Collapse in={isChannelsExpanded}>
@@ -196,7 +239,7 @@ useEffect(() => {
                   myChannels.map(channel => (
                     <NavLink key={channel._id} className={classes.link} to={`/AllChannels/${channel._id}`} onClick={() => handleChannelClick(channel._id)}>
                       <ListItem button>
-                        <ListItemText primary={channel.name} style={{color:'white'}}/>
+                        <ListItemText primary={`§${channel.name}`} style={{color:'white'}}/>
                       </ListItem>
                     </NavLink>
                   ))

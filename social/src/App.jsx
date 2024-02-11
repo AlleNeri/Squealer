@@ -9,6 +9,9 @@ import AllChannels from './pages/AllChannels/AllChannels';
 import Smm from './pages/Smm/Smm';
 import HomePage from './pages/HomePage/HomePage';
 import Keywords from './pages/Keywords/Keywords'
+import Controversial from './pages/AllChannels/Controversial/Controversial';
+import Popular from './pages/AllChannels/Popular/Popular';
+import Unpopular from './pages/AllChannels/Unpopular/Unpopular';
 import { PostsContext } from './context/PostsContext/PostsContext';
 import { SidebarProvider } from './context/SidebarContext/SidebarContext';
 import { TimeProvider } from './context/TimeContext/TimeContext';
@@ -46,6 +49,18 @@ const routes = createBrowserRouter([
 				path: '/Keywords/:keyword',
 				element : <Keywords />
 			},
+			{
+				path: '/AllChannels/Controversial',
+				element: <Controversial />
+			},
+			{
+				path: '/AllChannels/Popular',
+				element: <Popular />
+			},
+			{
+				path: '/AllChannels/Unpopular',
+				element: <Unpopular />
+			}
 		],
 	},
 ]);

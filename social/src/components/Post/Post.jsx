@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useContext, useState } from 'react';
-import { Card, CardContent, Typography, IconButton, Grid, Avatar, Tooltip } from '@material-ui/core';
+import { Card, CardContent, Typography, IconButton, Grid, Avatar, Tooltip, useMediaQuery, useTheme } from '@material-ui/core';
 import L, {Icon} from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import markerIconPng from "leaflet/dist/images/marker-icon.png";
 import { SentimentVeryDissatisfied, SentimentDissatisfied, SentimentSatisfied, SentimentVerySatisfied } from '@material-ui/icons';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import AlarmIcon from '@mui/icons-material/Alarm';
 import { LoginContext } from '../../context/LoginContext/LoginContext';
 import CountUp from 'react-countup';
@@ -11,8 +12,9 @@ import Linkify from 'react-linkify';
 import {Link} from 'react-router-dom';
 
 export default function Post({post}) {
-  const {title, content, keywords, reactions, posted_by, timed} = post;
+  const {title, content, keywords, reactions, posted_by, posted_on, timed, popular, unpopular, date} = post;
     const [user, setUser] = useState(null);
+    const [channel, setChannel] = useState(null);
     const mapRef = useRef(); // Assign useRef to a variable
     const token = localStorage.getItem('token');
     const { loggedIn } = useContext(LoginContext);
@@ -25,7 +27,18 @@ export default function Post({post}) {
     });
     const userID = localStorage.getItem('userId');
     const [userReaction, setUserReaction] = useState(post?.reactions?.find(reaction => reaction.user_id === userID));
+    const theme = useTheme();
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
     if(!loggedIn) { localStorage.removeItem('userId'); }
+    
+
+    useEffect(() => {
+      // Fetch the channel when the component mounts
+      fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels/${posted_on}`)
+        .then(response => response.json())
+        .then(data => setChannel(data))
+        .catch(error => console.error('Error:', error));
+    }, [posted_on]);
 
     useEffect(() => {
       const visualizePost = async () => {
@@ -181,6 +194,7 @@ export default function Post({post}) {
 
     return (
       <div style={{ display: 'flex', justifyContent: 'center' }}>
+      
         <Grid container justifyContent="center">
           <Grid item xs={12} sm={10} md={8} lg={6}>
             <Card style={{ margin: '20px', padding: '20px', backgroundColor: '#fafeff' }}>
@@ -190,12 +204,30 @@ export default function Post({post}) {
                     <Avatar alt="Profile" src={user && user.img ? `${import.meta.env.VITE_DEFAULT_URL}/media/image/${user.img}` : undefined} >
                       {user?.u_name?.charAt(0).toUpperCase()}
                     </Avatar>
-                    <Link to={`/Profile/${posted_by}`}>{user && user.u_name}</Link>
                   </Grid>
                   <Grid item xs={12} sm={10}>
-                    <Typography variant="h5" component="h2">
-                      {title}
-                    </Typography>
+                    <div>
+                      <div style={{ display: 'flex', flexDirection: isSmallScreen ? 'column-reverse' : 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div>
+                          <Link to={`/AllChannels/${channel?._id}`} style={{ textDecoration: 'none' }}>
+                            <Typography variant="body1" display="inline" color="textPrimary">{`§${channel?.name}`}</Typography>
+                          </Link>
+                          { (popular || unpopular) && 
+                            <Link to={`/AllChannels/${popular && unpopular ? 'Controversial' : popular ? 'Popular' : 'Unpopular'}`} style={{ textDecoration: 'none' }}>
+                              <Typography variant="body1" display="inline" color="textPrimary">
+                                {`, ${popular && unpopular ? '§CONTROVERSIAL' : popular ? '§POPULAR' : unpopular ? '§UNPOPULAR' : ''}`}
+                              </Typography>
+                            </Link>
+                          }
+                        </div>
+                        <Typography variant="body2" color="textSecondary">
+                          Posted by {user && <Link to={`/Profile/${posted_by}`} style={{ color: 'inherit' }}>@{user.u_name}</Link>} on {new Date(date).toLocaleString()}
+                        </Typography>
+                      </div>
+                      <Typography variant="h5" style={{ marginTop: '20px' }}>
+                        {title}
+                      </Typography>
+                    </div>
                     {content && content.text ?
                       <Typography variant="body2" component="p">
                         <Linkify>
@@ -205,7 +237,7 @@ export default function Post({post}) {
                       : <p></p>
                     }
                     {content && content.position && <div ref={mapRef} style={{ width: '100%', height: '300px', zIndex: 500 }}></div>}
-                    {content && content.img && <img src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${content.img}`} alt="description" style={{ width: '100%', height: 'auto' }} />}
+                    {content && content.img && <img src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${content.img}`} alt="description" style={{ width: '100%', height: '200px' }} />}
                     <Typography variant="body2" component="p">
                       {keywords && renderKeywords(keywords)}
                     </Typography>
@@ -241,7 +273,7 @@ export default function Post({post}) {
                           <Tooltip title="Timed squeal"><AlarmIcon /></Tooltip>
                         }
                         <Typography variant="body2" color="textSecondary">
-                          Views: {views || 0}
+                          <VisibilityIcon/> {views || 0}
                         </Typography>
                       </Grid>
                     </Grid>
