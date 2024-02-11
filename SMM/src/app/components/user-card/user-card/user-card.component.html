@@ -3,6 +3,7 @@
     class="user-card"
     style="width: 100%;"
     [nzLoading]="!!!this.user"
+    [nzActions]="[settings, edit, delete]"
   >
     <nz-skeleton
       [nzLoading]="!!!this.user"
@@ -25,4 +26,22 @@
     nzSrc="{{ user.img && backendComunication.at('media/image/'+user.img) }}"
     [nzSize]="'large'"
   ></nz-avatar>
+</ng-template>
+
+<ng-template #settings>
+  <app-user-settings ></app-user-settings>
+</ng-template>
+
+<ng-template #edit>
+  <!--
+  <app-user-edit [user]="user"></app-user-edit>
+  -->
+  Modifica
+</ng-template>
+
+<ng-template #delete>
+  <!--
+  <app-user-delete [user]="user"></app-user-delete>
+  -->
+  Elimina
 </ng-template>

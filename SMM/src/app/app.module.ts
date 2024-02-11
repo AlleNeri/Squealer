@@ -43,6 +43,7 @@ import {
   ExclamationCircleOutline,
   HeartOutline,
   ClockCircleOutline,
+  SettingOutline,
 } from '@ant-design/icons-angular/icons';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -84,6 +85,7 @@ import { UploadImageComponent } from './components/miscellaneous/upload-image/up
 import { MapComponent } from './components/miscellaneous/map/map.component';
 import { PostComponent } from './components/posts/post/post.component';
 import { ShowMapComponent } from './components/miscellaneous/show-map/show-map.component';
+import { UserSettingsComponent } from './components/auth/user-settings/user-settings.component';
 
 registerLocaleData(it);
 
@@ -96,6 +98,7 @@ const icons: IconDefinition[]= [
   ExclamationCircleOutline,
   HeartOutline,
   ClockCircleOutline,
+  SettingOutline,
 ];
 
 @NgModule({
@@ -124,6 +127,7 @@ const icons: IconDefinition[]= [
     MapComponent,
     PostComponent,
     ShowMapComponent,
+    UserSettingsComponent,
   ],
   imports: [
     BrowserModule,

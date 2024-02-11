@@ -47,6 +47,17 @@ export class UserInformationService {
   public get clients(): Client[] {
     return this._client;
   }
+
+  public removeClient(clientId: string): void {
+    this.backendComunication.delete(`users/clients/${clientId}`, this.auth.token!)
+      .subscribe((d: any)=> {
+        if(d.client) {
+          console.log(d.client);
+          this.userInformation!.client = d.client;
+          this.userInformationEvent.emit(this.userInformation);
+        }
+      });
+  }
 }
 
 export function factoryUserInformationService(userInformation: UserInformationService) {

@@ -1,0 +1,28 @@
+<div (click)="this.toggleVisibility()">
+  <span nz-icon nzType="setting"></span>
+  <span style="margin-left: 8px;">Impostazioni</span>
+</div>
+
+<nz-modal
+  [(nzVisible)]="this.isVisible"
+  nzTitle="Qualcuno non è più tuo cliente?"
+  (nzOnCancel)="toggleVisibility()"
+  (nzOnOk)="handleOk()"
+>
+  <ng-container *nzModalContent>
+    <nz-select
+      style="width: 100%;"
+      [(ngModel)]="this.selectedClient"
+      nzShowSearch
+      nzPlaceHolder="Seleziona un cliente"
+      [nzDisabled]="!this.areThereClients()"
+    >
+      <nz-option
+        *ngFor="let client of this.clients"
+        [nzLabel]="client.username!"
+        [nzValue]="client.id"
+      >
+      </nz-option>
+    </nz-select>
+  </ng-container>
+</nz-modal>

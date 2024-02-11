@@ -92,7 +92,7 @@ UserSchema.methods.addClient=function(user_id: string): void {
 };
 
 UserSchema.methods.removeClient=function(user_id: string): void {
-	if(this.isSMM) this.client=this.client.filter((client: string)=> client!=user_id);
+	if(this.isSMM) this.client = this.client.filter((client: string)=> client != user_id);
 };
 
 UserSchema.methods.isMySMM = function(user_id: string): boolean {
@@ -101,7 +101,11 @@ UserSchema.methods.isMySMM = function(user_id: string): boolean {
 }
 
 UserSchema.methods.setMySMM = function(user_id: string): void {
-	if(this.isVip) this.smm=user_id;
+	if(this.isVip) this.smm = user_id;
+}
+
+UserSchema.methods.removeMySMM = function(): void {
+	if(this.isVip) this.smm = undefined;
 }
 
 UserSchema.methods.isAMidnightPassed=function(): boolean | undefined {

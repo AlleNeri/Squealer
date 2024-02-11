@@ -114,26 +114,26 @@ userRoute.put('/smms/select/:id', Auth.authorize, Auth.isVip, (req: Request, res
 		.then(async (user: User | null) => {
 			if(!user) return res.status(404).json({ msg: 'SMM not found' });
 			else if(user.type !== UserType.SMM) return res.status(400).json({ msg: 'Bad request, the user is not a SMM' });
-			user.addClient(req.user!.id);
 			if(req.user!.smm) {
+				if(req.user!.smm == user.id) return res.status(200).json(getUserPublicInfo(user));
 				const oldSMM: User | null = await UserSchema.findById(req.user!.smm);
 				if(oldSMM) {
 					oldSMM.removeClient(req.user!.id);
 					oldSMM.save();
 				}
 			}
+			user.addClient(req.user!.id);
 			req.user!.setMySMM(user.id);
 			user.save();
-			req.user?.save();
-			res.status(200).json(user);
+			req.user!.save();
+			res.status(200).json(getUserPublicInfo(user));
 		})
 		.catch(err=> res.status(404).json({ msg: 'SMM not found', err: err }));
 });
 
-//delete a smm
+//remove a smm
 //only a vip client can do this
-userRoute.delete('/smms/delete', Auth.authorize, (req: Request, res: Response) => {
-	if(!req.user!.smm) return res.status(400).json({ msg: 'Bad request, you don\'t have a SMM' });
+userRoute.delete('/smms/delete', Auth.authorize, Auth.isVip, (req: Request, res: Response) => {
 	UserSchema.findById(req.user!.smm)
 		.then(async (user: User | null) => {
 			if(!user) return res.status(500).json({ msg: 'SMM not found' });
@@ -141,9 +141,30 @@ userRoute.delete('/smms/delete', Auth.authorize, (req: Request, res: Response) =
 			req.user!.smm = undefined;
 			user.save();
 			req.user?.save();
-			res.status(200).json(user);
+			res.status(200).json(getUserPublicInfo(user));
 		})
 		.catch(err=> res.status(404).json({ msg: 'SMM not found', err: err }));
+});
+
+//remove a client
+//only a smm can do this
+userRoute.delete('/clients/:id', Auth.authorize, Auth.isSMM, (req: Request, res: Response) => {
+	if(!req.params.id) return res.status(400).json({ msg: 'Bad request' });
+	if(!req.user!.isClient(req.params.id)) return res.status(401).json({ msg: 'The passed user is not a client of the authenticated user' });
+	UserSchema.findById(req.params.id)
+		.then((user: User | null) => {
+			if(!user) {
+				req.user!.removeClient(req.body.id);
+				return res.status(200).json({ msg: 'Client not found', client: req.user!.client });
+			}
+			req.user!.removeClient(user!.id);
+			req.user!.save();
+			user.removeMySMM();
+			user.save();
+			console.log(req.user!.client);
+			res.status(200).json({ client: req.user!.client });
+		})
+		.catch(err=> res.status(404).json({ msg: 'Client not found', err: err }));
 });
 
 //authentication routes
