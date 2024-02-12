@@ -1,0 +1,45 @@
+<div (click)="this.toggleVisibility()">
+  <span nz-icon nzType="edit"></span>
+  <span style="margin-left: 8px;">Modifica</span>
+</div>
+
+<nz-modal
+  [(nzVisible)]="this.isVisible"
+  nzTitle="Modifica la password"
+  (nzOnCancel)="this.toggleVisibility()"
+  (nzOnOk)="this.onSubmit()"
+  [nzOkDisabled]="!this.changePasswordForm.valid"
+>
+  <ng-container *nzModalContent>
+    <form
+      nz-form
+      [formGroup]="this.changePasswordForm"
+      (ngSubmit)="onSubmit()"
+    >
+      <nz-form-item>
+        <nz-form-control nzErrorTip="Inserisci la tua solita password">
+          <nz-input-group nzPrefixIcon="lock">
+            <input
+              nz-input
+              formControlName="oldPassword"
+              type="password"
+              placeholder="Vecchia password"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-control nzErrorTip="Almeno 8 caratteri tra lettere maiuscole, minuscole e cifre!">
+          <nz-input-group nzPrefixIcon="lock">
+            <input
+              nz-input
+              formControlName="newPassword"
+              type="password"
+              placeholder="Nuova password"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>

@@ -5,7 +5,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ILoginBody } from 'src/app/interfaces/auth-user';
 
 import { AuthenticationService } from '../../../services/authentication.service';
-import {NzMessageService} from 'ng-zorro-antd/message';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   selector: 'app-login-card',

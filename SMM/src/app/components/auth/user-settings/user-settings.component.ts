@@ -11,7 +11,7 @@ import Client from "src/app/classes/client";
 })
 export class UserSettingsComponent  {
   protected isVisible: boolean;
-  protected  selectedClient?: string;
+  protected selectedClient?: string;
 
   constructor(
     private userInfo: UserInformationService,

@@ -1,6 +1,6 @@
 import { Injectable, Output, EventEmitter } from '@angular/core';
 
-import { ILoggedUser, IRegisterBody, UserType } from '../interfaces/auth-user';
+import { ILoggedUser, IRegisterBody, ILoginBody, IChangePasswordBody, UserType } from '../interfaces/auth-user';
 
 import { BackendComunicationService } from './backend-comunication.service';
 import { mergeMap, of } from 'rxjs';
@@ -81,13 +81,17 @@ export class AuthenticationService {
       });
   }
 
-  login(data: Object) {
+  login(data: ILoginBody) {
     return this.backendComunication.post("users/login", data)
       .subscribe((d: Object)=> {
         this.logUser=d as ILoggedUser | undefined;
         if(this.isTokenExpired()) return false;
         return true;
       });
+  }
+
+  changePassword(data: IChangePasswordBody) {
+    return this.backendComunication.put(`users/${this.loggedUser!.id}/changePassword`, data);
   }
 
   logout(): void {

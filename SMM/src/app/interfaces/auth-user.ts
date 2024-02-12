@@ -28,3 +28,8 @@ export interface IRegisterBody {
   user: IUser,
   password: string
 };
+
+export interface IChangePasswordBody {
+  oldPassword: string,
+  newPassword: string
+};

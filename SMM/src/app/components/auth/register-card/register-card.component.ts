@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormGroup, Validators, ValidatorFn, ValidationErrors, AbstractControl, FormBuilder } from '@angular/forms';
+import { NzUploadFile } from 'ng-zorro-antd/upload';
 
 import { IRegisterBody } from 'src/app/interfaces/auth-user';
 
 import { AuthenticationService } from '../../../services/authentication.service';
-import {NzUploadFile} from 'ng-zorro-antd/upload';
 
 @Component({
   selector: 'app-register-card',
@@ -30,7 +30,6 @@ export class RegisterCardComponent {
       password: [ null, [
         Validators.required,
         Validators.minLength(this.passwordMinLength),
-        //pattern validator for password with at least 1 uppercase, 1 lowercase and 1 number  TODO: make other characters are allowed
         Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/),
       ]],
       confirmPassword: [ null, Validators.required],

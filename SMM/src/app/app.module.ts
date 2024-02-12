@@ -86,6 +86,7 @@ import { MapComponent } from './components/miscellaneous/map/map.component';
 import { PostComponent } from './components/posts/post/post.component';
 import { ShowMapComponent } from './components/miscellaneous/show-map/show-map.component';
 import { UserSettingsComponent } from './components/auth/user-settings/user-settings.component';
+import { UserEditComponent } from './components/auth/user-edit/user-edit.component';
 
 registerLocaleData(it);
 
@@ -128,6 +129,7 @@ const icons: IconDefinition[]= [
     PostComponent,
     ShowMapComponent,
     UserSettingsComponent,
+    UserEditComponent,
   ],
   imports: [
     BrowserModule,
