@@ -8,6 +8,8 @@
   nzTitle="Modifica la password"
   (nzOnCancel)="this.toggleVisibility()"
   (nzOnOk)="this.onSubmit()"
+  nzOkText="Modifica"
+  nzCancelText="Annulla"
   [nzOkDisabled]="!this.changePasswordForm.valid"
 >
   <ng-container *nzModalContent>

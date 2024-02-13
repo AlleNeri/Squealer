@@ -44,6 +44,7 @@ import {
   HeartOutline,
   ClockCircleOutline,
   SettingOutline,
+  DeleteTwoTone,
 } from '@ant-design/icons-angular/icons';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -87,6 +88,7 @@ import { PostComponent } from './components/posts/post/post.component';
 import { ShowMapComponent } from './components/miscellaneous/show-map/show-map.component';
 import { UserSettingsComponent } from './components/auth/user-settings/user-settings.component';
 import { UserEditComponent } from './components/auth/user-edit/user-edit.component';
+import { UserDeleteComponent } from './components/auth/user-delete/user-delete.component';
 
 registerLocaleData(it);
 
@@ -100,6 +102,7 @@ const icons: IconDefinition[]= [
   HeartOutline,
   ClockCircleOutline,
   SettingOutline,
+  DeleteTwoTone,
 ];
 
 @NgModule({
@@ -130,6 +133,7 @@ const icons: IconDefinition[]= [
     ShowMapComponent,
     UserSettingsComponent,
     UserEditComponent,
+    UserDeleteComponent,
   ],
   imports: [
     BrowserModule,

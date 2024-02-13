@@ -1,0 +1,22 @@
+<div (click)="this.toggleVisibility()">
+  <span
+    nz-icon
+    nzType="delete"
+    nzTheme="twotone"
+    nzTwotoneColor="red"
+  ></span>
+  <span style="margin-left: 8px;">Elimina</span>
+</div>
+
+<nz-modal
+  [(nzVisible)]="isVisible"
+  nzTitle="Elimina utente"
+  (nzOnCancel)="toggleVisibility()"
+  (nzOnOk)="handleOk()"
+  nzOkText="Elimina"
+  nzCancelText="Annulla"
+>
+  <ng-container *nzModalContent>
+    <p>Sei sicuro di voler eliminare l'utente?</p>
+  </ng-container>
+</nz-modal>
