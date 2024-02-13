@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useContext } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Card, CardContent, Typography, Avatar, Box, Menu, MenuItem, Dialog, DialogContent, Button } from '@material-ui/core';
+import { Card, CardContent, Typography, Avatar, Box, Menu, MenuItem, Grid, Dialog, DialogContent, Button, TextField, Select } from '@material-ui/core';
 import { PostsContext } from '../../context/PostsContext/PostsContext';
 import { LoginContext } from '../../context/LoginContext/LoginContext';
 import MyPosts from '../MyPosts/MyPosts';
@@ -17,6 +17,8 @@ const Profile = () => {
     const [anchorEl, setAnchorEl] = useState(null);
     const [openDialog, setOpenDialog] = useState(false);
     const [image, setImage] = useState(null);
+    const [period, setPeriod] = useState('day');
+    let [quantity, setQuantity] = useState(0);
     const currentUserId = localStorage.getItem('userId');
     const [userPosts, setUserPosts] = useState([]);
 
@@ -72,7 +74,7 @@ const Profile = () => {
             navigate('/login');
           });
         } 
-    }, [loggedIn, posts]);
+    }, [posts.length]);
 
     const handleChangeImage = () => {
         // Simula un click sull'input del file quando l'utente clicca su "Cambia immagine"
@@ -205,6 +207,23 @@ const Profile = () => {
     return <div>Loading...</div>;
   }
 
+  const handleSubmit = async () => {
+    quantity = parseInt(quantity);
+    const body =  JSON.stringify({ period, quantity });
+    const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/${currentUserId}/char`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': token,
+        'Content-Type': 'application/json',
+      },
+      body: body,
+    });
+
+    if (response.ok && response.headers.get('content-type')?.includes('application/json')) {
+      const data = await response.json();
+    } 
+  };
+
   return (
     <>
 
@@ -336,6 +355,31 @@ const Profile = () => {
                         {user && user.quote && user.char_availability.monthly || 0}
                     </Typography>
               </Box>
+              <Grid container spacing={3} alignItems="center" justifyContent="center">
+                <Grid item xs={12} sm={4}>
+                  <Select
+                    value={period}
+                    onChange={(e) => setPeriod(e.target.value)}
+                    fullWidth
+                  >
+                    <MenuItem value="day">Day</MenuItem>
+                    <MenuItem value="week">Week</MenuItem>
+                    <MenuItem value="month">Month</MenuItem>
+                  </Select>
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <TextField
+                    label="Quantity"
+                    type="number"
+                    value={quantity}
+                    onChange={(e) => setQuantity((e.target.value))}
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <Button onClick={handleSubmit} fullWidth>Buy Chars</Button>
+                </Grid>
+              </Grid>
             </>
           }
           </Box>
