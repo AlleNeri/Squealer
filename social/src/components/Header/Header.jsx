@@ -3,6 +3,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import LoginIcon from '@mui/icons-material/Login';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -64,6 +65,12 @@ export default function ButtonAppBar({setModalOpen}) {
     setIsProfileClicked(true);
   };
 
+  const handleSettingsClick = () => {
+    navigate(`/Settings/${localStorage.getItem('userId')}`);
+    handleClose();
+    setIsProfileClicked(false);
+  };
+
   useEffect(() => {
     if (location.pathname === '/HomePage') {
       setIsProfileClicked(false);
@@ -77,29 +84,37 @@ export default function ButtonAppBar({setModalOpen}) {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
   return (
     <div className="header" style={headerStyle}>
         <Toolbar className="Toolbar">
           {isSidebarMinimized && 
-          <div style={{ display: 'flex', alignItems:'center', justifyContent:'space-between' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <Tooltip title="Channels">
-                <MenuIcon onClick={() => setSidebarMinimized(false)} style={{color: 'white', cursor:'pointer'}}/>
-              </Tooltip>
-              <span style={{ fontSize: '0.8rem' }}>Channels</span>
-            </div>
+            <div style={{ display: 'flex', alignItems:'center', justifyContent:'space-between' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <Tooltip title="Channels">
+                  <MenuIcon onClick={() => setSidebarMinimized(false)} style={{color: 'white', cursor:'pointer'}}/>
+                </Tooltip>
+                <span style={{ fontSize: '0.8rem' }}>Channels</span>
+              </div>
 
-            <div>
-              <Link to='/HomePage' className="Link">
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginLeft:'10px' }}>
-                  <Tooltip title="Homepage">
-                    <HomeIcon/>
-                  </Tooltip>
-                  <span style={{ fontSize: '0.8rem' }}>Home</span>
-                </div>
-              </Link>
+              <div>
+                <Link to='/HomePage' className="Link">
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginLeft:'10px' }}>
+                    <Tooltip title="Homepage">
+                      <HomeIcon/>
+                    </Tooltip>
+                    <span style={{ fontSize: '0.8rem' }}>Home</span>
+                  </div>
+                </Link>
+              </div>
             </div>
-          </div>
           }
 
           {!isSidebarMinimized &&
@@ -144,13 +159,14 @@ export default function ButtonAppBar({setModalOpen}) {
           </div>
           
           }
+
           {loggedIn && !matches &&
           <div className='newLog'>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <Tooltip title="New squeal">
                 <CreateIcon style={{ cursor:"pointer" }} onClick={handleNewPostClick} />
               </Tooltip>
-              <span style={{ fontSize: '0.8rem' }}>New squeal</span> {/* Adjust as needed */}
+              <span style={{ fontSize: '0.8rem' }}>New squeal</span>
             </div>
 
             <Link to='/Login' className="Link">
@@ -162,14 +178,31 @@ export default function ButtonAppBar({setModalOpen}) {
               </div>
             </Link>
 
-            <Link to={`/Profile/${localStorage.getItem('userId')}`} className='Link'>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <Tooltip title="Profile">
-                  <AccountCircleIcon onClick={handleProfileClick} />
-                </Tooltip>
-                <span style={{ fontSize: '0.8rem' }}>Profile</span>
-              </div>
-            </Link>
+            <div>
+              <IconButton style={{color: 'white'}}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <Tooltip title="Profile">
+                    <ManageAccountsIcon onClick={handleMenuOpen}/>
+                  </Tooltip>
+                  <span style={{ fontSize: '0.8rem' }}>Profile</span>
+                </div>
+              </IconButton>
+              <Menu
+                anchorEl={anchorEl}
+                keepMounted
+                open={Boolean(anchorEl)}
+                onClose={handleMenuClose}
+              >
+                <MenuItem onClick={handleProfileClick}>
+                  <AccountCircleIcon/>
+                  My profile
+                </MenuItem>
+                <MenuItem onClick={handleSettingsClick}>
+                  <ManageAccountsIcon />
+                  Settings
+                </MenuItem>
+              </Menu>
+            </div>
             
           </div>}
           
@@ -206,6 +239,10 @@ export default function ButtonAppBar({setModalOpen}) {
                 <MenuItem onClick={handleProfileClick}>
                   <AccountCircleIcon />
                   Profile
+                </MenuItem>
+                <MenuItem onClick={handleSettingsClick}>
+                  <ManageAccountsIcon/>
+                  Settings
                 </MenuItem>
                 <MenuItem onClick={handleLogout}>
                   <LogoutIcon />

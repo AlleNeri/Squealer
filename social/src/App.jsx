@@ -8,7 +8,8 @@ import Profile from './pages/Profile/Profile';
 import AllChannels from './pages/AllChannels/AllChannels';
 import Smm from './pages/Smm/Smm';
 import HomePage from './pages/HomePage/HomePage';
-import Keywords from './pages/Keywords/Keywords'
+import Keywords from './pages/Keywords/Keywords';
+import Settings from './pages/Settings/Settings';
 import Controversial from './pages/AllChannels/Controversial/Controversial';
 import Popular from './pages/AllChannels/Popular/Popular';
 import Unpopular from './pages/AllChannels/Unpopular/Unpopular';
@@ -60,7 +61,11 @@ const routes = createBrowserRouter([
 			{
 				path: '/AllChannels/Unpopular',
 				element: <Unpopular />
-			}
+			},
+			{
+				path: '/Settings/:id',
+				element: <Settings />
+			},
 		],
 	},
 ]);
