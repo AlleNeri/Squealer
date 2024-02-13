@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardContent, Typography, CardActions, Button, Avatar } from '@material-ui/core';
+import { Card, CardContent, Typography, CardActions, Button, Avatar, Divider } from '@material-ui/core';
 
 const SmmPage = () => {
   const [smms, setSmms] = useState([]);
   const [selectedSmm, setSelectedSmm] = useState(null);
   const token = localStorage.getItem('token');
+  const userId = localStorage.getItem('userId');
 
   const handleSelect = async (smmId) => {
     try {
@@ -65,23 +66,27 @@ const SmmPage = () => {
       .catch((error) => {
         console.error('There has been a problem with your fetch operation:', error);
       });
-  }, []);
+  }, [selectedSmm]);
 
   return (
-  <div>
-    {smms.map((smm) => (
-      <Card key={smm._id}>
-        <CardContent>
-          <Avatar alt="SMM Profile" src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${smm.img}`} />
-          <Typography variant="subtitle1" component="div">
-            <b>Nome:</b> {smm.name.first}
-          </Typography>
-          <Typography variant="subtitle1" component="div">
-            <b>Cognome:</b> {smm.name.last}
-          </Typography>
-        </CardContent>
-        <CardActions>
-          {selectedSmm === smm._id ? (
+    <div>
+      <Typography variant="h4" align="center" gutterBottom>
+        Choose your SMM
+      </Typography>
+      <Divider style={{ backgroundColor: 'black', marginBottom: '20px' }} />
+      {smms.map((smm) => (
+        <Card key={smm._id}>
+          <CardContent>
+            <Avatar alt="SMM Profile" src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${smm.img}`} />
+            <Typography variant="subtitle1" component="div">
+              <b>Nome:</b> {smm.name.first}
+            </Typography>
+            <Typography variant="subtitle1" component="div">
+              <b>Cognome:</b> {smm.name.last}
+            </Typography>
+          </CardContent>
+          <CardActions>
+          {smm.client.includes(localStorage.getItem('userId')) ? (
             <Button variant="contained" color="secondary" onClick={handleRevoke}>
               REVOCA SMM
             </Button>
@@ -91,8 +96,8 @@ const SmmPage = () => {
             </Button>
           )}
         </CardActions>
-      </Card>
-    ))}
+        </Card>
+      ))}
     </div>
   );
 };
