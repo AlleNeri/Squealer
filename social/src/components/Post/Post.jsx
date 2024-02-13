@@ -47,19 +47,17 @@ export default function Post({post}) {
           const userReaction = post?.reactions?.find(reaction => reaction.user_id === userID);
           if (!userReaction) {
             // Add a view to the post
-            const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/posts/${post?.post._id}/visualize`, {
+            const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/posts/${post._id}/visualize`, {
               method: 'PATCH',
               headers: {
                 'Content-Type': 'application/json',
                 'Authorization': token,
               },
             });
-      
             if (!response.ok) {
               const data = await response.json();
             }
           }
-  
         } catch (error) {
           
         }
