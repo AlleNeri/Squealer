@@ -84,7 +84,7 @@ export class RegisterCardComponent {
     else return null;
   }
 
-  protected getImg(data: NzUploadFile): void {
+  protected getImg(data?: NzUploadFile): void {
     this.registerForm.setValue({
       ...this.registerForm.getRawValue(),
       img: data

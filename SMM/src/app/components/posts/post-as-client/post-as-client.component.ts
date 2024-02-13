@@ -5,7 +5,7 @@ import { NzUploadFile } from 'ng-zorro-antd/upload';
 import { LatLng } from 'leaflet';
 
 import { IChannel } from 'src/app/interfaces/channel';
-import { IUser } from 'src/app/interfaces/user';
+import { IUser, IChar } from 'src/app/interfaces/user';
 import { IPost } from 'src/app/interfaces/post';
 
 import Client from 'src/app/classes/client';
@@ -60,6 +60,26 @@ export class PostAsClientComponent implements OnInit {
       });
   }
 
+  get userCharAvailability(): IChar {
+    const char: IChar = this.client.charNumber!;
+    const used: number =
+      (this.postForm.get('text')?.value.length || 0) +
+      (this.postForm.get('title')?.value.length || 0) +
+      (this.postForm.get('keywords')?.value.reduce((acc: number, curr: string) => acc + curr.length, 0) || 0) +
+      (this.postForm.get('img')?.value ? 125 : 0) +
+      (this.postForm.get('position')?.value ? 125 : 0)
+    ;
+    return {
+      dayly: char.dayly - used,
+      weekly: char.weekly - used,
+      monthly: char.monthly - used
+    };
+  }
+
+  hasCharAvailability(): boolean {
+    return this.userCharAvailability.dayly >= 0 && this.userCharAvailability.weekly >= 0 && this.userCharAvailability.monthly >= 0;
+  }
+
   protected mentionFunction = (data: IUser) => data.u_name;
 
   private contentValidator(): ValidatorFn {
@@ -71,11 +91,19 @@ export class PostAsClientComponent implements OnInit {
     }
   }
 
-  protected getImg(data: NzUploadFile): void {
-    this.postForm.setValue({
-      ...this.postForm.getRawValue(),
-      img: data
-    });
+  protected getImg(data?: NzUploadFile): void {
+    if(data) {
+      this.postForm.setValue({
+        ...this.postForm.getRawValue(),
+        img: data
+      });
+    }
+    else {
+      this.postForm.setValue({
+        ...this.postForm.getRawValue(),
+        img: null
+      });
+    }
   }
 
   protected getPos(data?: LatLng): void {

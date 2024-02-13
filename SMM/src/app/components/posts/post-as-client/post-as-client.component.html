@@ -133,24 +133,35 @@
 
   <!-- Footer -->
   <ng-template #drawerFooter>
-    <nz-space style="float: right;">
-      <button
-        nz-button
-        nzType="default"
-        (click)="this.postForm.reset(); this.toggleDrawer();"
-        *nzSpaceItem
-      >
-        Cancella
-      </button>
-      <button
-        nz-button
-        nzType="primary"
-        (click)="this.post()"
-        *nzSpaceItem
-        [disabled]="!this.postForm.valid"
-      >
-        Post
-      </button>
-    </nz-space>
+    <div
+      nz-space
+      nzAlign="baseline"
+      class="footer"
+    >
+      <p>Caratteri a disposizione:
+        <span [ngClass]="{'negativeChars': this.userCharAvailability.dayly < 0}">{{this.userCharAvailability.dayly}}</span>/
+        <span [ngClass]="{'negativeChars': this.userCharAvailability.weekly < 0}">{{this.userCharAvailability.weekly}}</span>/
+        <span [ngClass]="{'negativeChars': this.userCharAvailability.monthly < 0}">{{this.userCharAvailability.monthly}}</span>
+      </p>
+      <nz-space style="float: right;">
+        <button
+          nz-button
+          nzType="default"
+          (click)="this.postForm.reset(); this.toggleDrawer();"
+          *nzSpaceItem
+        >
+          Cancella
+        </button>
+        <button
+          nz-button
+          nzType="primary"
+          (click)="this.post()"
+          *nzSpaceItem
+          [disabled]="!(this.postForm.valid && this.hasCharAvailability())"
+        >
+          Post
+        </button>
+      </nz-space>
+    </div>
   </ng-template>
 </nz-drawer>

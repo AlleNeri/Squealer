@@ -11,3 +11,12 @@
   height: 300px;
   padding-bottom: 10px;
 }
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.negativeChars {
+  color: red;
+}

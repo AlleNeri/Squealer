@@ -9,11 +9,17 @@ import { NzUploadFile } from 'ng-zorro-antd/upload';
 })
 export class UploadImageComponent {
   fileList: NzUploadFile[];
-  @Output() uploadedImg: EventEmitter<NzUploadFile>;
+  @Output() uploadedImg: EventEmitter<NzUploadFile | undefined>;
 
   constructor(private msgService: NzMessageService) {
     this.fileList = [];
-    this.uploadedImg = new EventEmitter<NzUploadFile>();
+    this.uploadedImg = new EventEmitter<NzUploadFile | undefined>();
+  }
+
+  protected remove = (_: NzUploadFile): false => {
+    this.uploadedImg.emit(undefined);
+    this.fileList = [];
+    return false;
   }
 
   protected beforeUpload = (file: NzUploadFile): false => {
