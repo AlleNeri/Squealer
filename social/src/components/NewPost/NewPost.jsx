@@ -1,8 +1,10 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { LoginContext } from '../../context/LoginContext/LoginContext';
 import { PostsContext } from '../../context/PostsContext/PostsContext';
-import { TextField, Button, InputLabel, FormControl, MenuItem, Select, Box, Typography, Avatar } from '@material-ui/core';
+import { TimeContext } from '../../context/TimeContext/TimeContext';
+import { TextField, Button, InputLabel, FormControl, MenuItem, Select, Box, Typography, Avatar, Checkbox } from '@material-ui/core';
 import FaceIcon from '@material-ui/icons/Face';
+import { useMediaQuery, useTheme } from '@material-ui/core';
 import { MentionsInput, Mention } from 'react-mentions';
 import './newPost.css';
 
@@ -10,6 +12,8 @@ function NewPost({ modalOpen, setModalOpen }) {
   const { loggedIn } = useContext(LoginContext);
   const [charAvailability, setCharAvailability] = useState({ dayly: 0, weekly: 0, monthly: 0 });
   const [initialCharAvailability, setInitialCharAvailability] = useState({ dayly: 0, weekly: 0, monthly: 0 });
+  const { updateInterval, setUpdateInterval, updateTimes, setUpdateTimes } = useContext(TimeContext);
+  const [isTimed, setIsTimed] = useState(false);
   const [subject, setSubject] = useState('');
   const [postText, setPostText] = useState('');
   const [users, setUsers] = useState([]);
@@ -23,7 +27,9 @@ function NewPost({ modalOpen, setModalOpen }) {
   const [channel, setChannel] = useState(''); // New state variable for the selected channel
   const [myChannels, setMyChannels] = useState([]); // New state variable for the user's channels
   const { posts, setPosts } = useContext(PostsContext);
+  const [lessChar, setLessChar] = useState(0);
   const token = localStorage.getItem('token');
+  const theme = useTheme();
 
   useEffect(() => {
     setIsFormValid(subject !== '' && (postText !== '' || image !== null || position ) && keywords !== '');
@@ -110,6 +116,7 @@ function NewPost({ modalOpen, setModalOpen }) {
       setError('You have reached your daily character limit');
       return;
     }
+    setLessChar(newPostText.length);
     setPostText(newPostText);
   };
   
@@ -160,6 +167,14 @@ function NewPost({ modalOpen, setModalOpen }) {
   }
 
   const handlePostTypeChange = (event) => {
+    if(lessChar > 0){
+      setCharAvailability(prevState => ({
+        ...prevState,
+        dayly: prevState?.dayly + lessChar,
+      }));
+
+      setLessChar(0);
+    }
     setPostType(event.target.value);
   };
 
@@ -173,6 +188,12 @@ function NewPost({ modalOpen, setModalOpen }) {
           } else {
             console.error('Could not get current position');
           }
+          // Update character availability
+          setCharAvailability(prevState => ({
+            ...prevState,
+            dayly: prevState?.dayly - 125,
+          }));
+          setLessChar(125);
         },
         (error) => {
           console.error('Error getting current position', error);
@@ -189,9 +210,16 @@ function NewPost({ modalOpen, setModalOpen }) {
       setPreview(reader.result);
     };
     reader.readAsDataURL(file);
-  
+    
     // Saves the image file in lcoal state
     setImage(file);
+
+    // Update character availability
+    setCharAvailability(prevState => ({
+      ...prevState,
+      dayly: prevState?.dayly - 125,
+    }));
+    setLessChar(125);
   };
 
   const handleSubmit = async (event) => {
@@ -223,7 +251,7 @@ function NewPost({ modalOpen, setModalOpen }) {
           img: null,
           position: position || undefined,
         },
-        timed: false,
+        timed: isTimed,
         keywords: validKeywords || [],
         posted_on: channel || null,
         popular: false,
@@ -240,8 +268,6 @@ function NewPost({ modalOpen, setModalOpen }) {
   
     if (!postResponse.ok) {
       console.error('Error creating post');
-      console.log(postResponse);
-      console.log(postResponse.json());
       return;
     }
   
@@ -251,7 +277,7 @@ function NewPost({ modalOpen, setModalOpen }) {
     if (image) {
       const imageData = new FormData();
       imageData.append('image', image);
-      imageData.append('postId', newPost._id); // Assuming the post ID is available as _id
+      imageData.append('postId', newPost.post._id); // Assuming the post ID is available as _id
   
       const imageResponse = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/media/image`, {
         method: 'PUT',
@@ -260,13 +286,12 @@ function NewPost({ modalOpen, setModalOpen }) {
         },
         body: imageData,
       });
-  
       if (!imageResponse.ok) {
         return;
       }
 
       const imageResponseData = await imageResponse.json();
-      newPost.content.img = imageResponseData.imgId; // Assuming the image ID is available as imgId
+      newPost.post.content.img = imageResponseData.imgId; // Assuming the image ID is available as imgId
     }
     
     // Updated the posts list
@@ -288,7 +313,7 @@ function NewPost({ modalOpen, setModalOpen }) {
       {loggedIn ? (
         <div>
           <div className="modal" style={{ display: modalOpen ? 'block' : 'none' }}>      
-            <div className="modal-content">
+            <div className="modal-content" >
               <form onSubmit={handleSubmit} >
                 <Typography variant="h4" component="h2" gutterBottom>
                   NEW SQUEAL
@@ -315,8 +340,8 @@ function NewPost({ modalOpen, setModalOpen }) {
                     value={postType}
                     onChange={handlePostTypeChange}
                   >
-                    <MenuItem value="text">Text</MenuItem>
-                    <MenuItem value="image">Image</MenuItem>
+                    <MenuItem value="text" disabled={isTimed}>Text</MenuItem>
+                    <MenuItem value="image" disabled={isTimed}>Image</MenuItem>
                     <MenuItem value="geolocation">Geolocation</MenuItem>
                   </Select>
                 </FormControl>
@@ -411,6 +436,33 @@ function NewPost({ modalOpen, setModalOpen }) {
                   margin="normal"
                 />    
               </Box>
+
+              <Checkbox
+                checked={isTimed}
+                name="isTimed"
+                color="primary"
+                inputProps={{ 'aria-label': 'Timed squeal' }}
+                onChange={() => setIsTimed(!isTimed)}
+              />
+              {isTimed && (
+                <>
+                  <TextField
+                    label="Update Interval (minutes)"
+                    type="number"
+                    value={updateInterval}
+                    onChange={(e) => setUpdateInterval(e.target.value)}
+                  />
+                  <Select
+                    value={updateTimes}
+                    onChange={(e) => setUpdateTimes(e.target.value)}
+                  >
+                    <MenuItem value={1}>1</MenuItem>
+                    <MenuItem value={2}>2</MenuItem>
+                    <MenuItem value={3}>3</MenuItem>
+                    {/* Add more options as needed */}
+                  </Select>
+                </>
+              )}
               {error && <p style={{ color: 'red' }}>{error}</p>}
               <Box marginBottom={2}>
                 <div style={{display:"flex", justifyContent:"space-between"}}>
@@ -425,7 +477,6 @@ function NewPost({ modalOpen, setModalOpen }) {
                     </Box>
                     </div>
                 </div>
-                
               </Box>
               </form>
             </div>
