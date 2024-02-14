@@ -4,6 +4,7 @@ import axios from 'axios';
 import UserSchema, { User } from './model/User';
 import ChannelSchema, { Channel } from './model/Channel';
 import PostSchema, { Post } from './model/Post';
+import ImgaeSchema, { Image } from './model/Image';
 
 (async () =>{
 	//utils
@@ -38,7 +39,9 @@ import PostSchema, { Post } from './model/Post';
 				return '';
 			});
 
-		nasabotProfileSchema.img=img;
+		const image: Image = new ImgaeSchema({ data: img, contentType: 'image/png' });
+		await image.save();
+		nasabotProfileSchema.img = image._id;
 		nasabotProfile=new UserSchema(nasabotProfileSchema);
 		await nasabotProfile.save();
 		console.log('NASA bot created. Id: ', nasabotProfile!._id);
@@ -62,9 +65,9 @@ import PostSchema, { Post } from './model/Post';
 	}
 	else console.log('NASA channel already exists. Id: ', nasabotChannel._id);
 
-	//create a nasabot post every day at 00:10
+	//create a nasabot post every day at 00:05
 	if(!process.env.NASA_API_KEY) throw new Error('NASA_API_KEY is not defined in the config.env file.');
-	corn.schedule('10 0 * * *', async () => {
+	corn.schedule('05 00 * * *', async () => {
 		const { NASA_API_KEY } = process.env;
 		const response = await axios.get(`https://api.nasa.gov/planetary/apod?api_key=${NASA_API_KEY}`);
 		const daylyImage: String = await axios.get(response.data.url, { responseType: 'arraybuffer' })
@@ -73,17 +76,19 @@ import PostSchema, { Post } from './model/Post';
 				console.log("Error occurred while creating nasa bot.\n", error)
 				return '';
 			});
+		const savedDaylyImage: Image = new ImgaeSchema({ data: daylyImage, contentType: 'image/png' });
+		await savedDaylyImage.save();
 		const daylyPost: Post= new PostSchema({
 			title: response.data.title,
 			content: {
 				text: response.data.explanation,
-				img: daylyImage
+				img: savedDaylyImage._id,
 			},
 			keywords: listOfTags(response.data.explanation),
 			posted_by: nasabotProfile!._id,
 			posted_on: nasabotChannel!._id,
 		});
-		daylyPost.save();
+		await daylyPost.save();
 	}, {
 		scheduled: true,
 		timezone: 'Europe/Rome'

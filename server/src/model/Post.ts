@@ -4,10 +4,11 @@ import ChannelSchema, { Channel } from "./Channel";
 import UserSchema, { User } from "./User";
 
 let CM_COEFFICIENT: any | undefined=process.env.CM_COEFFICIENT;
-const {CONTROVERSIAL_CHANNEL, POPULAR_CHANNEL}=process.env;
+const {CONTROVERSIAL_CHANNEL, DBCOLLECTION_IMAGE, POPULAR_CHANNEL}=process.env;
 
 if(CM_COEFFICIENT === undefined) throw new Error("CM_COEFFICIENT is not defined in the config.env file.");
 if(CONTROVERSIAL_CHANNEL === undefined) throw new Error("CONTROVERSIAL_CHANNEL is not defined in the config.env file.");
+if(DBCOLLECTION_IMAGE === undefined) throw new Error("DBCOLLECTION_IMAGE is not defined in the config.env file.");
 if(POPULAR_CHANNEL === undefined) throw new Error("POPULAR_CHANNEL is not defined in the config.env file.");
 if(!process.env.DBCOLLECTION_POST) throw new Error("DBCOLLECTION_POST is not defined in the config.env file.");
 
@@ -23,7 +24,7 @@ const PostSchema: mongoose.Schema=new mongoose.Schema({
 		required: true,
 		type: {
 			text: String,
-			img: mongoose.Schema.Types.ObjectId,
+			img: { type: mongoose.Schema.Types.ObjectId, ref: DBCOLLECTION_IMAGE },
 			position: {
 				latitude: Number,
 				longitude: Number

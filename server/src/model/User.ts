@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 if(!process.env.DBCOLLECTION_USER) throw new Error("DBCOLLECTION_USER is not defined in the config.env file.");
+if(!process.env.DBCOLLECTION_IMAGE) throw new Error("DBCOLLECTION_IMAGE is not defined in the config.env file.");
 if(!process.env.START_D_QUOTE) throw new Error("START_D_QUOTE is not defined in the config.env file.");
 if(!process.env.START_W_QUOTE) throw new Error("START_W_QUOTE is not defined in the config.env file.");
 if(!process.env.START_M_QUOTE) throw new Error("START_M_QUOTE is not defined in the config.env file.");
@@ -37,7 +38,7 @@ const UserSchema: mongoose.Schema=new mongoose.Schema({
 		weekly: { type: Number, min: 0, default: process.env.START_W_QUOTE },
 		monthly: { type: Number, min: 0, default: process.env.START_M_QUOTE },
 	},
-	img: String,
+	img: {type: mongoose.Schema.Types.ObjectId, ref: process.env.DBCOLLECTION_IMAGE, required: false},
 	b_date: Date,
 	creation_date: {type: Date, immutable: true, default: Date.now},
 	appartenence: [{type: mongoose.Schema.Types.ObjectId, ref: process.env.DBCOLLECTION_CHANNEL}],
