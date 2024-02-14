@@ -16,6 +16,7 @@ import Unpopular from './pages/AllChannels/Unpopular/Unpopular';
 import { PostsContext } from './context/PostsContext/PostsContext';
 import { SidebarProvider } from './context/SidebarContext/SidebarContext';
 import { TimeProvider } from './context/TimeContext/TimeContext';
+import { SearchProvider } from './context/SearchContext/SearchContext';
 
 const routes = createBrowserRouter([
 	{
@@ -84,15 +85,17 @@ function App() {
 	}, []);
 	
 	return (
-		<TimeProvider value={{timeContextValue}}>
-			<SidebarProvider>
-				<LoginContext.Provider value={loginContextValue}>
-					<PostsContext.Provider value={postsContextValue}>
-						<RouterProvider router={routes} />
-					</PostsContext.Provider>
-				</LoginContext.Provider>
-			</SidebarProvider>
-		</TimeProvider>
+		<SearchProvider>
+			<TimeProvider value={{timeContextValue}}>
+				<SidebarProvider>
+					<LoginContext.Provider value={loginContextValue}>
+						<PostsContext.Provider value={postsContextValue}>
+							<RouterProvider router={routes} />
+						</PostsContext.Provider>
+					</LoginContext.Provider>
+				</SidebarProvider>
+			</TimeProvider>
+		</SearchProvider>
 	);
 }
 

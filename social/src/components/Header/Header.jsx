@@ -12,18 +12,24 @@ import HomeIcon from '@mui/icons-material/Home';
 import MenuIcon from '@mui/icons-material/Menu';
 import AppsIcon from '@mui/icons-material/Apps';
 import LogoutIcon from '@mui/icons-material/Logout';
+import SearchBar from "material-ui-search-bar";
 import logo from '../../../assets/logo.png'
 import './header.css';
 import { LoginContext } from "../../context/LoginContext/LoginContext";
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { SidebarContext } from '../../context/SidebarContext/SidebarContext';
-import { Menu, MenuItem, IconButton} from '@mui/material';
+import { PostsContext } from '../../context/PostsContext/PostsContext';
+import { SearchContext } from '../../context/SearchContext/SearchContext';
+import { Menu, MenuItem, IconButton, TextField} from '@mui/material';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 export default function ButtonAppBar({setModalOpen}) {
   const navigate = useNavigate();
   const { loggedIn, setLoggedIn } = useContext(LoginContext);
+  const { setIsSearching } = useContext(SearchContext);
   const {isSidebarMinimized, setSidebarMinimized} = useContext(SidebarContext);
+  const [searchValue, setSearchValue] = useState('');
+  const { posts, setPosts } = useContext(PostsContext);
   const [anchorEl, setAnchorEl] = useState(null);
   const [isProfileClicked, setIsProfileClicked] = useState(false);
   const location = useLocation();
@@ -92,6 +98,70 @@ export default function ButtonAppBar({setModalOpen}) {
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
+
+  // Update searchValue whenever the input changes
+  const handleInputChange = (newValue) => {
+    setSearchValue(newValue);
+  };
+
+  // Perform the search when searchValue changes
+  useEffect(() => {
+    handleSearchChange(searchValue);
+  }, [searchValue]);
+
+  const getChannelName = async (channelId) => {
+    const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels/${channelId}`);
+    const channel = await response.json();
+    return channel.name;
+  };
+
+  const handleSearchChange = async () => {
+    const trimmedQuery = searchValue.trim();
+    setIsSearching(trimmedQuery !== '');
+
+    if (trimmedQuery !== '') {
+      let filteredPosts = [];
+
+      if (trimmedQuery.startsWith('§')) {
+        // Search by channel
+        const channelNameQuery = trimmedQuery.slice(1);
+
+        for (let post of posts) {
+          const channelName = await getChannelName(post.posted_on);
+          if (channelName === channelNameQuery) {
+            filteredPosts.push(post);
+          }
+        }
+      } else if (trimmedQuery.startsWith('#')) {
+        // Search by keyword
+        const keyword = trimmedQuery.slice(1);
+        filteredPosts = posts.filter(post => post?.keywords?.some(kw => kw.includes(keyword)));
+      } else if (trimmedQuery.startsWith('@')) {
+        // Search by mention
+        const mention = trimmedQuery.slice(1);
+        filteredPosts = posts.filter(post => post?.text?.includes(`@${mention}`));
+      } else {
+        // Regular search
+        for (let post of posts) {
+          const channelName = await getChannelName(post.posted_on);
+          if (post?.text?.includes(trimmedQuery) || 
+              post?.keywords?.some(kw => kw.includes(trimmedQuery)) || 
+              channelName.includes(trimmedQuery)) {
+            filteredPosts.push(post);
+          }
+        }
+      }
+
+      setPosts(filteredPosts);
+    } else {
+      setPosts(posts);
+    }
+  };
+
+  useEffect(() => {
+    handleSearchChange();
+  }, [searchValue]);
+
   return (
     <div className="header" style={headerStyle}>
         <Toolbar className="Toolbar">
@@ -137,6 +207,12 @@ export default function ButtonAppBar({setModalOpen}) {
             </Typography>
           </div>
           
+          <SearchBar
+            value={searchValue}
+            onChange={handleInputChange}
+            style={{ width: '150px' }}
+          />
+
           {!loggedIn &&
           <div className='regLog'>
             <Link to='/Register' className="Link">
