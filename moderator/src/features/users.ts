@@ -2,22 +2,32 @@ import { getToken } from '../utils/storage';
 import { env } from '../env';
 
 const usersId = 'users';
+const nameFilterId = 'user-name-form';
+const typeFilterId = 'user-type-form';
+
 const userTypes = ['normal', 'vip', 'smm', 'mod', 'bot'];
 const selectedTypes = [ ...userTypes ];
+let name: string | undefined = undefined;
 
 export function showUsers() {
 	document.querySelector<HTMLDivElement>(`#${env.CONTENT_DIV}`)!.innerHTML = `
 		<h2>Users</h2>
-		<form class="checkbox-container" id="user-type-form">
+		<form class="search-container">
+			<input type="text" id="${nameFilterId}" placeholder="Search by username" value="${name || ''}">
+		</form>
+		<form class="checkbox-container" id="${typeFilterId}">
 			${userTypes.map((userType) => 
-				`<input type="checkbox" id='${userType}' checked>
-				<label for='${userType}'>${userType}</label>`
+				`<div>
+					<input type="checkbox" id='${userType}' checked>
+					<label for='${userType}'>${userType}</label>
+				</div>`
 			).join('')}
 		</form>
 		<div id='${usersId}' class="users-container"></div>
 	`;
 	populateUsers(selectedTypes);
-	setCheckboxListeners();
+	setNameFilterListener();
+	setTypeFilterListeners();
 }
 
 function populateUsers(type: string[]) {
@@ -35,7 +45,7 @@ function populateUsers(type: string[]) {
 			const usersDiv = document.querySelector<HTMLDivElement>(`#${usersId}`)!;
 			usersDiv.innerHTML = '';
 			users.map((user: any) => {
-				if(type.includes(user.type)) usersDiv.innerHTML += `
+				if(type.includes(user.type) && (!name || user.u_name.includes(name))) usersDiv.innerHTML += `
 							<div class='user'>
 								<div class='user-header'>
 									<h3>${user.u_name}</h3>
@@ -58,8 +68,16 @@ export function addActionToUserLink(href: string): void {
 	});
 }
 
-function setCheckboxListeners() {
-	document.getElementById('user-type-form')!.addEventListener('change', (event) => {
+function setNameFilterListener() {
+	document.getElementById(nameFilterId)!.addEventListener('input', (event) => {
+		const target = event.target as HTMLInputElement;
+		name = target.value;
+		populateUsers(selectedTypes);
+	});
+}
+
+function setTypeFilterListeners() {
+	document.getElementById(typeFilterId)!.addEventListener('change', (event) => {
 		const target = event.target as HTMLInputElement;
 		if(target.tagName !== 'INPUT') return;
 		if(!userTypes.includes(target.id)) return;
