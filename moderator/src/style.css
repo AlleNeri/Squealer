@@ -89,3 +89,7 @@ body {
 	align-items: center;
 	justify-content: center;
 }
+
+.checkbox-container {
+	padding-bottom: 1rem;
+}
