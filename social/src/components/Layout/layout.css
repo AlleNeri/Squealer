@@ -7,7 +7,7 @@ html, body {
 }
 
 .top {
-    background-color: #f8f9fa; /* Adjust as needed */
+    background-color: #f8f9fa;
 }
 
 .container {
@@ -17,8 +17,8 @@ html, body {
 }
 
 .sidebar {
-    width: 375px; /* Adjust as needed */
-    background-color: #f8f9fa; /* Adjust as needed */
+    width: 375px;
+    background-color: #f8f9fa;
     overflow-y: auto;
 }
 

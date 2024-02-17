@@ -164,7 +164,8 @@ export default function ButtonAppBar({setModalOpen}) {
 
   return (
     <div className="header" style={headerStyle}>
-        <Toolbar className="Toolbar">
+        <Toolbar className="Toolbar" style={{ flexDirection: 'column' }}>
+        <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
           {isSidebarMinimized && 
             <div style={{ display: 'flex', alignItems:'center', justifyContent:'space-between' }}>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -202,16 +203,10 @@ export default function ButtonAppBar({setModalOpen}) {
 
           <div style={{ display: 'flex', alignItems: 'center' }}>
             {!matches && <img src={logo} alt="Logo" style={{ height: '50px', marginRight: '10px' }} />}
-            <Typography className="Typography" fontWeight="fontWeightBold">
+            <Typography className="Typography" fontWeight="fontWeightBold" style={{marginLeft:'10px'}}>
               SQUEALER
             </Typography>
           </div>
-          
-          <SearchBar
-            value={searchValue}
-            onChange={handleInputChange}
-            style={{ width: '150px' }}
-          />
 
           {!loggedIn &&
           <div className='regLog'>
@@ -327,6 +322,12 @@ export default function ButtonAppBar({setModalOpen}) {
               </Menu>
             </div>
           }
+        </div>
+          <SearchBar
+            value={searchValue}
+            onChange={handleInputChange}
+            style={{ width: '100%', height: '40px', marginTop: '10px', marginBottom: '10px' }}
+          />
         </Toolbar>
         
     </div>
