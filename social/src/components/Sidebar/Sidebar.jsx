@@ -16,6 +16,7 @@ const Sidebar = () => {
   const [isChannelModalOpen, setChannelModalOpen] = useState(false);
   const [selectedChannel, setSelectedChannel] = useState(null);
   const [isChannelsExpanded, setChannelsExpanded] = useState(false);
+  const [isDirectMessagesExpanded, setDirectMessagesExpanded] = useState(false);
   const [isExplore, setExplore] = useState(false);
   const [isTrending, setTrending] = useState(false);
   const { loggedIn } = useContext(LoginContext);
@@ -80,6 +81,10 @@ const Sidebar = () => {
 
   const toggleTrending = () => {
     setTrending(!isTrending);
+  };
+
+  const toggleDirectMessages = () => {
+    setDirectMessagesExpanded(!isDirectMessagesExpanded);
   };
 
   useEffect(() => {
@@ -235,18 +240,57 @@ useEffect(() => {
                 {isChannelsExpanded ? <ExpandMoreIcon style={{color:'white'}}/> : <ChevronRightIcon style={{color:'white'}}/>}
               </ListItem>
               <Collapse in={isChannelsExpanded}>
-                {myChannels.length > 0 ? (
-                  myChannels.map(channel => (
-                    <NavLink key={channel._id} className={classes.link} to={`/AllChannels/${channel._id}`} onClick={() => handleChannelClick(channel._id)}>
-                      <ListItem button>
-                        <ListItemText primary={`§${channel.name}`} style={{color:'white'}}/>
-                      </ListItem>
-                    </NavLink>
-                  ))
+                {myChannels.some(channel => !channel.name.startsWith('__direct__')) ? (
+                  myChannels.map(channel => {
+                    // Skip channels that start with "__direct__"
+                    if (channel.name.startsWith('__direct__')) {
+                      return null;
+                    }
+
+                    return (
+                      <NavLink key={channel._id} className={classes.link} to={`/AllChannels/${channel._id}`} onClick={() => handleChannelClick(channel._id)}>
+                        <ListItem button>
+                          <ListItemText primary={`§${channel.name}`} style={{color:'white'}}/>
+                        </ListItem>
+                      </NavLink>
+                    );
+                  })
                 ) : (
                   !isSidebarMinimized && (
                     <ListItem>
-                      <ListItemText primary="You have not channels" />
+                      <ListItemText primary="You have not channels" style={{ color: '#fff' }} />
+                    </ListItem>
+                  )
+                )}
+              </Collapse>
+              <ListItem button onClick={toggleDirectMessages} className={classes.channel}>
+                <ListItemText 
+                  primary="DIRECT MESSAGES" 
+                  style={{color:'white'}} 
+                  primaryTypographyProps={{ style: { fontWeight: 700, textDecoration: 'underline' } }}
+                />
+                {isDirectMessagesExpanded ? <ExpandMoreIcon style={{color:'white'}}/> : <ChevronRightIcon style={{color:'white'}}/>}
+              </ListItem>
+              <Collapse in={isDirectMessagesExpanded}>
+                {myChannels.some(channel => channel.name.startsWith('__direct__')) ? (
+                  myChannels.map(channel => {
+                    // Only include channels that start with "__direct__"
+                    if (!channel.name.startsWith('__direct__')) {
+                      return null;
+                    }
+
+                    return (
+                      <NavLink key={channel._id} className={classes.link} to={`/AllChannels/${channel._id}`} onClick={() => handleChannelClick(channel._id)}>
+                        <ListItem button>
+                          <ListItemText primary={`§${channel.name}`} style={{color:'white'}}/>
+                        </ListItem>
+                      </NavLink>
+                    );
+                  })
+                ) : (
+                  !isSidebarMinimized && (
+                    <ListItem>
+                      <ListItemText primary="You have not direct messages" style={{ color: '#fff' }} />
                     </ListItem>
                   )
                 )}

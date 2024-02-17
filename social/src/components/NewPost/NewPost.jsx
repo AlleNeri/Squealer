@@ -22,14 +22,16 @@ function NewPost({ modalOpen, setModalOpen }) {
   const [error, setError] = useState(null);
   const [position, setPosition] = useState(undefined);
   const [keywords, setKeywords] = useState('');
-  const [postType, setPostType] = useState('text'); // ['text', 'image', 'geo']
+  const [contentType, setcontentType] = useState('text'); // ['text', 'image', 'geo']
+  const [postType, setPostType] = useState('normal');
+  const [directRecipient, setDirectRecipient] = useState('');
   const [isFormValid, setIsFormValid] = useState(false);
   const [channel, setChannel] = useState(''); // New state variable for the selected channel
   const [myChannels, setMyChannels] = useState([]); // New state variable for the user's channels
   const { posts, setPosts } = useContext(PostsContext);
   const [lessChar, setLessChar] = useState(0);
   const token = localStorage.getItem('token');
-  const theme = useTheme();
+  const username = localStorage.getItem('username');
 
   useEffect(() => {
     setIsFormValid(subject !== '' && (postText !== '' || image !== null || position ) && keywords !== '');
@@ -54,12 +56,12 @@ function NewPost({ modalOpen, setModalOpen }) {
   }, []);
 
   useEffect(() => {
-    // This function runs whenever postType changes
+    // This function runs whenever contentType changes
     setImage(null);
     setPostText('');
     setPosition(null);
     setError(null);
-  }, [postType]);
+  }, [contentType]);
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/mention`, {
@@ -99,43 +101,63 @@ function NewPost({ modalOpen, setModalOpen }) {
     }
   }, [loggedIn, token]);
 
+  const handlePostTypeChange = (event) => {
+    setPostType(event.target.value);
+  };
+
+  const handleDirectRecipientChange = (event) => {
+    setDirectRecipient(event.target.value);
+  };
+
   const handlePostTextChange = event => {
     const newPostText = event.target.value;
-    const diff = postText.length - newPostText.length;
-    if (diff > 0 && charAvailability?.dayly < initialCharAvailability?.dayly) {
-      setCharAvailability(prevState => ({
-        ...prevState,
-        dayly: prevState?.dayly + diff,
-      }));
-    } else if (diff < 0 && charAvailability?.dayly > 0) {
-      setCharAvailability(prevState => ({
-        ...prevState,
-        dayly: prevState?.dayly + diff, // diff is negative, so this decreases dayly
-      }));
-    }else{
-      setError('You have reached your daily character limit');
-      return;
+    if(postType === 'normal'){
+      const diff = postText.length - newPostText.length;
+      if (diff > 0 && charAvailability?.dayly < initialCharAvailability?.dayly) {
+        setCharAvailability(prevState => ({
+          ...prevState,
+          dayly: prevState?.dayly + diff,
+          weekly: prevState?.weekly + diff,
+          monthly: prevState?.monthly + diff,
+        }));
+      } else if (diff < 0 && charAvailability?.dayly > 0 && charAvailability?.weekly > 0 && charAvailability?.monthly > 0) {
+        setCharAvailability(prevState => ({
+          ...prevState,
+          dayly: prevState?.dayly + diff, // diff is negative, so this decreases dayly
+          weekly: prevState?.weekly + diff, // diff is negative, so this decreases weekly
+          monthly: prevState?.monthly + diff, // diff is negative, so this decreases monthly
+        }));
+      }else{
+        setError('You have reached your daily, weekly, or monthly character limit');
+        return;
+      }
+      setLessChar(newPostText.length);
     }
-    setLessChar(newPostText.length);
     setPostText(newPostText);
   };
-  
+
   const handleSubjectChange = event => {
     const newSubject = event.target.value;
-    const diff = subject.length - newSubject.length;
-    if (diff > 0 && charAvailability?.dayly < initialCharAvailability?.dayly) {
-      setCharAvailability(prevState => ({
-        ...prevState,
-        dayly: prevState?.dayly + diff,
-      }));
-    } else if (diff < 0 && charAvailability?.dayly > 0) {
-      setCharAvailability(prevState => ({
-        ...prevState,
-        dayly: prevState?.dayly + diff, // diff is negative, so this decreases dayly
-      }));
-    }else{
-      setError('You have reached your daily character limit');
-      return;
+      if(postType === 'normal'){
+      const diff = subject.length - newSubject.length;
+      if (diff > 0 && charAvailability?.dayly < initialCharAvailability?.dayly) {
+        setCharAvailability(prevState => ({
+          ...prevState,
+          dayly: prevState?.dayly + diff,
+          weekly: prevState?.weekly + diff,
+          monthly: prevState?.monthly + diff,
+        }));
+      } else if (diff < 0 && charAvailability?.dayly > 0 && charAvailability?.weekly > 0 && charAvailability?.monthly > 0) {
+        setCharAvailability(prevState => ({
+          ...prevState,
+          dayly: prevState?.dayly + diff, // diff is negative, so this decreases dayly
+          weekly: prevState?.weekly + diff, // diff is negative, so this decreases weekly
+          monthly: prevState?.monthly + diff, // diff is negative, so this decreases monthly
+        }));
+      }else{
+        setError('You have reached your daily, weekly, or monthly character limit');
+        return;
+      }
     }
     setSubject(newSubject);
   };
@@ -166,20 +188,22 @@ function NewPost({ modalOpen, setModalOpen }) {
     setKeywords(value);
   }
 
-  const handlePostTypeChange = (event) => {
+  const handlecontentTypeChange = (event) => {
     if(lessChar > 0){
       setCharAvailability(prevState => ({
         ...prevState,
         dayly: prevState?.dayly + lessChar,
+        weekly: prevState?.weekly + lessChar,
+        monthly: prevState?.monthly + lessChar,
       }));
 
       setLessChar(0);
     }
-    setPostType(event.target.value);
+    setcontentType(event.target.value);
   };
 
   const handlePositionChange = () => {
-    if(postType==='geolocation'){
+    if(contentType==='geolocation'){
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
@@ -189,11 +213,15 @@ function NewPost({ modalOpen, setModalOpen }) {
             console.error('Could not get current position');
           }
           // Update character availability
-          setCharAvailability(prevState => ({
-            ...prevState,
-            dayly: prevState?.dayly - 125,
-          }));
-          setLessChar(125);
+          if(postType === 'normal'){
+            setCharAvailability(prevState => ({
+              ...prevState,
+              dayly: prevState?.dayly - 125,
+              weekly: prevState?.weekly - 125,
+              monthly: prevState?.monthly - 125,
+            }));
+            setLessChar(125);
+          }
         },
         (error) => {
           console.error('Error getting current position', error);
@@ -204,22 +232,60 @@ function NewPost({ modalOpen, setModalOpen }) {
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
-  
+
     const reader = new FileReader();
     reader.onloadend = () => {
       setPreview(reader.result);
     };
     reader.readAsDataURL(file);
     
-    // Saves the image file in lcoal state
+    // Saves the image file in local state
     setImage(file);
 
-    // Update character availability
-    setCharAvailability(prevState => ({
-      ...prevState,
-      dayly: prevState?.dayly - 125,
-    }));
-    setLessChar(125);
+    if(postType === 'normal'){
+      // Update character availability
+      setCharAvailability(prevState => ({
+        ...prevState,
+        dayly: prevState?.dayly - 125,
+        weekly: prevState?.weekly - 125,
+        monthly: prevState?.monthly - 125,
+      }));
+      setLessChar(125);
+    };
+  };
+  const createChannel = async (channel) => {
+    const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token, 
+      },
+      body: JSON.stringify({ channel }),
+    });
+
+    if (!response.ok) {
+      console.log(response);
+      throw new Error('Error creating channel');
+    }
+
+    const data = await response.json();
+    return data;
+  };
+  
+  const getUsers = async () => {
+    const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/mention`, {
+      method: 'GET',
+      headers: {
+        'Authorization': token, // Assumendo che tu abbia un token di autenticazione
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Error getting users');
+    }
+
+    const data = await response.json();
+    return data;
   };
 
   const handleSubmit = async (event) => {
@@ -237,12 +303,47 @@ function NewPost({ modalOpen, setModalOpen }) {
     const validKeywords = splitKeywords.filter(keyword => keyword.length > 1);
     
 
-    if (!channel) {
+    if (!channel && postType !== 'direct') {
       alert('Please select a channel.');
       setModalOpen(true);
     }else if(charAvailability?.dayly <= 0) {
       setError('You have reached your daily character limit');
+    }else if(charAvailability?.weekly <= 0) {
+      setError('You have reached your weekly character limit');
+    }else if(charAvailability?.monthly <= 0) {
+      setError('You have reached your monthly character limit');
     }else{
+      let channelId = channel;
+      if (postType === 'direct') {
+        const channelName = `__direct__${username}${directRecipient}`;
+        const channelNameReverse = `__direct__${directRecipient}${username}`;
+
+        const channelsResponse = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels/my`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token,
+          },
+        });
+        const channels = await channelsResponse.json();
+        let directChannel = channels.find(ch => ch.name === channelName || ch.name === channelNameReverse);
+        const users = await getUsers();
+
+        const recipientUser = users.find(user => user.u_name === directRecipient);
+        
+        if (!recipientUser) {
+          throw new Error('Recipient user not found');
+        }
+
+        if (!directChannel) {
+          directChannel = await createChannel({
+            name: channelName,
+            owners: [recipientUser.id],
+            private: true,
+          });
+        }
+
+        channelId = directChannel._id;
+      }
       // First, create the post without the image ID
       const data = {
         title: subject || 'Default title',
@@ -253,7 +354,7 @@ function NewPost({ modalOpen, setModalOpen }) {
         },
         timed: isTimed,
         keywords: validKeywords || [],
-        posted_on: channel || null,
+        posted_on: channelId || null,
         popular: false,
       };
   
@@ -304,7 +405,7 @@ function NewPost({ modalOpen, setModalOpen }) {
     setError(null);
     setPosition(null);
     setKeywords('');
-    setPostType('text');
+    setcontentType('text');
   };
 }
 
@@ -318,6 +419,28 @@ function NewPost({ modalOpen, setModalOpen }) {
                 <Typography variant="h4" component="h2" gutterBottom>
                   NEW SQUEAL
                 </Typography>
+
+                <FormControl>
+                  <InputLabel id="post-type-label">Post Type</InputLabel>
+                  <Select
+                    labelId="post-type-label"
+                    id="post-type"
+                    value={postType}
+                    onChange={handlePostTypeChange}
+                  >
+                    <MenuItem value="normal">Normal</MenuItem>
+                    <MenuItem value="direct">Direct Message</MenuItem>
+                  </Select>
+                </FormControl>
+
+                {postType === 'direct' && (
+                  <TextField
+                    id="direct-recipient"
+                    label="Recipient Username"
+                    value={directRecipient}
+                    onChange={handleDirectRecipientChange}
+                  />
+                )}
 
                 <Box marginBottom={2}>
                   <TextField
@@ -337,8 +460,8 @@ function NewPost({ modalOpen, setModalOpen }) {
                   <Select
                     labelId="post-type-label"
                     id="post-type"
-                    value={postType}
-                    onChange={handlePostTypeChange}
+                    value={contentType}
+                    onChange={handlecontentTypeChange}
                   >
                     <MenuItem value="text" disabled={isTimed}>Text</MenuItem>
                     <MenuItem value="image" disabled={isTimed}>Image</MenuItem>
@@ -346,7 +469,7 @@ function NewPost({ modalOpen, setModalOpen }) {
                   </Select>
                 </FormControl>
 
-                {postType === 'text' && (
+                {contentType === 'text' && (
                   <Box position="relative" width="100%">
                     <MentionsInput 
                         value={postText} 
@@ -389,7 +512,7 @@ function NewPost({ modalOpen, setModalOpen }) {
                   </Box>
                 )}
 
-                {postType === 'image' && (
+                {contentType === 'image' && (
                   <>
                     <Button variant="contained" component="label">
                       Upload Image
@@ -399,7 +522,7 @@ function NewPost({ modalOpen, setModalOpen }) {
                   </>
                 )}
 
-                {postType === 'geolocation' && (
+                {contentType === 'geolocation' && (
                   <Box marginBottom={2}>
                     <Button variant="contained" onClick={handlePositionChange}>Get Current Position</Button>
                     {position && (
@@ -419,10 +542,18 @@ function NewPost({ modalOpen, setModalOpen }) {
                   value={channel}
                   onChange={(event) => setChannel(event.target.value)}
                   label="Channel"
+                  disabled={postType === 'direct'} // Disabilita la selezione del canale se postType è 'direct'
                 >
-                  {myChannels.map((channel) => (
-                    <MenuItem key={channel._id} value={channel._id}>{channel.name}</MenuItem>
-                  ))}
+                  {myChannels.map((channel) => {
+                    // Skip channels that start with "__direct__"
+                    if (channel.name.startsWith('__direct__')) {
+                      return null;
+                    }
+
+                    return (
+                      <MenuItem key={channel._id} value={channel._id}>{channel.name}</MenuItem>
+                    );
+                  })}
                 </Select>
               </FormControl>
               
@@ -471,11 +602,19 @@ function NewPost({ modalOpen, setModalOpen }) {
                         () => setModalOpen(false)
                       }>Submit</Button>
                     </div>
-                    <div>
-                    <Box fontWeight="fontWeightBold">
-                      Characters remaining: {charAvailability?.dayly}
-                    </Box>
-                    </div>
+                    {postType === 'normal' &&
+                      <div>
+                      <Box fontWeight="fontWeightBold">
+                        Characters remaining daily: {charAvailability?.dayly}
+                      </Box>
+                      <Box fontWeight="fontWeightBold">
+                        Characters remaining weekly: {charAvailability?.weekly}
+                      </Box>
+                      <Box fontWeight="fontWeightBold">
+                        Characters remaining monthly: {charAvailability?.monthly}
+                      </Box>
+                      </div>
+                    }
                 </div>
               </Box>
               </form>
