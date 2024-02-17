@@ -54,10 +54,7 @@ export class PostAsClientComponent implements OnInit {
     this.backend.get(`channels/all`, this.auth.token!)
       .subscribe(res => this.channels = res as IChannel[]);
     this.backend.get(`users/mention`, this.auth.token!)
-      .subscribe(res => {
-        this.mentions = res as IUser[]
-        console.log("mentions:", this.mentions);
-      });
+      .subscribe(res => this.mentions = res as IUser[]);
   }
 
   get userCharAvailability(): IChar {

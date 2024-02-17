@@ -12,6 +12,7 @@
       [nzActive]="true"
     >
       <nz-card-meta
+        *ngIf="user"
         [nzAvatar]="avatarTemplate"
         nzTitle="{{ user.u_name }}"
         nzDescription="{{ user.email }} - {{ user.name.first }} {{ user.name.last }}"

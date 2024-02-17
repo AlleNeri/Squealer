@@ -27,7 +27,7 @@ export class PostSectionComponent implements OnInit, OnChanges {
   ngOnInit(): void { this.loadPosts(); }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if(changes["client"].currentValue.id !== changes["client"].previousValue.id)
+    if(changes["client"].currentValue.id !== changes["client"].previousValue?.id)
       this.loadPosts();
   }
 

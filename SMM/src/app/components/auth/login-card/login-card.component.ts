@@ -32,10 +32,9 @@ export class LoginCardComponent {
     this.buttonLoading=true;
     //get the data to sent to the server
     const body: ILoginBody=this.loginForm.value;
-    //TODO: show some feedback to the user that the login is in progress
     //authenticate the user and redirect to the dashboard if the login is successful
     this.auth.login(body)
-      .add(() => {
+      .subscribe(() => {
         this.buttonLoading=false;
         if(this.auth.isLoggedIn() && this.auth.isSMM) this.router.navigate(['/smm']);
         else if(this.auth.isLoggedIn() && !this.auth.isSMM) {
