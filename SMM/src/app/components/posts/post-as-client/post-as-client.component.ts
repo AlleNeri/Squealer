@@ -60,9 +60,9 @@ export class PostAsClientComponent implements OnInit {
   get userCharAvailability(): IChar {
     const char: IChar = this.client.charNumber!;
     const used: number =
-      (this.postForm.get('text')?.value.length || 0) +
-      (this.postForm.get('title')?.value.length || 0) +
-      (this.postForm.get('keywords')?.value.reduce((acc: number, curr: string) => acc + curr.length, 0) || 0) +
+      (this.postForm.get('text')?.value?.length || 0) +
+      (this.postForm.get('title')?.value?.length || 0) +
+      (this.postForm.get('keywords')?.value?.reduce((acc: number, curr: string) => acc + curr.length, 0) || 0) +
       (this.postForm.get('img')?.value ? 125 : 0) +
       (this.postForm.get('position')?.value ? 125 : 0)
     ;
@@ -157,7 +157,6 @@ export class PostAsClientComponent implements OnInit {
         title: this.postForm.value.title,
         content: {
           text: this.postForm.value.text,
-          img: this.postForm.value.img == '' ? null : this.postForm.value.img,
           position: this.postForm.value.position
         },
         posted_on: this.postForm.value.channel,
@@ -167,14 +166,15 @@ export class PostAsClientComponent implements OnInit {
     console.log("body:", body);
     this.backend.post(`posts?as=${this.client.id}`, body, this.auth.token!)
       .subscribe((res: any) => {
-          console.log(res);
           if(res.user_char_availability) this.client.charNumber = res.user_char_availability;
           if(res.post) this.newPost.emit(res.post);
-          this.postForm.reset();
           this.toggleDrawer();
         }
       );
   }
 
-  protected toggleDrawer(): void { this.isDrawerVisible = !this.isDrawerVisible; }
+  protected toggleDrawer(): void {
+    if(this.isDrawerVisible) this.postForm.reset();
+    this.isDrawerVisible = !this.isDrawerVisible;
+  }
 }
