@@ -205,22 +205,21 @@ export default function Post({post}) {
                   </Grid>
                   <Grid item xs={12} sm={10}>
                     <div>
-                      <div style={{ display: 'flex', flexDirection: isSmallScreen ? 'column-reverse' : 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div style={{ display: 'flex', flexDirection: isSmallScreen ? 'column-reverse' : 'row', justifyContent: 'space-between', alignItems: 'left' }}>
                         <div>
                           <Link to={`/AllChannels/${channel?._id}`} style={{ textDecoration: 'none' }}>
-                            <Typography variant="body1" display="inline" color="textPrimary">{`§${channel?.name}`}</Typography>
+                            <Typography variant="body1" display="inline" color="textPrimary" style={{ textDecoration: 'underline' }}>
+                              {`§${channel?.name}`}
+                            </Typography>
                           </Link>
                           { (popular || unpopular) && 
                             <Link to={`/AllChannels/${popular && unpopular ? 'Controversial' : popular ? 'Popular' : 'Unpopular'}`} style={{ textDecoration: 'none' }}>
-                              <Typography variant="body1" display="inline" color="textPrimary">
+                              <Typography variant="body1" display="inline" color="textPrimary" style={{ textDecoration: 'underline' }}>
                                 {`, ${popular && unpopular ? '§CONTROVERSIAL' : popular ? '§POPULAR' : unpopular ? '§UNPOPULAR' : ''}`}
                               </Typography>
                             </Link>
                           }
                         </div>
-                        <Typography variant="body2" color="textSecondary">
-                          Posted by {user && <Link to={`/Profile/${posted_by}`} style={{ color: 'inherit' }}>@{user.u_name}</Link>} on {new Date(date).toLocaleString()}
-                        </Typography>
                       </div>
                       <Typography variant="h5" style={{ marginTop: '20px' }}>
                         {title}
@@ -270,9 +269,17 @@ export default function Post({post}) {
                         {timed &&
                           <Tooltip title="Timed squeal"><AlarmIcon /></Tooltip>
                         }
-                        <Typography variant="body2" color="textSecondary">
-                          <VisibilityIcon/> {views || 0}
-                        </Typography>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <Typography variant="body2" color="textSecondary">
+                            Posted by {user && <Link to={`/Profile/${posted_by}`} style={{ color: 'inherit' }}>@{user.u_name}</Link>} on {new Date(date).toLocaleString()}
+                          </Typography>
+                          <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <VisibilityIcon/>
+                            <Typography variant="body2" color="textSecondary">
+                              {views || 0}
+                            </Typography>
+                          </div>
+                        </div>
                       </Grid>
                     </Grid>
                   </Grid>
