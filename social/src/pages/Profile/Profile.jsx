@@ -1,8 +1,16 @@
 import React, { useEffect, useState, useRef, useContext } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Card, CardContent, Typography, Avatar, Box, Menu, MenuItem, Grid, Dialog, DialogContent, Button, TextField, Select } from '@material-ui/core';
+import { Card, CardContent, Typography, Avatar, Menu, MenuItem, Grid, Dialog, DialogContent, 
+  DialogTitle, DialogActions, Button, TextField, Select, Table, TableHead, TableBody, 
+  TableCell, TableRow} from '@material-ui/core';
+import CakeIcon from '@mui/icons-material/Cake';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import EngineeringIcon from '@mui/icons-material/Engineering';
 import { PostsContext } from '../../context/PostsContext/PostsContext';
 import { LoginContext } from '../../context/LoginContext/LoginContext';
+import { SearchContext } from '../../context/SearchContext/SearchContext';
+import { UserPostsContext } from '../../context/UserPostsContext/UserPostsContext';
 import MyPosts from '../MyPosts/MyPosts';
 import Post from '../../components/Post/Post';
 import './profile.css';
@@ -10,17 +18,21 @@ import './profile.css';
 const Profile = () => {
     const { id } = useParams();
     const [user, setUser] = useState(null);
+    const [open, setOpen] = useState(false);
     const fileInput = useRef(null);
     const token = localStorage.getItem('token');
     const { posts, setPosts } = useContext(PostsContext);
+    const { isSearching } = useContext(SearchContext);
     const {loggedIn} = useContext(LoginContext);
+    const { userPosts, setUserPosts } = useContext(UserPostsContext);
     const [anchorEl, setAnchorEl] = useState(null);
     const [openDialog, setOpenDialog] = useState(false);
     const [image, setImage] = useState(null);
     const [period, setPeriod] = useState('day');
+    const [channels, setChannels] = useState({});
     let [quantity, setQuantity] = useState(0);
+    const [purchased, setPurchased] = useState(false);
     const currentUserId = localStorage.getItem('userId');
-    const [userPosts, setUserPosts] = useState([]);
 
     const navigate = useNavigate();
 
@@ -28,9 +40,26 @@ const Profile = () => {
         if (image) {
           setUser(prevState => ({ ...prevState, img: `${import.meta.env.VITE_DEFAULT_URL}/media/image/${image}` }));
         }
-      }, [image]);
+      }, [image, purchased]);
     
     useEffect(() => {
+      if(isSearching) return;
+      Promise.all(userPosts.map(post => 
+        fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels/${post.posted_on}`)
+          .then(response => response.json())
+      ))
+      .then(data => {
+        const channelsObj = data.reduce((obj, item, index) => {
+          obj[userPosts[index]._id] = item;
+          return obj;
+        }, {});
+        setChannels(channelsObj);
+      })
+      .catch(error => console.error('Error:', error));
+    }, [userPosts, isSearching]);
+
+    useEffect(() => {
+      if (isSearching) return;
         if (id !== currentUserId) {
           const fetchUserPosts = async () => {
             const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/posts?of=${id}`, {
@@ -49,9 +78,10 @@ const Profile = () => {
     
           fetchUserPosts();
         }
-    }, []);
+    }, [isSearching]);
 
     useEffect(() => {
+        if(isSearching) return;
         if (token) {
           fetch(`${import.meta.env.VITE_DEFAULT_URL}/posts/my`, {
             method: 'GET',
@@ -74,7 +104,7 @@ const Profile = () => {
             navigate('/login');
           });
         } 
-    }, [posts.length]);
+    }, [posts.length, isSearching]);
 
     const handleChangeImage = () => {
         // Simula un click sull'input del file quando l'utente clicca su "Cambia immagine"
@@ -87,6 +117,7 @@ const Profile = () => {
 
     const handleClose = () => {
         setAnchorEl(null);
+        setOpen(false);
     };
 
     const handleOpenDialog = () => {
@@ -207,6 +238,10 @@ const Profile = () => {
     return <div>Loading...</div>;
   }
 
+  function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+  }
+
   const handleSubmit = async () => {
     quantity = parseInt(quantity);
     const body =  JSON.stringify({ period, quantity });
@@ -221,21 +256,26 @@ const Profile = () => {
 
     if (response.ok && response.headers.get('content-type')?.includes('application/json')) {
       const data = await response.json();
+      handleClose();
+      setPurchased(!purchased);
     } 
+  };
+
+  const handleClickOpen = () => {
+    setOpen(true);
   };
 
   return (
     <>
-
     <Card style={{ backgroundColor: '#f5f5f5', width:'100%' }}>
-      <CardContent>
-        <Box display="flex" flexDirection="row" alignItems="center">
-            <div>
-            <Avatar 
-                src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${user.img}`} 
-                onClick={handleAvatarClick} 
-                style={{ height: '200px', width: '200px' }} 
-            />
+    <CardContent>
+      <Grid container spacing={2}>
+        <Grid item xs={12} align="center">
+          <Avatar 
+            src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${user.img}`} 
+            onClick={handleAvatarClick} 
+            style={{ height: '200px', width: '200px' }} 
+          />
             <Menu
                 anchorEl={anchorEl}
                 keepMounted
@@ -256,146 +296,111 @@ const Profile = () => {
                 </DialogContent>
             </Dialog>
             <input type="file" ref={fileInput} className="hidden-file-input" onChange={handleFileChange} />
-            </div>
-
-            <Box display="flex" flexDirection="column" ml={10}>
-            <Box display="flex" alignItems="center">
-                <Typography variant="subtitle1" component="span" style={{ fontWeight: 'bold' }}>
-                Username:
-                </Typography>
-                <Typography variant="body2" component="span" style={{ marginLeft: '8px' }}>
-                {user.u_name}
-                </Typography>
-            </Box>
-            <Box display="flex" alignItems="center">
-                <Typography variant="subtitle1" component="span" style={{ fontWeight: 'bold' }}>
-                    First name:
-                </Typography>
-                <Typography variant="body2" component="span" style={{ marginLeft: '8px' }}>
-                    {user.name.first}
-                </Typography>
-            </Box>
-            <Box display="flex" alignItems="center">
-                <Typography variant="subtitle1" component="span" style={{ fontWeight: 'bold' }}>
-                    Last name:
-                </Typography>
-                <Typography variant="body2" component="span" style={{ marginLeft: '8px' }}>
-                    {user.name.last}
-                </Typography>
-            </Box>
-            {id === currentUserId && 
-            <>
-            <Box display="flex" alignItems="center">
-                <Typography variant="subtitle1" component="span" style={{ fontWeight: 'bold' }}>
-                    Birth date:
-                </Typography>
-                <Typography variant="body2" component="span" style={{ marginLeft: '8px' }}>
-                    {new Date(user.b_date).toLocaleDateString()}
-                </Typography>
-            </Box>
-            <Box display="flex" alignItems="center">
-                <Typography variant="subtitle1" component="span" style={{ fontWeight: 'bold' }}>
-                    E-mail Address:
-                </Typography>
-                <Typography variant="body2" component="span" style={{ marginLeft: '8px' }}>
-                    {user.email}
-                </Typography>
-            </Box>
-            <Box display="flex" alignItems="center">
-                <Typography variant="subtitle1" component="span" style={{ fontWeight: 'bold' }}>
-                    Type:
-                </Typography>
-                <Typography variant="body2" component="span" style={{ marginLeft: '8px' }}>
-                    {user.type}
-                </Typography>
-            </Box>
-            <Box display="flex" alignItems="center">
-                <Typography variant="subtitle1" component="span" style={{ fontWeight: 'bold' }}>
-                    Creation date:
-                </Typography>
-                <Typography variant="body2" component="span" style={{ marginLeft: '8px' }}>
-                    {new Date(user.creation_date).toLocaleDateString()}
-                </Typography>
-            </Box>
-            <Box display="flex" alignItems="center">
-                <Typography variant="subtitle1" component="span" style={{ fontWeight: 'bold' }}>
-                    Message popularity:
-                </Typography>
-                <Typography variant="body2" component="span" style={{ marginLeft: '8px', color: 'green' }}>
-                    {user && user.messagePopularity && user.messagePopularity.positive || 0}
-                </Typography>
-                <Typography variant="body2" component="span">
-                /
-                </Typography>
-                <Typography variant="body2" component="span" style={{ color: 'red' }}>
-                    {user && user.messagePopularity && user.messagePopularity.negative || 0}
-                </Typography>
-            </Box>
-            <Box display="flex" alignItems="center">
-                <Typography variant="subtitle1" component="span" style={{ fontWeight: 'bold' }}>
-                    Daily quote:
-                </Typography>
-                <Typography variant="body2" component="span" style={{ marginLeft: '8px' }}>
-                    {user && user.quote && user.char_availability.dayly || 0}
-                </Typography>
-              </Box>
-              <Box display="flex" alignItems="center">
-                    <Typography variant="subtitle1" component="span" style={{ fontWeight: 'bold' }}>
-                        Weekly quote:
-                    </Typography>
-                    <Typography variant="body2" component="span" style={{ marginLeft: '8px' }}>
-                        {user && user.quote && user.char_availability.weekly || 0}
-                    </Typography>
-              </Box>
-              <Box display="flex" alignItems="center">
-                    <Typography variant="subtitle1" component="span" style={{ fontWeight: 'bold' }}>
-                        Monthly quote:
-                    </Typography>
-                    <Typography variant="body2" component="span" style={{ marginLeft: '8px' }}>
-                        {user && user.quote && user.char_availability.monthly || 0}
-                    </Typography>
-              </Box>
-              <Grid container spacing={3} alignItems="center" justifyContent="center">
-                <Grid item xs={12} sm={4}>
-                  <Select
-                    value={period}
-                    onChange={(e) => setPeriod(e.target.value)}
-                    fullWidth
-                  >
-                    <MenuItem value="day">Day</MenuItem>
-                    <MenuItem value="week">Week</MenuItem>
-                    <MenuItem value="month">Month</MenuItem>
-                  </Select>
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <TextField
-                    label="Quantity"
-                    type="number"
-                    value={quantity}
-                    onChange={(e) => setQuantity((e.target.value))}
-                    fullWidth
-                  />
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <Button onClick={handleSubmit} fullWidth>Buy Chars</Button>
-                </Grid>
-              </Grid>
-            </>
-          }
-          </Box>
-          
-          {user.type === 'vip' && id === currentUserId && (
-            <Box ml={20}>
-              <Button variant="contained" color="primary" onClick={() => navigate('/Smm')}>
-                Trova SMM
-              </Button>
-            </Box>
+            </Grid>
+        <Grid item xs={12} align="left">
+          <Typography variant="h6">
+            {capitalizeFirstLetter(user.name.first)} {capitalizeFirstLetter(user.name.last)}
+          </Typography>
+        </Grid>
+        <Grid item xs={12} align="left">
+          <Typography variant="subtitle1">
+            @{user.u_name}
+          </Typography>
+        </Grid>
+        <Grid item xs={12} align="left">
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <CakeIcon />
+            <Typography variant="body2" style={{ marginLeft: '8px' }}>
+              Birthday:{new Date(user.b_date).toLocaleDateString()}
+            </Typography>
+          </div>
+        </Grid>
+        <Grid item xs={12} align="left">
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <CalendarMonthIcon />
+            <Typography variant="body2" style={{ marginLeft: '8px' }}>
+              Registration date:{new Date(user.creation_date).toLocaleDateString()}
+            </Typography>
+          </div>
+        </Grid>
+        <Grid item xs={12} align="center">
+        </Grid>
+        {id === currentUserId && (
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell align="center"><strong>Daily</strong></TableCell>
+                <TableCell align="center"><strong>Weekly</strong></TableCell>
+                <TableCell align="center"><strong>Monthly</strong></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                <TableCell align="center">{user && user.quote && user.char_availability.dayly || 0}</TableCell>
+                <TableCell align="center">{user && user.quote && user.char_availability.weekly || 0}</TableCell>
+                <TableCell align="center">{user && user.quote && user.char_availability.monthly || 0}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
         )}
-        </Box>
-        </CardContent>
+
+        {id === currentUserId && (
+          <Grid item xs={12} sm={4}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Button onClick={handleClickOpen} fullWidth startIcon={<AttachMoneyIcon />} color="primary" style={{ marginTop: '20px' }}>
+                Buy Chars
+              </Button>
+              {user.type === 'vip' && id === currentUserId && (
+                <Button fullWidth startIcon={<EngineeringIcon />} color="primary" style={{ marginTop: '20px' }} onClick={() => navigate('/Smm')}>
+                  Find Social Media Manager
+                </Button>
+              )}
+            </div>
+          </Grid>
+        )}
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Buy Chars</DialogTitle>
+        <DialogContent>
+          <Grid container spacing={3} alignItems="center" justifyContent="center">
+            <Grid item xs={12} sm={4}>
+              <Select
+                value={period}
+                onChange={(e) => setPeriod(e.target.value)}
+                fullWidth
+              >
+                <MenuItem value="day">Day</MenuItem>
+                <MenuItem value="week">Week</MenuItem>
+                <MenuItem value="month">Month</MenuItem>
+              </Select>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                label="Quantity"
+                type="number"
+                value={quantity}
+                onChange={(e) => setQuantity((e.target.value))}
+                fullWidth
+              />
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} variant="contained" color="secondary">
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleSubmit} 
+            style={{ backgroundColor: 'green', color: 'white' }}
+          >
+            Buy
+          </Button>
+        </DialogActions>
+      </Dialog>
+      </Grid>
+      
+      </CardContent>
     </Card>
 
-    
     {loggedIn && 
       <Typography variant="h4" component="h6" gutterBottom style={{ textAlign: 'center', marginTop:'20px' }}>
           POST PUBBLICATI DA {user.u_name.toUpperCase()}
@@ -411,8 +416,10 @@ const Profile = () => {
     {id === currentUserId ? (
         <MyPosts/>
     ) : (
-        userPosts.map(post => (
-            <Post key={post._id} post={post} />
+        userPosts
+        .filter(post => channels[post._id] && !channels[post._id].name.startsWith('__direct__'))
+        .map(post => (
+          <Post key={post._id} post={post} />
         ))
     )}
     </>
