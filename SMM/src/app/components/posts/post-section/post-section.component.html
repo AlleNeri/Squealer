@@ -8,6 +8,9 @@
   <nz-tab nzTitle="Impopolari">
     <ng-container *ngIf="this.unpopularPosts.length > 0; then unpopularPostsList else noPosts" />
   </nz-tab>
+  <nz-tab nzTitle="Controversi">
+    <ng-container *ngIf="this.controversialPosts.length > 0; then controversialPostsList else noPosts" />
+  </nz-tab>
 </nz-tabset>
 
 <ng-template #addPost>
@@ -36,6 +39,14 @@
 <ng-template #unpopularPostsList>
   <app-post
     *ngFor="let post of unpopularPosts"
+    [post]="post"
+    [user]="this.client"
+  ></app-post>
+</ng-template>
+
+<ng-template #controversialPostsList>
+  <app-post
+    *ngFor="let post of controversialPosts"
     [post]="post"
     [user]="this.client"
   ></app-post>

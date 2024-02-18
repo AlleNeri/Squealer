@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 
 import { BackendComunicationService } from 'src/app/services/backend-comunication.service';
+import { UserInformationService } from 'src/app/services/user-information.service';
 
 import Client from 'src/app/classes/client';
 
@@ -15,5 +16,8 @@ export class UserCardComponent {
   @Input({required: true}) user!: IUser;
   @Input() clients?: Client[];
 
-  constructor(protected backendComunication: BackendComunicationService) {}
+  constructor(
+    protected backendComunication: BackendComunicationService,
+    protected userInfo: UserInformationService
+  ) {}
 }

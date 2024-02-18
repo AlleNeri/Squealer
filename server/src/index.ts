@@ -12,7 +12,7 @@ import { channelRoute } from "./view/channel";
 import { mediaRoute } from "./view/media";
 
 /*** Configs ***/
-const PORT: number = Number(process.env.PORT) || 8080;
+const PORT: number = Number(process.env.PORT) || 8000;
 
 /*** Mongoose initialization ***/
 const dbUri: string = process.env.PRODUCTION
