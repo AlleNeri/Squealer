@@ -10,6 +10,7 @@ import Smm from './pages/Smm/Smm';
 import HomePage from './pages/HomePage/HomePage';
 import Keywords from './pages/Keywords/Keywords';
 import Settings from './pages/Settings/Settings';
+import NewPost from './pages/NewPost/NewPost';
 import Controversial from './pages/AllChannels/Controversial/Controversial';
 import Popular from './pages/AllChannels/Popular/Popular';
 import Unpopular from './pages/AllChannels/Unpopular/Unpopular';
@@ -68,6 +69,10 @@ const routes = createBrowserRouter([
 			{
 				path: '/Settings/:id',
 				element: <Settings />
+			},
+			{
+				path: '/NewPost',
+				element: <NewPost />
 			},
 		],
 	},
