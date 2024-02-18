@@ -18,6 +18,7 @@ import './header.css';
 import { LoginContext } from "../../context/LoginContext/LoginContext";
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { SidebarContext } from '../../context/SidebarContext/SidebarContext';
+import { UserPostsContext } from '../../context/UserPostsContext/UserPostsContext';
 import { PostsContext } from '../../context/PostsContext/PostsContext';
 import { SearchContext } from '../../context/SearchContext/SearchContext';
 import { Menu, MenuItem, IconButton, TextField} from '@mui/material';
@@ -30,6 +31,7 @@ export default function ButtonAppBar({setModalOpen}) {
   const {isSidebarMinimized, setSidebarMinimized} = useContext(SidebarContext);
   const [searchValue, setSearchValue] = useState('');
   const { posts, setPosts } = useContext(PostsContext);
+  const { userPosts, setUserPosts } = useContext(UserPostsContext);
   const [anchorEl, setAnchorEl] = useState(null);
   const [isProfileClicked, setIsProfileClicked] = useState(false);
   const location = useLocation();
@@ -104,11 +106,6 @@ export default function ButtonAppBar({setModalOpen}) {
     setSearchValue(newValue);
   };
 
-  // Perform the search when searchValue changes
-  useEffect(() => {
-    handleSearchChange(searchValue);
-  }, [searchValue]);
-
   const getChannelName = async (channelId) => {
     const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels/${channelId}`);
     const channel = await response.json();
@@ -122,39 +119,43 @@ export default function ButtonAppBar({setModalOpen}) {
     if (trimmedQuery !== '') {
       let filteredPosts = [];
 
-      if (trimmedQuery.startsWith('§')) {
-        // Search by channel
-        const channelNameQuery = trimmedQuery.slice(1);
+      // Combine posts and userPosts
+      const allPostsMap = {};
 
-        for (let post of posts) {
-          const channelName = await getChannelName(post.posted_on);
-          if (channelName === channelNameQuery) {
-            filteredPosts.push(post);
-          }
+      // Combine posts and userPosts and remove duplicates
+      [...posts, ...userPosts].forEach(post => {
+        allPostsMap[post._id] = post;
+      });
+
+      const allPosts = Object.values(allPostsMap);
+      const lowerCaseQuery = trimmedQuery.toLowerCase();
+
+      for (let post of allPosts) {
+        const isPopular = post.popular && !post.unpopular && 'popular'.includes(lowerCaseQuery);
+        const isUnpopular = !post.popular && post.unpopular && 'unpopular'.includes(lowerCaseQuery);
+        const isControversial = post.popular && post.unpopular && 'controversial'.includes(lowerCaseQuery);
+
+        if (isPopular || isUnpopular || isControversial) {
+          filteredPosts.push(post);
         }
-      } else if (trimmedQuery.startsWith('#')) {
-        // Search by keyword
-        const keyword = trimmedQuery.slice(1);
-        filteredPosts = posts.filter(post => post?.keywords?.some(kw => kw.includes(keyword)));
-      } else if (trimmedQuery.startsWith('@')) {
-        // Search by mention
-        const mention = trimmedQuery.slice(1);
-        filteredPosts = posts.filter(post => post?.text?.includes(`@${mention}`));
-      } else {
-        // Regular search
-        for (let post of posts) {
+      }
+
+      if (filteredPosts.length === 0) {
+        for (let post of allPosts) {
           const channelName = await getChannelName(post.posted_on);
-          if (post?.text?.includes(trimmedQuery) || 
-              post?.keywords?.some(kw => kw.includes(trimmedQuery)) || 
-              channelName.includes(trimmedQuery)) {
+
+          if (post?.content.text?.toLowerCase().includes(lowerCaseQuery) || 
+              post?.keywords?.some(kw => kw.toLowerCase().includes(lowerCaseQuery)) || 
+              channelName.toLowerCase().includes(lowerCaseQuery)) {
             filteredPosts.push(post);
           }
         }
       }
-
       setPosts(filteredPosts);
+      setUserPosts(filteredPosts);
     } else {
       setPosts(posts);
+      setUserPosts(userPosts);
     }
   };
 
