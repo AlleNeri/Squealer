@@ -14,9 +14,11 @@ import Controversial from './pages/AllChannels/Controversial/Controversial';
 import Popular from './pages/AllChannels/Popular/Popular';
 import Unpopular from './pages/AllChannels/Unpopular/Unpopular';
 import { PostsContext } from './context/PostsContext/PostsContext';
+import { UserPostsContext } from './context/UserPostsContext/UserPostsContext';
 import { SidebarProvider } from './context/SidebarContext/SidebarContext';
 import { TimeProvider } from './context/TimeContext/TimeContext';
 import { SearchProvider } from './context/SearchContext/SearchContext';
+
 
 const routes = createBrowserRouter([
 	{
@@ -74,6 +76,7 @@ const routes = createBrowserRouter([
 function App() {
 	const [loggedIn, setLoggedIn] = useState(false);
 	const [posts, setPosts] = useState([]);
+	const [userPosts, setUserPosts] = useState([]);
 	const [updateInterval, setUpdateInterval] = useState(0);
 	const [updateTimes, setUpdateTimes] = useState(0);
 	const loginContextValue = useMemo(() => ({ loggedIn, setLoggedIn }), [loggedIn, setLoggedIn]);
@@ -85,17 +88,19 @@ function App() {
 	}, []);
 	
 	return (
-		<SearchProvider>
-			<TimeProvider value={{timeContextValue}}>
-				<SidebarProvider>
-					<LoginContext.Provider value={loginContextValue}>
-						<PostsContext.Provider value={postsContextValue}>
-							<RouterProvider router={routes} />
-						</PostsContext.Provider>
-					</LoginContext.Provider>
-				</SidebarProvider>
-			</TimeProvider>
-		</SearchProvider>
+		<UserPostsContext.Provider value={{userPosts, setUserPosts}}>
+			<SearchProvider>
+				<TimeProvider value={{timeContextValue}}>
+					<SidebarProvider>
+						<LoginContext.Provider value={loginContextValue}>
+							<PostsContext.Provider value={postsContextValue}>
+								<RouterProvider router={routes} />
+							</PostsContext.Provider>
+						</LoginContext.Provider>
+					</SidebarProvider>
+				</TimeProvider>
+			</SearchProvider>
+		</UserPostsContext.Provider>
 	);
 }
 
