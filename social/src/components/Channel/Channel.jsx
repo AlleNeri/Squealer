@@ -1,32 +1,11 @@
 import React, { useState } from 'react';
-import { Box, Button, TextField, Typography, Dialog, FormControlLabel, Checkbox } from '@mui/material';
-import { makeStyles } from '@material-ui/core/styles';
-
-const useStyles = makeStyles((theme) => ({
-    dialog: {
-      marginLeft: theme.spacing(30), // Move the dialog to the left
-    },
-    form: {
-      padding: theme.spacing(2), // Add some padding around the form
-    },
-    textField: {
-      marginBottom: theme.spacing(2), // Add some margin below the text fields
-    },
-    button: {
-      display: 'flex', // Center the button
-      justifyContent: 'center',
-    },
-    typography: {
-        margin: theme.spacing(2), // Add some margin
-    },
-}));
+import { Button, TextField, Typography, Dialog, FormControlLabel, Checkbox, Grid, Divider, Box} from '@mui/material';
 
 const Channel = ({ isOpen, onClose }) => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [isPrivate, setPrivate] = useState(false);
     const token = localStorage.getItem('token');
-    const classes = useStyles();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -64,64 +43,68 @@ const Channel = ({ isOpen, onClose }) => {
 
     return (
         <Dialog 
-            className={classes.dialog}
             open={isOpen} 
             onClose={onClose} 
             fullScreen={false} 
-            maxWidth='lg'
-            PaperProps={{ style: { width: '60%', maxHeight: '100vh' } }}
+            maxWidth='md'
+            PaperProps={{ style: { maxHeight: '100vh', width: '80%' } }}
         >
-            <div>
-                <Box className={classes.typography}>
-                    <Typography variant="h4" component="h2" gutterBottom>
-                        NEW CHANNEL
-                    </Typography>
-                </Box>
-
-                <form onSubmit={handleSubmit} className={classes.form}>
-                    <Box marginBottom={2} className={classes.textField}>
-                        <TextField
-                            label="Name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            variant="outlined"
-                            fullWidth
-                            margin="normal"
-                            required
-                        />
+            <Grid container direction="column" spacing={2}>
+                <Grid item xs={12}>
+                    <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column">
+                        <Typography variant="h4" component="h2" gutterBottom>
+                            NEW CHANNEL
+                        </Typography>
+                        <Divider style={{ width: '100%', backgroundColor: 'black' }} />
                     </Box>
+                </Grid>
 
-                    <Box className={classes.textField}>
-                        <TextField
-                            label="Description"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            variant="outlined"
-                            fullWidth
-                            margin="normal"
-                        />
-                    </Box>
+                <Grid item xs={12}>
+                    <form onSubmit={handleSubmit}>
+                        <Grid container direction="column" spacing={2}>
+                            <Grid item xs={12} style={{ paddingLeft:'30px' }}>
+                                <TextField
+                                    label="Name"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    variant="outlined"
+                                    fullWidth
+                                    required
+                                />
+                            </Grid>
 
-                    <FormControlLabel
-                        control={
-                        <Checkbox 
-                            checked={isPrivate} 
-                            onChange={(e) => setPrivate(e.target.checked)} 
-                            color="primary" 
-                        />
-                        }
-                        label="Private"
-                    />
+                            <Grid item xs={12} style={{ paddingLeft: '30px' }}>
+                                <TextField
+                                    label="Description"
+                                    value={description}
+                                    onChange={(e) => setDescription(e.target.value)}
+                                    variant="outlined"
+                                    fullWidth
+                                />
+                            </Grid>
 
-                    <Box>
-                        <Button className={classes.button} type="submit" variant="contained" color="primary">
-                            Create Channel
-                        </Button>
-                    </Box>
-                </form>
+                            <Grid item xs={12} style={{ paddingLeft: '30px' }}>
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox 
+                                            checked={isPrivate} 
+                                            onChange={(e) => setPrivate(e.target.checked)} 
+                                            color="primary" 
+                                        />
+                                    }
+                                    label="Private"
+                                />
+                            </Grid>
 
-                <div onClick={onClose}></div>
-            </div>
+                            <Grid item xs={12} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                <Button type="submit" variant="contained" color="primary">
+                                    Create Channel
+                                </Button>
+                            </Grid>
+                        </Grid>
+                    </form>
+                </Grid>
+            </Grid>
         </Dialog>
     );
 };

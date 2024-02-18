@@ -25,7 +25,7 @@ const AllChannels = () => {
       .catch(error => {
         console.error('There was an error!', error);
       });
-  }, [id, posts]);
+  }, [id, posts.length]);
 
   useEffect(() => {
     // Fetch posts
@@ -42,7 +42,7 @@ const AllChannels = () => {
       .catch(error => {
         console.error('There was an error!', error);
       });
-  }, [id, posts]); // Add posts.length as a dependency
+  }, [id, posts.length]); // Add posts.length as a dependency
 
   if (!channel) {
     return <div>Loading...</div>;
