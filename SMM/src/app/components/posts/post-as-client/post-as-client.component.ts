@@ -156,18 +156,31 @@ export class PostAsClientComponent implements OnInit {
       post: {
         title: this.postForm.value.title,
         content: {
-          text: this.postForm.value.text,
+          text: this.postForm.value.text || null,
           position: this.postForm.value.position
         },
         posted_on: this.postForm.value.channel,
         keywords: this.postForm.value.keywords,
       }
     };
-    console.log("body:", body);
     this.backend.post(`posts?as=${this.client.id}`, body, this.auth.token!)
       .subscribe((res: any) => {
           if(res.user_char_availability) this.client.charNumber = res.user_char_availability;
-          if(res.post) this.newPost.emit(res.post);
+          if(this.postForm.value.img) {
+            const formData = new FormData();
+            formData.append('image', this.postForm.value.img as any);
+            formData.append('postId', res.post._id);
+            this.backend.put(`media/image`, formData, this.auth.token!)
+              .subscribe((resImg: any) => {
+                if(resImg.user_char_availability) this.client.charNumber = resImg.user_char_availability;
+                if(resImg.msg) this.msgService.warning(resImg.msg);
+                if(resImg.imgId) {
+                  res.post.content.img = resImg.imgId;
+                  this.newPost.emit(res.post);
+                }
+              });
+          }
+          else if(res.post) this.newPost.emit(res.post);
           this.toggleDrawer();
         }
       );
