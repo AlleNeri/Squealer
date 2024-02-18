@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
@@ -22,6 +22,8 @@ export class PostAsClientComponent implements OnInit {
   @Input({required: true}) client!: Client;
   @Output() newPost: EventEmitter<IPost>;
   protected isDrawerVisible: boolean;
+  protected keywordsInputVisible: boolean;
+  @ViewChild('keywordsInput', { static: false }) keywordsInput?: ElementRef;
   protected postForm: FormGroup;
   protected channels: IChannel[];
   protected mentions: IUser[];
@@ -33,6 +35,7 @@ export class PostAsClientComponent implements OnInit {
     private msgService: NzMessageService
   ) {
     this.isDrawerVisible = false;
+    this.keywordsInputVisible = false;
     this.channels = [];
     this.mentions = [];
     this.newPost = new EventEmitter<IPost>();
@@ -131,6 +134,7 @@ export class PostAsClientComponent implements OnInit {
         });
       }
       (event.target as HTMLInputElement).value = '';
+      this.toggleKeywordsInputVisibility();
     }
   }
 
@@ -187,7 +191,20 @@ export class PostAsClientComponent implements OnInit {
   }
 
   protected toggleDrawer(): void {
-    if(this.isDrawerVisible) this.postForm.reset();
+    if(this.isDrawerVisible)
+      this.postForm.reset({
+        title: '',
+        text: '',
+        img: null,
+        position: null,
+        channel: '',
+        keywords: []
+      });
     this.isDrawerVisible = !this.isDrawerVisible;
+  }
+
+  protected toggleKeywordsInputVisibility(): void {
+    this.keywordsInputVisible = !this.keywordsInputVisible;
+    if(this.keywordsInputVisible) setTimeout(() => this.keywordsInput?.nativeElement.focus(), 10);
   }
 }

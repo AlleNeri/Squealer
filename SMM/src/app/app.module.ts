@@ -46,6 +46,7 @@ import {
   SettingOutline,
   DeleteTwoTone,
   DashboardOutline,
+  PlusOutline,
 } from '@ant-design/icons-angular/icons';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -105,6 +106,7 @@ const icons: IconDefinition[]= [
   SettingOutline,
   DeleteTwoTone,
   DashboardOutline,
+  PlusOutline,
 ];
 
 @NgModule({
