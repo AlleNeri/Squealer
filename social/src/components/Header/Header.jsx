@@ -24,7 +24,7 @@ import { SearchContext } from '../../context/SearchContext/SearchContext';
 import { Menu, MenuItem, IconButton, TextField} from '@mui/material';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
-export default function ButtonAppBar({setModalOpen}) {
+export default function ButtonAppBar() {
   const navigate = useNavigate();
   const { loggedIn, setLoggedIn } = useContext(LoginContext);
   const { setIsSearching } = useContext(SearchContext);
@@ -62,7 +62,7 @@ export default function ButtonAppBar({setModalOpen}) {
   }
 
   const handleNewPostClick = () => {
-    setModalOpen(true);
+    navigate('/NewPost');
     handleClose();
     setIsProfileClicked(false);
   };

@@ -301,6 +301,7 @@ useEffect(() => {
       </Drawer>
   </div>
       {isChannelModalOpen && (
+        setSidebarMinimized(true),
         <Channel
           isOpen={isChannelModalOpen}
           onClose={() => setChannelModalOpen(false)}

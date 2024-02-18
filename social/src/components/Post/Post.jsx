@@ -30,7 +30,17 @@ export default function Post({post}) {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
     if(!loggedIn) { localStorage.removeItem('userId'); }
-    
+    const postDate = new Date(date);
+    const today = new Date();
+
+    const isToday = 
+      postDate.getDate() === today.getDate() &&
+      postDate.getMonth() === today.getMonth() &&
+      postDate.getFullYear() === today.getFullYear();
+
+    const displayDate = isToday
+      ? `Today at ${postDate.getHours()}:${postDate.getMinutes() < 10 ? '0' : ''}${postDate.getMinutes()}`
+      : postDate.toLocaleString();
 
     useEffect(() => {
       // Fetch the channel when the component mounts
@@ -199,20 +209,35 @@ export default function Post({post}) {
               <CardContent>
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={2}>
-                    <Avatar alt="Profile" src={user && user.img ? `${import.meta.env.VITE_DEFAULT_URL}/media/image/${user.img}` : undefined} >
-                      {user?.u_name?.charAt(0).toUpperCase()}
-                    </Avatar>
+                   
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <Avatar alt="Profile" src={user && user.img ? `${import.meta.env.VITE_DEFAULT_URL}/media/image/${user.img}` : undefined} >
+                          {user?.u_name?.charAt(0).toUpperCase()}
+                        </Avatar>
+                        {user && <Link to={`/Profile/${posted_by}`} style={{ color: 'inherit', marginLeft: '10px' }}>@{user.u_name}</Link>}
+                      </div>
+                      {timed &&
+                        <div>
+                          <Tooltip title="Timed squeal">
+                            <AlarmIcon />
+                          </Tooltip>
+                        </div>
+                      }
+                    </div>
                   </Grid>
                   <Grid item xs={12} sm={10}>
                     <div>
                       <div style={{ display: 'flex', flexDirection: isSmallScreen ? 'column-reverse' : 'row', justifyContent: 'space-between', alignItems: 'left' }}>
                         <div>
-                          <Link to={`/AllChannels/${channel?._id}`} style={{ textDecoration: 'none' }}>
-                            <Typography variant="body1" display="inline" color="textPrimary" style={{ textDecoration: 'underline' }}>
-                              {`§${channel?.name}`}
-                            </Typography>
-                          </Link>
-                          { (popular || unpopular) && 
+                          {channel?.name && !channel.name.startsWith('__direct__') && (
+                            <Link to={`/AllChannels/${channel?._id}`} style={{ textDecoration: 'none' }}>
+                              <Typography variant="body1" display="inline" color="textPrimary" style={{ textDecoration: 'underline' }}>
+                                {`§${channel?.name}`}
+                              </Typography>
+                            </Link>
+                          )}
+                          {channel?.name && !channel.name.startsWith('__direct__') && (popular || unpopular) && 
                             <Link to={`/AllChannels/${popular && unpopular ? 'Controversial' : popular ? 'Popular' : 'Unpopular'}`} style={{ textDecoration: 'none' }}>
                               <Typography variant="body1" display="inline" color="textPrimary" style={{ textDecoration: 'underline' }}>
                                 {`, ${popular && unpopular ? '§CONTROVERSIAL' : popular ? '§POPULAR' : unpopular ? '§UNPOPULAR' : ''}`}
@@ -266,15 +291,12 @@ export default function Post({post}) {
                         </Grid>
                       </Grid>
                       <Grid container alignItems="flex-end" justifyContent="flex-end">
-                        {timed &&
-                          <Tooltip title="Timed squeal"><AlarmIcon /></Tooltip>
-                        }
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
                           <Typography variant="body2" color="textSecondary">
-                            Posted by {user && <Link to={`/Profile/${posted_by}`} style={{ color: 'inherit' }}>@{user.u_name}</Link>} on {new Date(date).toLocaleString()}
+                            Posted {displayDate}
                           </Typography>
                           <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <VisibilityIcon/>
+                            <VisibilityIcon style={{ marginRight: '10px' }}/>
                             <Typography variant="body2" color="textSecondary">
                               {views || 0}
                             </Typography>
