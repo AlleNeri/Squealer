@@ -85,10 +85,16 @@ export class RegisterCardComponent {
   }
 
   protected getImg(data?: NzUploadFile): void {
-    this.registerForm.setValue({
-      ...this.registerForm.getRawValue(),
-      img: data
-    });
+    if(data)
+      this.registerForm.setValue({
+        ...this.registerForm.getRawValue(),
+        img: data
+      });
+    else
+      this.registerForm.setValue({
+        ...this.registerForm.getRawValue(),
+        img: null
+      });
   }
 
   onSubmit() {

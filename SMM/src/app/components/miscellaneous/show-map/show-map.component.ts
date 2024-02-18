@@ -25,7 +25,6 @@ export class ShowMapComponent implements AfterViewInit {
   constructor() {
     this.position = new LatLng(0, 0);
     this.mapId = 'map-' + Math.random().toString(36).substring(7);
-    console.log(this.mapId);
   }
 
   private initMap(): void {

@@ -30,9 +30,16 @@ mediaRoute.put("/image", upload.single("image"), Auth.authorize, async (req: Req
 		const post: Post | null = await PostSchema.findById(req.body.postId);
 		if(!post) return res.status(404).json({ msg: "Post not found." });
 		
-		if(req.user?.type === UserType.SMM && !req.user?.isClient(post._id))
-			return res.status(403).json({ msg: "You are not allowed to edit the post." });
-		else if(req.user?.type !== UserType.VIP && req.user?.type !== UserType.NORMAL)
+		if(req.user?.type === UserType.SMM) {
+			if(!req.user?.isClient(post.posted_by))
+				return res.status(403).json({ msg: "You are not allowed to edit the post." });
+			else {
+				const client: User | null = await UserSchema.findById(post.posted_by);
+				if(!client) return res.status(404).json({ msg: "Client not found." });
+				req.user = client;
+			}
+		}
+		if(req.user?.type !== UserType.VIP && req.user?.type !== UserType.NORMAL)
 			return res.status(403).json({ msg: "You are not allowed to edit the post." });
 
 		//check if the post was posted today
@@ -42,8 +49,19 @@ mediaRoute.put("/image", upload.single("image"), Auth.authorize, async (req: Req
 			return res.status(406).json({ msg: "You can't edit a post that was not posted today." });
 
 		if(!req.user.canPost(numCharForSpecialPosts)) {
+			//count the number of char in the post
+			const charCount: number =
+				(post.title?.length || 0) +
+				(post.content.text?.length || 0) +
+				(post.content.position ? numCharForSpecialPosts : 0) +
+				(post.keywords?.reduce((acc: number, curr: string) => acc + curr.length, 0) || 0);
+			//rsstore the char count
+			req.user.char_availability.dayly += charCount;
+			req.user.char_availability.weekly += charCount;
+			req.user.char_availability.monthly += charCount;
+			//delete the post
 			await PostSchema.findByIdAndDelete(post._id);
-			return res.status(500).json({ msg: "User can't post. The post has been deleted." });
+			return res.status(500).json({ msg: "User can't post. The post has been deleted.", user_char_availability: req.user!.char_availability });
 		}
 		req.user.save();
 

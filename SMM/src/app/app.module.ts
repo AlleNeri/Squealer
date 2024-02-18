@@ -45,6 +45,8 @@ import {
   ClockCircleOutline,
   SettingOutline,
   DeleteTwoTone,
+  DashboardOutline,
+  PlusOutline,
 } from '@ant-design/icons-angular/icons';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -103,6 +105,8 @@ const icons: IconDefinition[]= [
   ClockCircleOutline,
   SettingOutline,
   DeleteTwoTone,
+  DashboardOutline,
+  PlusOutline,
 ];
 
 @NgModule({

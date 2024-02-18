@@ -2,11 +2,6 @@
   width: 100%;
 }
 
-[nz-icon] {
-  margin-right: 6px;
-  font-size: 24px;
-}
-
 .position-picker {
   height: 300px;
   padding-bottom: 10px;
@@ -19,4 +14,9 @@
 
 .negativeChars {
   color: red;
+}
+
+.editable-tag {
+  background: rgb(255, 255, 255);
+  border-style: dashed;
 }
