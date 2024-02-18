@@ -193,19 +193,19 @@ useEffect(() => {
           </ListItem>
           <Collapse in={isTrending}>
               <NavLink className={classes.link} to={`/AllChannels/Controversial`}>
-                <ListItem button>
+                <ListItem button onClick={() => setSidebarMinimized(true)}>
                   <ListItemText primary={`§CONTROVERSIAL`} style={{color:'white'}}/>
                 </ListItem>
               </NavLink>
 
               <NavLink className={classes.link} to={`/AllChannels/Popular`}>
-                <ListItem button>
+                <ListItem button onClick={() => setSidebarMinimized(true)}>
                   <ListItemText primary={`§POPULAR`} style={{color:'white'}}/>
                 </ListItem>
               </NavLink>
 
               <NavLink className={classes.link} to={`/AllChannels/Unpopular`}>
-                <ListItem button>
+                <ListItem button onClick={() => setSidebarMinimized(true)}>
                   <ListItemText primary={`§UNPOPULAR`} style={{color:'white'}}/>
                 </ListItem>
               </NavLink>
