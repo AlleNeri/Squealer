@@ -3,7 +3,7 @@ import { Injectable, Output, EventEmitter } from '@angular/core';
 import { ILoggedUser, IRegisterBody, ILoginBody, IChangePasswordBody, UserType } from '../interfaces/auth-user';
 
 import { BackendComunicationService } from './backend-comunication.service';
-import { mergeMap, of, map } from 'rxjs';
+import { mergeMap, of, map, catchError, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -84,11 +84,13 @@ export class AuthenticationService {
   login(data: ILoginBody) {
     return this.backendComunication.post("users/login", data)
       .pipe(
-        map((d: Object)=> {
-          this.logUser=d as ILoggedUser | undefined;
+        map((d: any)=> {
+          if(d.success) this.logUser=d as ILoggedUser | undefined;
+          console.log(this.isTokenExpired());
           if(this.isTokenExpired()) return false;
           return true;
-        })
+        }),
+        catchError((e: any)=> throwError("e"))
       );
   }
 

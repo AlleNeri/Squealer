@@ -34,14 +34,19 @@ export class LoginCardComponent {
     const body: ILoginBody=this.loginForm.value;
     //authenticate the user and redirect to the dashboard if the login is successful
     this.auth.login(body)
-      .subscribe(() => {
+      .subscribe((_: any) => {
         this.buttonLoading=false;
+        console.log(this.auth.isLoggedIn());
         if(this.auth.isLoggedIn() && this.auth.isSMM) this.router.navigate(['/smm']);
         else if(this.auth.isLoggedIn() && !this.auth.isSMM) {
           this.msgService.warning(`L'utente non è un SMM`);
           this.auth.logout();
         }
         else this.msgService.error(`Username o password errati`);
+      },
+      (_: any) => {
+        this.buttonLoading=false;
+        this.msgService.error(`Errore durante il login`);
       });
   }
 }
