@@ -15,7 +15,15 @@ import { mediaRoute } from "./view/media";
 const PORT: number = Number(process.env.PORT) || 8080;
 
 /*** Mongoose initialization ***/
-mongoose.connect(`mongodb://${process.env.DBHOST}:${process.env.DBPORT}/${process.env.DBNAME}`)
+const dbUri: string = process.env.PRODUCTION
+	? `mongodb://${process.env.DBHOST}/${process.env.DBNAME}`
+	: `mongodb://${process.env.DBHOST}:${process.env.DBPORT}/${process.env.DBNAME}`;
+mongoose.connect(
+	dbUri,
+	process.env.PRODUCTION
+		? { authSource: 'admin', user: process.env.DBUSER, pass: process.env.DBPASSWORD }
+		: {}
+)
 	.then(()=>console.log(`Connected to database: ${process.env.DBNAME}`))
 	.catch(err=>console.log(`Error connecting to database: ${err}`));
 
