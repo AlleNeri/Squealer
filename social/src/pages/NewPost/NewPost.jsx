@@ -327,7 +327,7 @@ function NewPost() {
           let channelId = channel;
           if (postType === 'direct') {
             const channelName = `__direct__${username}${directRecipient.u_name}`;
-            const channelNameReverse = `__direct__${directRecipient}${username}`;
+            const channelNameReverse = `__direct__${directRecipient.u_name}${username}`;
 
             const channelsResponse = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels/my`, {
               headers: {
