@@ -348,7 +348,7 @@ export default function ButtonAppBar() {
                               </div>
                               ) : (
                               <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <Avatar style={{height:"20px", width:"20px"}}>@{notification.u_name.charAt(0)}</Avatar>
+                                <Avatar style={{height:"20px", width:"20px"}}>{notification.u_name.charAt(0)}</Avatar>
                                 <span style={{ marginLeft: '5px' }}>{notification.u_name} sent you a message!</span>
                               </div>
                             )}
