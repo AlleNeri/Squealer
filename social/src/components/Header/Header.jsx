@@ -332,27 +332,27 @@ export default function ButtonAppBar() {
                   vertical: 'top',
                   horizontal: 'center',
                 }}
-                style={{ maxHeight: '300px', overflow: 'auto' }} 
+                style={{ maxHeight: '300px', overflow: 'auto' }} // Aggiungi qui la proprietà border
               >
                 {Object.entries(groupedNotifications).map(([date, notifications], index) => (
                   <div key={index}>
                     <Typography variant="body1" style={{ textTransform: 'uppercase', fontWeight: 'bold' }}>{date}</Typography>
                     {notifications.map((notification, index) => (
-                      <Link to={`AllChannels/${notification.posted_on}`} style={{ textDecoration: 'none', color: 'inherit' }} key={index}>
+                      <Link to={`AllChannels/${notification.posted_on}`} style={{ textDecoration: 'none', color: 'inherit' }} key={index} onClick={handleNotificationClose}>
                         <div>
                           <Typography onMouseOver={(e) => e.target.style.color = 'blue'} onMouseOut={(e) => e.target.style.color = 'inherit'}>
                             {notification.img ? (
                               <div>
                                 <img src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${notification.img}`} alt="Profile" style={{height:"20px", width:"20px", borderRadius: "50%"}} />
-                                <span style={{ marginLeft: '5px' }}>{notification.u_name}</span>
+                                <span style={{ marginLeft: '5px' }}>{notification.u_name} sent you a message!</span>
                               </div>
                               ) : (
                               <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <Avatar style={{height:"20px", width:"20px"}}>@{notification.u_name.charAt(0)}</Avatar>
-                                <span style={{ marginLeft: '5px' }}>{notification.u_name}</span>
+                                <span style={{ marginLeft: '5px' }}>{notification.u_name} sent you a message!</span>
                               </div>
                             )}
-                            sent you a message!
+                            
                           </Typography>
                           <Divider style={{ backgroundColor: 'black' }} /> 
                         </div>
@@ -436,7 +436,7 @@ export default function ButtonAppBar() {
                   <div key={index}>
                     <Typography variant="body1" style={{ textTransform: 'uppercase', fontWeight: 'bold' }}>{date}</Typography>
                     {notifications.map((notification, index) => (
-                      <Link to={`AllChannels/${notification.posted_on}`} style={{ textDecoration: 'none', color: 'inherit' }} key={index}>
+                      <Link to={`AllChannels/${notification.posted_on}`} style={{ textDecoration: 'none', color: 'inherit' }} key={index} onClick={handleNotificationClose}>
                         <div>
                           <Typography onMouseOver={(e) => e.target.style.color = 'blue'} onMouseOut={(e) => e.target.style.color = 'inherit'}>
                             {notification.img ? (
@@ -446,7 +446,7 @@ export default function ButtonAppBar() {
                               </div>
                               ) : (
                               <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <Avatar style={{height:"20px", width:"20px"}}>@{notification.u_name.charAt(0)}</Avatar>
+                                <Avatar style={{height:"20px", width:"20px"}}>{notification.u_name.charAt(0)}</Avatar>
                                 <span style={{ marginLeft: '5px' }}>{notification.u_name} sent you a message!</span>
                               </div>
                             )}
