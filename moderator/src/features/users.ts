@@ -60,14 +60,6 @@ function populateUsers(type: string[]) {
 		});
 }
 
-// TODO: adjust this function to work properly
-export function addActionToUserLink(href: string): void {
-	document.querySelector<HTMLAnchorElement>(`a[href='${href}']`)!.addEventListener('click', (event) => {
-		event.preventDefault();
-		console.log('Clicked on user link', href);
-	});
-}
-
 function setNameFilterListener() {
 	document.getElementById(nameFilterId)!.addEventListener('input', (event) => {
 		const target = event.target as HTMLInputElement;

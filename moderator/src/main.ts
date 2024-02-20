@@ -5,6 +5,7 @@ import { env } from './env';
 import { showDashboard } from './features/dashboard';
 import { showUsers } from './features/users';
 import { showPosts } from './features/posts';
+import { showPost } from './features/post';
 
 import './style.css';
 
@@ -18,7 +19,8 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 router.add("", showDashboard)
 	.add("login", showLogin)
 	.add("users", showUsers)
-	.add("posts", showPosts);
+	.add("posts", showPosts)
+	.add("posts/{postId}", showPost);
 
 showBackHome();
 router.navigateTo("login");

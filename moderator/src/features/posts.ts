@@ -1,8 +1,8 @@
+import { router } from '../utils/router';
 import { env } from '../env';
 import { getToken } from '../utils/storage';
-import { addActionToUserLink} from './users';
 
-const postsId = "posts";
+const postsId: string = "posts";
 
 export function showPosts() {
 	document.querySelector<HTMLDivElement>(`#${env.CONTENT_DIV}`)!.innerHTML = `
@@ -30,7 +30,7 @@ function populatePosts(): void {
 				return new Date(b.posted_on).getTime() - new Date(a.posted_on).getTime();
 			});
 			posts.map(async (post: any) => {
-				return fetch(
+				await fetch(
 					`${env.BACKEND_URL}/users/${post.posted_by}`,
 					{
 						method: 'GET',
@@ -39,37 +39,41 @@ function populatePosts(): void {
 				)
 					.then(response => response.json())
 					.then(user => {
-						postsDiv.innerHTML += `
-							<div class='post'>
-								<div class='post-header'>
-									<h3>${post.title}</h3>
-									<i><a href="${post.posted_by}">${user.u_name}</a></i>
-									<button>Edit</button>
-								</div>
-								<div>
-									${
-										post.content.text
-											? `<p>${post.content.text}</p>`
-											: ''
-									}
-									${
-										post.content.img
-											? `<div class="preview-image"><img src="${env.BACKEND_URL}/media/image/${post.content.img}" alt="post image not found" /></div>`
-											: ''
-									}
-									${
-										post.content.position
-											? `<p>Latitude: ${post.content.position.latitude}, Longitude: ${post.content.position.longitude}</p>`
-											: ''
-									}
-								</div>
+						const tmp = document.createElement('div');
+						tmp.classList.add('post');
+						tmp.innerHTML = `
+							<div class='post-header'>
+								<h3>${post.title}</h3>
+								<i><a href="/users/${post.posted_by}">${user.u_name}</a></i>
+								<button id="${post._id}">Edit</button>
+							</div>
+							<div>
+								${
+									post.content.text
+										? `<p>${post.content.text}</p>`
+										: ''
+								}
+								${
+									post.content.img
+										? `<a href="${env.BACKEND_URL}/media/image/${post.content.img}" target="_blank">immagine</a>`
+										: ''
+								}
+								${
+									post.content.position
+										? `<p>Latitude: ${post.content.position.latitude}, Longitude: ${post.content.position.longitude}</p>`
+										: ''
+								}
 							</div>
 						`;
-						addActionToUserLink(post.posted_by);
+						postsDiv.appendChild(tmp);
 					})
-					.then(() => addActionToUserLink(post.posted_by))
+					.then(() => addListenerToEditButton(post._id))
 					.catch(error => console.log(error));
 			});
 		})
 		.catch(error => console.log(error));
+}
+
+function addListenerToEditButton(postId: string) {
+	document.getElementById(`${postId}`)!.addEventListener('click', () => router.navigateTo(`/posts/${postId}`));
 }
