@@ -4,7 +4,7 @@ import { Container, Box, Grid, TextField, Button, Typography, Divider } from '@m
 import { LoginContext } from "../../context/LoginContext/LoginContext";
 
 function Settings() {
-    const { loggedIn, setLoggedIn } = useContext(LoginContext);
+    const { loggedIn, setLoggedIn, justRegistered, setJustRegistered } = useContext(LoginContext);
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);

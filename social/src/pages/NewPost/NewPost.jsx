@@ -9,6 +9,7 @@ import { TextField, Button, InputLabel, FormControl, MenuItem, Select, Box, Link
 import { Autocomplete } from '@mui/material';
 import FaceIcon from '@material-ui/icons/Face';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import { Alert } from '@mui/material';
 import { MentionsInput, Mention } from 'react-mentions';
 import './newPost.css';
 import { useNavigate } from 'react-router-dom';
@@ -25,8 +26,9 @@ function NewPost() {
   const [users, setUsers] = useState([]);
   const [image, setImage] = useState('');
   const [preview, setPreview] = useState(null);
-  const [error, setError] = useState(null);
   const [position, setPosition] = useState(undefined);
+  const [hasPosition, setHasPosition] = useState(false);
+  const [hasImage, setHasImage] = useState(false);
   const [keywords, setKeywords] = useState('');
   const [contentType, setcontentType] = useState('geolocation'); // ['text', 'image', 'geo']
   const [postType, setPostType] = useState('normal');
@@ -36,9 +38,25 @@ function NewPost() {
   const [myChannels, setMyChannels] = useState([]); // New state variable for the user's channels
   const { posts, setPosts } = useContext(PostsContext);
   const [lessChar, setLessChar] = useState(0);
+  const [alert, setAlert] = useState({ open: false, message: '', severity: '' });
   const token = localStorage.getItem('token');
   const username = localStorage.getItem('username');
   const navigate = useNavigate();
+
+
+  useEffect(() => {
+    // Quando il componente viene montato, leggi lo stato da localStorage
+    const savedToken = localStorage.getItem('token');
+    if (savedToken) {
+      localStorage.setItem('token', savedToken);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Ogni volta che lo stato cambia, salvalo in localStorage
+    localStorage.setItem('token', token);
+  }, [token, loggedIn]);
+
 
   useEffect(() => {
     setIsFormValid(subject !== '' && (postText !== '' || image !== null || position ) && keywords !== '');
@@ -67,7 +85,6 @@ function NewPost() {
     setImage(null);
     setPostText('');
     setPosition(null);
-    setError(null);
   }, [contentType]);
 
   useEffect(() => {
@@ -113,10 +130,6 @@ function NewPost() {
     setPostType(event.target.value);
   };
 
-  const handleDirectRecipientChange = (event) => {
-    setDirectRecipient(event.target.value);
-  };
-
   const handlePostTextChange = event => {
     const newPostText = event.target.value;
     if(postType === 'normal'){
@@ -136,7 +149,7 @@ function NewPost() {
           monthly: prevState?.monthly + diff, // diff is negative, so this decreases monthly
         }));
       }else{
-        setError('You have reached your daily, weekly, or monthly character limit');
+        setAlert('You have reached your daily, weekly, or monthly character limit');
         return;
       }
       setLessChar(newPostText.length);
@@ -163,7 +176,7 @@ function NewPost() {
           monthly: prevState?.monthly + diff, // diff is negative, so this decreases monthly
         }));
       }else{
-        setError('You have reached your daily, weekly, or monthly character limit');
+        setAlert('You have reached your daily, weekly, or monthly character limit');
         return;
       }
     }
@@ -217,11 +230,12 @@ function NewPost() {
           const { latitude, longitude } = position.coords;
           if (latitude !== null && longitude !== null) {
             setPosition({latitude, longitude});
+            setHasPosition(true); // Set hasPosition to true after getting the position
           } else {
-            console.error('Could not get current position');
+            setAllert('Could not get current position');
           }
-          // Update character availability
-          if(postType === 'normal'){
+          // Update character availability only if it's the first time getting the position
+          if(postType === 'normal' && !hasPosition){
             setCharAvailability(prevState => ({
               ...prevState,
               dayly: prevState?.dayly - 125,
@@ -232,11 +246,12 @@ function NewPost() {
           }
         },
         (error) => {
-          console.error('Error getting current position', error);
+          setAllert('Error getting current position', error);
         }
       );
     }
   };
+
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
@@ -250,7 +265,7 @@ function NewPost() {
     // Saves the image file in local state
     setImage(file);
 
-    if(postType === 'normal'){
+    if(postType === 'normal' && !hasImage){
       // Update character availability
       setCharAvailability(prevState => ({
         ...prevState,
@@ -259,8 +274,10 @@ function NewPost() {
         monthly: prevState?.monthly - 125,
       }));
       setLessChar(125);
+      setHasImage(true); // Set hasImage to true after loading the image
     };
   };
+
   const createChannel = async (channel) => {
     const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels`, {
       method: 'POST',
@@ -311,19 +328,20 @@ function NewPost() {
         const validKeywords = splitKeywords.filter(keyword => keyword.length > 1);
 
         if (!directRecipient && postType === 'direct') {
-          alert('Please select a recipient.');
+          setAlert('Please select a recipient.');
           return;
         }
 
-        if (!channel && postType !== 'direct') {
-          alert('Please select a channel.');
-        }else if(charAvailability?.dayly <= 0) {
-          setError('You have reached your daily character limit');
-        }else if(charAvailability?.weekly <= 0) {
-          setError('You have reached your weekly character limit');
-        }else if(charAvailability?.monthly <= 0) {
-          setError('You have reached your monthly character limit');
-        }else{
+        if (charAvailability?.dayly <= 0) {
+          setAlert({ open: true, message: 'You have reached your daily character limit', severity: 'error' });
+          return; // return early to prevent further execution
+        } else if (charAvailability?.weekly <= 0) {
+          setAlert({ open: true, message: 'You have reached your weekly character limit', severity: 'error' });
+          return; // return early to prevent further execution
+        } else if (charAvailability?.monthly <= 0) {
+          setAlert({ open: true, message: 'You have reached your monthly character limit', severity: 'error' });
+          return; // return early to prevent further execution
+        } else{
           let channelId = channel;
           if (postType === 'direct') {
             const channelName = `__direct__${username}${directRecipient.u_name}`;
@@ -388,8 +406,7 @@ function NewPost() {
         if (image) {
           const imageData = new FormData();
           imageData.append('image', image);
-          console.log(newPost);
-          imageData.append('postId', newPost._id); // Assuming the post ID is available as _id
+          imageData.append('postId', newPost.post._id); // Assuming the post ID is available as _id
       
           const imageResponse = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/media/image`, {
             method: 'PUT',
@@ -403,7 +420,7 @@ function NewPost() {
           }
 
           const imageResponseData = await imageResponse.json();
-          newPost.content.img = imageResponseData.imgId; // Assuming the image ID is available as imgId
+          newPost.post.content.img = imageResponseData.imgId; // Assuming the image ID is available as imgId
         }
         
         // Updated the posts list
@@ -413,7 +430,6 @@ function NewPost() {
         setSubject('');
         setImage(null);
         setPostText('');
-        setError(null);
         setPosition(null);
         setKeywords('');
         setcontentType('text');
@@ -664,6 +680,11 @@ function NewPost() {
                 />    
               </Grid>
 
+              {alert.open && (
+                  <Grid item xs={12}>
+                    <Alert severity={alert.severity}>{alert.message}</Alert>
+                  </Grid>
+                )}
               <Grid item xs={12} style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <Button variant="contained" style={{ marginRight: '10px' }} onClick={() => navigate('/Homepage')}>
                   Cancel
@@ -672,8 +693,6 @@ function NewPost() {
                   Submit
                 </Button>
               </Grid>
-
-
             </Grid>
           ) : (
             <Typography variant="body1" style={{ marginTop: '50px', textAlign: 'center' }}>

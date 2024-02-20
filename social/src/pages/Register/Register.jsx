@@ -1,26 +1,31 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import "./register.css";
+import { LoginContext } from '../../context/LoginContext/LoginContext';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import {TextField, Button, Container, Typography, Box, FormControl, InputLabel, Select, MenuItem} from '@material-ui/core';
+import {TextField, Button, Container, Typography, Box, InputLabel, Select, MenuItem, Snackbar} from '@material-ui/core';
+import { Alert } from '@mui/material';
 import {green} from '@material-ui/core/colors/';
 import { useNavigate } from 'react-router-dom';
 
 function Register() {
   const [user, setUser] = useState({
     name: {
-      first: '',
-      last: ''
+      first: undefined,
+      last: undefined
     },
-    email: '',
+    email: undefined,
     type: 'normal',
-    b_date: '', 
-    img: '' 
+    b_date: undefined, 
+    img: undefined,
+    u_name: undefined
   });
 
   const [password, setPassword] = useState('');
   const [uploadComplete, setUploadComplete] = useState(false);
   const [imageFile, setImageFile] = useState(null);
-  const [error, setError] = useState('');
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const { setLoggedIn, setJustRegistered } = useContext(LoginContext);
 
   const  navigate = useNavigate();
 
@@ -32,16 +37,45 @@ function Register() {
   const handleEmailChange = (event) => {
     const email = event.target.value;
     setUser(prevState => ({ ...prevState, email: email }));
-  
-    if (!isEmailValid(email)) {
-      setError('Please enter a valid email address');
-    } else {
-      setError('');
-    }
   };
 
+  const isPasswordValid = (password) => {
+    // La password deve avere almeno 8 caratteri, una lettera maiuscola, una lettera minuscola e un numero
+    const regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+    return regex.test(password);
+  };
+  
+  const isAdult = (b_date) => {
+    const birthDate = new Date(b_date);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age >= 18;
+  };
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!isEmailValid(user.email)) {
+      setAlertMessage('Please enter a valid email address');
+      setShowAlert(true);
+      return;
+    }
+  
+    if (!isPasswordValid(password)) {
+      setAlertMessage('Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number');
+      setShowAlert(true);
+      return;
+    }
+  
+    if (!isAdult(user.b_date)) {
+      setAlertMessage('You must be at least 18 years old to register and write a valid date');
+      setShowAlert(true);
+      return;
+    }
 
     const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/register`, {
       method: 'POST', 
@@ -54,13 +88,24 @@ function Register() {
       })
     });
 
+    if (!response.ok) {
+      const responseBody = await response.json();
+      setAlertMessage( 'An error occurred while registering. Make sure you have written your name and surname, and that your username and email do not already exist');
+      setShowAlert(true);
+      return;
+    }
+
     const data = await response.json();
 
     if(data.success) {
       localStorage.setItem('token', data.jwt.token);
+      localStorage.setItem('userId', data.id);
+      setJustRegistered(true);
+      setLoggedIn(true);
       handleImageUpload(imageFile);
-    } else {
+      navigate('/Homepage');
     }
+
   }
 
   const handleImageSelection = (event) => {
@@ -87,16 +132,12 @@ function Register() {
     .then(data => {
       // Update the user state with the returned image URL
       setUser(prevState => ({ ...prevState, img: data.url }));
-      localStorage.removeItem('token');
-      navigate('/login');
     })
     .catch((error) => {
       console.error('Error:', error);
     });
   }
 
-  const isDisabled = !isEmailValid(user.email) || user.u_name?.length === 0 || user.email?.length === 0 ||user.name.first?.length === 0 || 
-  user.name?.last.length === 0 || user.u_name?.length === 0 || password?.length === 0;
 
   return (
     <Container maxWidth="sm" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', height: '100vh', marginTop:'70px' }}>
@@ -148,8 +189,6 @@ function Register() {
             onChange={handleEmailChange}
             fullWidth
           />
-
-          {error && <p style={{ color: 'red' }}>{error}</p>}
         
           <TextField
             className='register-Form-Input'
@@ -168,7 +207,6 @@ function Register() {
           >
             <MenuItem value={'normal'}>Normal</MenuItem>
             <MenuItem value={'vip'}>VIP</MenuItem>
-            <MenuItem value={'smm'}>Smm</MenuItem>
           </Select>
 
           <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column">
@@ -188,7 +226,6 @@ function Register() {
           <Button 
             className="register-button"
             type="submit"
-            disabled={isDisabled}
             variant="contained" // This gives the button a solid background
             color="primary" // This makes the button blue
           >
@@ -196,6 +233,13 @@ function Register() {
           </Button>
         
     </form>
+          {showAlert && (
+                <Snackbar open={showAlert} onClose={() => setShowAlert(false)} anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}>
+                  <Alert onClose={() => setShowAlert(false)} severity="error">
+                    {alertMessage}
+                  </Alert>
+                </Snackbar>
+          )}
     </Container>
   );
 

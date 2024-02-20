@@ -40,7 +40,7 @@ const Profile = () => {
         if (image) {
           setUser(prevState => ({ ...prevState, img: `${import.meta.env.VITE_DEFAULT_URL}/media/image/${image}` }));
         }
-      }, [image, purchased]);
+      }, [image, purchased, token]);
     
     useEffect(() => {
       if(isSearching) return;
@@ -56,7 +56,7 @@ const Profile = () => {
         setChannels(channelsObj);
       })
       .catch(error => console.error('Error:', error));
-    }, [userPosts, isSearching]);
+    }, [userPosts, isSearching, token]);
 
     useEffect(() => {
       if (isSearching) return;
@@ -78,7 +78,7 @@ const Profile = () => {
     
           fetchUserPosts();
         }
-    }, [isSearching]);
+    }, [isSearching, token]);
 
     useEffect(() => {
         if(isSearching) return;
@@ -104,7 +104,7 @@ const Profile = () => {
             navigate('/login');
           });
         } 
-    }, [posts.length, isSearching]);
+    }, [posts.length, isSearching, token]);
 
     const handleChangeImage = () => {
         // Simula un click sull'input del file quando l'utente clicca su "Cambia immagine"
@@ -232,7 +232,7 @@ const Profile = () => {
       .catch(error => {
         console.error('There was an error!', error);
       });
-  }, [id]);
+  }, [id, token]);
 
   if (!user) {
     return <div>Loading...</div>;

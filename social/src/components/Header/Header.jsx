@@ -26,7 +26,7 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 export default function ButtonAppBar() {
   const navigate = useNavigate();
-  const { loggedIn, setLoggedIn } = useContext(LoginContext);
+  const { loggedIn, setLoggedIn, justRegistered, setJustRegistered } = useContext(LoginContext);
   const { setIsSearching } = useContext(SearchContext);
   const {isSidebarMinimized, setSidebarMinimized} = useContext(SidebarContext);
   const [searchValue, setSearchValue] = useState('');
@@ -124,26 +124,27 @@ export default function ButtonAppBar() {
   };
 
   useEffect(() => {
-    const fetchMyChannels = async () => {
-      const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels/my`, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': token,
-        },
-      });
-      const channels = await response.json();
-
-      const filteredChannels = channels.filter(channel => channel.name.startsWith('__direct__'));
-      setMyChannels(filteredChannels);
-    };
-
-    fetchMyChannels();
-  }, []);
+    if(loggedIn){
+      const fetchMyChannels = async () => {
+        const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels/my`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token,
+          },
+        });
+        const channels = await response.json();
+  
+        const filteredChannels = channels.filter(channel => channel.name.startsWith('__direct__'));
+        setMyChannels(filteredChannels);
+      };
+  
+      fetchMyChannels();
+    }
+  }, [loggedIn]);
 
   useEffect(() => {
     const fetchPosts = async () => {
       const allPosts = [];
-      console.log(myChannels);
       for (const channel of myChannels) {
         const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels/${channel._id}/posts`);
         const data = await response.json();

@@ -80,11 +80,12 @@ const routes = createBrowserRouter([
 
 function App() {
 	const [loggedIn, setLoggedIn] = useState(false);
+	const [justRegistered, setJustRegistered] = useState(false);
 	const [posts, setPosts] = useState([]);
 	const [userPosts, setUserPosts] = useState([]);
 	const [updateInterval, setUpdateInterval] = useState(0);
 	const [updateTimes, setUpdateTimes] = useState(0);
-	const loginContextValue = useMemo(() => ({ loggedIn, setLoggedIn }), [loggedIn, setLoggedIn]);
+	const loginContextValue = useMemo(() => ({ loggedIn, setLoggedIn, justRegistered, setJustRegistered }), [loggedIn, setLoggedIn, justRegistered, setJustRegistered]);
 	const postsContextValue = useMemo(() => ({ posts, setPosts }), [posts, setPosts]);
 	const timeContextValue = useMemo(() => ({ updateInterval, setUpdateInterval, updateTimes, setUpdateTimes }), [updateInterval, setUpdateInterval, updateTimes, setUpdateTimes]);
 	
