@@ -29,6 +29,7 @@ export default function Post({post}) {
     const [userReaction, setUserReaction] = useState(post?.reactions?.find(reaction => reaction.user_id === userID));
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+    const isScreenLarge = useMediaQuery(theme.breakpoints.up('md'));
     if(!loggedIn) { localStorage.removeItem('userId'); }
     const postDate = new Date(date);
     const today = new Date();
@@ -209,16 +210,24 @@ export default function Post({post}) {
               <CardContent>
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={2}>
-                   
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <div style={{ 
+                      display: 'flex', 
+                      flexDirection: isScreenLarge ? 'column' : 'row', 
+                      justifyContent: 'space-between', 
+                      alignItems: 'center' 
+                    }}>
+                      <div style={{ 
+                        display: 'flex', 
+                        flexDirection: isScreenLarge ? 'column' : 'row', 
+                        alignItems: isScreenLarge ? 'center' : 'flex-start' 
+                      }}>
                         <Avatar alt="Profile" src={user && user.img ? `${import.meta.env.VITE_DEFAULT_URL}/media/image/${user.img}` : undefined} >
                           {user?.u_name?.charAt(0).toUpperCase()}
                         </Avatar>
-                        {user && <Link to={`/Profile/${posted_by}`} style={{ color: 'inherit', marginLeft: '10px' }}>@{user.u_name}</Link>}
+                        {user && <Link to={`/Profile/${posted_by}`} style={{ color: 'inherit', marginLeft: isScreenLarge ? '0' : '10px' }}>@{user.u_name}</Link>}
                       </div>
-                      {timed &&
-                        <div>
+                      {timed && isSmallScreen &&
+                        <div style={{ alignSelf: isScreenLarge ? 'flex-end' : 'initial' }}>
                           <Tooltip title="Timed squeal">
                             <AlarmIcon />
                           </Tooltip>
@@ -228,7 +237,12 @@ export default function Post({post}) {
                   </Grid>
                   <Grid item xs={12} sm={10}>
                     <div>
-                      <div style={{ display: 'flex', flexDirection: isSmallScreen ? 'column-reverse' : 'row', justifyContent: 'space-between', alignItems: 'left' }}>
+                      <div style={{ 
+                        display: 'flex', 
+                        flexDirection: isSmallScreen ? 'column-reverse' : 'row', 
+                        justifyContent: 'space-between', 
+                        alignItems: 'left' 
+                      }}>
                         <div>
                           {channel?.name && !channel.name.startsWith('__direct__') && (
                             <Link to={`/AllChannels/${channel?._id}`} style={{ textDecoration: 'none' }}>
@@ -245,6 +259,13 @@ export default function Post({post}) {
                             </Link>
                           }
                         </div>
+                        {timed && !isSmallScreen &&
+                          <div>
+                            <Tooltip title="Timed squeal">
+                              <AlarmIcon />
+                            </Tooltip>
+                          </div>
+                        }
                       </div>
                       <Typography variant="h5" style={{ marginTop: '20px' }}>
                         {title}
@@ -264,43 +285,49 @@ export default function Post({post}) {
                       {keywords && renderKeywords(keywords)}
                     </Typography>
                     <Grid container justifyContent="space-between">
-                      <Grid container spacing={1}>
-                        <Grid item xs={3} sm={3}>
-                          <IconButton onClick={() => handleReaction(-2)} disabled={!loggedIn}>
-                            <SentimentVeryDissatisfied style={{ color: userReaction && userReaction.value === -2 ? 'red' : 'grey' }} />
-                            <CountUp end={reactionCounts.veryDissatisfied} />
-                          </IconButton>
+                      {channel?.name && !channel.name.startsWith('__direct__') && (
+                        <Grid container justifyContent="space-between">
+                          <Grid container spacing={1}>
+                            <Grid item xs={3} sm={3}>
+                              <IconButton onClick={() => handleReaction(-2)} disabled={!loggedIn}>
+                                <SentimentVeryDissatisfied style={{ color: userReaction && userReaction.value === -2 ? 'red' : 'grey' }} />
+                                <CountUp end={reactionCounts.veryDissatisfied} />
+                              </IconButton>
+                            </Grid>
+                            <Grid item xs={3} sm={3}>
+                              <IconButton onClick={() => handleReaction(-1)} disabled={!loggedIn}>
+                                <SentimentDissatisfied style={{ color: userReaction && userReaction.value === -1 ? 'orange' : 'grey' }} />
+                                <CountUp end={reactionCounts.dissatisfied} />
+                              </IconButton>
+                            </Grid>
+                            <Grid item xs={3} sm={3}>
+                              <IconButton onClick={() => handleReaction(1)} disabled={!loggedIn}>
+                                <SentimentSatisfied style={{ color: userReaction && userReaction.value === 1 ? 'lightgreen' : 'grey' }} />
+                                <CountUp end={reactionCounts.satisfied} />
+                              </IconButton>
+                            </Grid>
+                            <Grid item xs={3} sm={3}>
+                              <IconButton onClick={() => handleReaction(2)} disabled={!loggedIn}>
+                                <SentimentVerySatisfied style={{ color: userReaction && userReaction.value === 2 ? 'green' : 'grey' }} />
+                                <CountUp end={reactionCounts.verySatisfied} />
+                              </IconButton> 
+                            </Grid>
+                          </Grid>
                         </Grid>
-                        <Grid item xs={3} sm={3}>
-                          <IconButton onClick={() => handleReaction(-1)} disabled={!loggedIn}>
-                            <SentimentDissatisfied style={{ color: userReaction && userReaction.value === -1 ? 'orange' : 'grey' }} />
-                            <CountUp end={reactionCounts.dissatisfied} />
-                          </IconButton>
-                        </Grid>
-                        <Grid item xs={3} sm={3}>
-                          <IconButton onClick={() => handleReaction(1)} disabled={!loggedIn}>
-                            <SentimentSatisfied style={{ color: userReaction && userReaction.value === 1 ? 'lightgreen' : 'grey' }} />
-                            <CountUp end={reactionCounts.satisfied} />
-                          </IconButton>
-                        </Grid>
-                        <Grid item xs={3} sm={3}>
-                          <IconButton onClick={() => handleReaction(2)} disabled={!loggedIn}>
-                            <SentimentVerySatisfied style={{ color: userReaction && userReaction.value === 2 ? 'green' : 'grey' }} />
-                            <CountUp end={reactionCounts.verySatisfied} />
-                          </IconButton> 
-                        </Grid>
-                      </Grid>
+                      )}
                       <Grid container alignItems="flex-end" justifyContent="flex-end">
                         <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
                           <Typography variant="body2" color="textSecondary">
-                            Posted {displayDate}
+                            {channel?.name?.startsWith('__direct__') ? 'Sent' : 'Posted'} {displayDate}
                           </Typography>
-                          <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <VisibilityIcon style={{ marginRight: '10px' }}/>
-                            <Typography variant="body2" color="textSecondary">
-                              {views || 0}
-                            </Typography>
-                          </div>
+                          {channel?.name && !channel.name.startsWith('__direct__') && (
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                              <VisibilityIcon style={{ marginRight: '10px' }}/>
+                              <Typography variant="body2" color="textSecondary">
+                                {views || 0}
+                              </Typography>
+                            </div>
+                          )}
                         </div>
                       </Grid>
                     </Grid>
