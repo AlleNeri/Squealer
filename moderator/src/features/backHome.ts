@@ -1,4 +1,4 @@
-import { Navigate } from '../utils/navigate';
+import { router } from '../utils/router';
 import { env } from '../env';
 
 import homeIcon from '../assets/home.svg';
@@ -15,6 +15,5 @@ export function showBackHome() {
 }
 
 function addActionToBackHomeButton() {
-	const navigate: Navigate = Navigate.getInstance();
-	document.querySelector<HTMLButtonElement>(`#${backHomeButtonId}`)!.addEventListener('click', () => navigate.toHomePage());
+	document.querySelector<HTMLButtonElement>(`#${backHomeButtonId}`)!.addEventListener('click', () => router.navigateTo(''));
 }

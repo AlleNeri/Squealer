@@ -1,4 +1,4 @@
-import { Navigate } from './utils/navigate';
+import { router } from './utils/router';
 import { showBackHome } from './features/backHome';
 import { showLogin } from './features/login';
 import { env } from './env';
@@ -15,14 +15,10 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 	<div id="${env.BACK_HOME_DIV}"></div>
 `;
 
-const navigate: Navigate = Navigate.getInstance(
-	showDashboard,
-	{
-		"login": showLogin,
-		"users": showUsers,
-		"posts": showPosts,
-	}
-);
+router.add("", showDashboard)
+	.add("login", showLogin)
+	.add("users", showUsers)
+	.add("posts", showPosts);
 
 showBackHome();
-navigate.to("login");
+router.navigateTo("login");
