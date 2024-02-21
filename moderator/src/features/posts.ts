@@ -36,6 +36,7 @@ export function showPosts() {
 						</optgroup>
 					</select>
 				</div>
+				
 			</form>
 			<div id='${postsId}' class="posts-container"></div>
 		`;
@@ -98,27 +99,30 @@ function populatePosts() {
 							<div class='post-header'>
 								<h3>${post.title}</h3>
 								<i><a href="/users/${post.posted_by}">${user.u_name}</a></i>
-								<p>${new Date(post.date).toLocaleDateString()}</p>
 								${channel ? `<p>§${channel.name}</p>` : ''}
+								<p>${new Date(post.date).toLocaleDateString()}</p>
 								<button id="${post._id}">Edit</button>
 							</div>
-								<div>
-									${
-										post.content.text
-											? `<p>${post.content.text}</p>`
-											: ''
-									}
-									${
-										post.content.img
-											? `<a href="${env.BACKEND_URL}/media/image/${post.content.img}" target="_blank">immagine</a>`
-											: ''
-									}
-									${
-										post.content.position
-											? `<p>Latitude: ${post.content.position.latitude}, Longitude: ${post.content.position.longitude}</p>`
-											: ''
-									}
-								</div>
+							<div>
+								${
+									post.content.text
+										? `<p>${post.content.text}</p>`
+										: ''
+								}
+								${
+									post.content.img
+										? `<a href="${env.BACKEND_URL}/media/image/${post.content.img}" target="_blank">immagine</a>`
+										: ''
+								}
+								${
+									post.content.position
+										? `<p>Latitude: ${post.content.position.latitude}, Longitude: ${post.content.position.longitude}</p>`
+										: ''
+								}
+							</div>
+							<div class='post-footer'>
+								<p>Keywords: ${post.keywords.map((keyword: string) => `#${keyword}`).join(', ')}</p>
+							</div>
 							`;
 							postsDiv.appendChild(tmp);
         					addListenerToEditButton(post._id);

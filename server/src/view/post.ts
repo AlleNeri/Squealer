@@ -143,6 +143,22 @@ postRoute.put("/:id/position", Auth.authorize, (req: Request, res: Response) => 
 		.catch((err: Error) => res.status(500).json({ msg: "Error updating post", err: err }));
 });
 
+//update a post
+//only a mod can update a post
+postRoute.put("/:id", Auth.authorize, Auth.isMod, (req: Request, res: Response) => {
+	PostSchema.findById(req.params.id)
+		.then((post: Post | null) => {
+			if(!post) res.status(404).json({ msg: "Post not found" });
+			else {
+				const updatedPost: Post=new PostSchema(req.body.post);
+				updatedPost.save()
+					.then((post: Post) => res.status(200).json(post))
+					.catch((err: Error) => res.status(500).json({ msg: "Error updating post", err: err }));
+			}
+		})
+		.catch((err: Error) => res.status(500).json({ msg: "Error updating post", err: err }));
+});
+
 //delete a post
 postRoute.delete("/:id", Auth.authorize, (req: Request, res: Response) => {
 	PostSchema.findByIdAndDelete(req.params.id)
