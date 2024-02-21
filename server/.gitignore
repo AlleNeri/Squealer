@@ -1,5 +1,6 @@
 #dependency
 node_modules/
+./package-lock.json
 
 #distribution
 dist/
@@ -9,3 +10,6 @@ rsa-keys/
 
 #.env file
 config.env
+
+#frontends
+smm/

@@ -3,6 +3,7 @@ server/node_modules
 server/dist
 server/rsa-keys
 server/config.env
+server/package-lock.json
 
 # SMM
 SMM/node_modules

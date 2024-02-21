@@ -1,7 +1,8 @@
 /*** Imports ***/
-import express, { Express, Request, Response } from "express";
+import express, { Express, Router, Request, Response } from "express";
 import cors from "cors";
 import mongoose from "mongoose";
+import path from "path";
 
 import "./env"; //do not move this line and be careful to not import anything or write any code before this line
 
@@ -42,17 +43,24 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-//TODO: add checkLogin to all protected routes
-app.use("/router", router);	// This is for testing purposes only. TODO: Remove this line.
-app.use("/posts", postRoute);
-app.use("/users", userRoute);
-app.use("/channels", channelRoute);
-app.use("/media", mediaRoute);
+/*** Api ***/
+const apiRouter: Router = Router();
+apiRouter.use("/router", router);	// This is for testing purposes only. TODO: Remove this line.
+apiRouter.use("/posts", postRoute);
+apiRouter.use("/users", userRoute);
+apiRouter.use("/channels", channelRoute);
+apiRouter.use("/media", mediaRoute);
+
+app.use("/api", apiRouter);
 
 //TODO: remove this route, it's only for testing purposes
 app.get('/', (_: Request, res: Response)=>{
 	res.status(200).send(`The server seams to run correctly.`);
 });
+
+/*** Frontends ***/
+const basePath: string = path.join(__dirname, '../');
+app.use('/smm', express.static(path.join(basePath, 'smm')));
 
 /*** Server start ***/
 app.listen(PORT, ()=>console.log(`The server responds at: http://localhost:${PORT}`));
