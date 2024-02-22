@@ -355,7 +355,7 @@ export default function ButtonAppBar() {
                       {notifications.map((notification, index) => (
                         <Link to={`AllChannels/${notification.posted_on}`} style={{ textDecoration: 'none', color: 'inherit' }} key={index} onClick={handleNotificationClose}>
                           <div>
-                            <Typography onMouseOver={(e) => e.target.style.color = 'blue'} onMouseOut={(e) => e.target.style.color = 'inherit'}>
+                            <Typography component="div" onMouseOver={(e) => e.target.style.color = 'blue'} onMouseOut={(e) => e.target.style.color = 'inherit'}>
                               {notification.img ? (
                                 <div>
                                   <img src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${notification.img}`} alt="Profile" style={{height:"20px", width:"20px", borderRadius: "50%"}} />
@@ -367,7 +367,6 @@ export default function ButtonAppBar() {
                                   <span style={{ marginLeft: '5px' }}>{notification.u_name} sent you a message!</span>
                                 </div>
                               )}
-                              
                             </Typography>
                             <Divider style={{ backgroundColor: 'black' }} /> 
                           </div>
@@ -377,7 +376,8 @@ export default function ButtonAppBar() {
                   ))}
                   </>
                 ) : (
-                  <Typography variant="body1" style={{ textTransform: 'uppercase', fontWeight: 'bold' }}>No notifications</Typography>
+                  <div><Typography>No notifications</Typography></div>
+
                 )}
               </Popover>
             </div>
@@ -461,7 +461,7 @@ export default function ButtonAppBar() {
                       {notifications.map((notification, index) => (
                         <Link to={`AllChannels/${notification.posted_on}`} style={{ textDecoration: 'none', color: 'inherit' }} key={index} onClick={handleNotificationClose}>
                           <div>
-                            <Typography onMouseOver={(e) => e.target.style.color = 'blue'} onMouseOut={(e) => e.target.style.color = 'inherit'}>
+                            <Typography component="div" onMouseOver={(e) => e.target.style.color = 'blue'} onMouseOut={(e) => e.target.style.color = 'inherit'}>
                               {notification.img ? (
                                 <div>
                                   <img src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${notification.img}`} alt="Profile" style={{height:"20px", width:"20px", borderRadius: "50%"}} />
@@ -473,7 +473,6 @@ export default function ButtonAppBar() {
                                   <span style={{ marginLeft: '5px' }}>{notification.u_name} sent you a message!</span>
                                 </div>
                               )}
-                              
                             </Typography>
                             <Divider style={{ backgroundColor: 'black' }} /> 
                           </div>
@@ -483,7 +482,7 @@ export default function ButtonAppBar() {
                   ))}
                   </>
                 ) : (
-                  <Typography variant="body1" style={{ textTransform: 'uppercase', fontWeight: 'bold' }}>No notifications</Typography>
+                  <div><Typography>No notifications</Typography></div>
                 )}
               </Popover>
 
