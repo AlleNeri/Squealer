@@ -232,7 +232,7 @@ const Profile = () => {
       .catch(error => {
         console.error('There was an error!', error);
       });
-  }, [id, token]);
+  }, [id, token, purchased]);
 
   if (!user) {
     return <div>Loading...</div>;
