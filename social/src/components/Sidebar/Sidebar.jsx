@@ -22,6 +22,7 @@ const Sidebar = () => {
   const { loggedIn } = useContext(LoginContext);
   const location = useLocation();
   const token = localStorage.getItem('token');
+  const addedChannel = localStorage.getItem('addedChannel');
   const { isSidebarMinimized, setSidebarMinimized } = useContext(SidebarContext);
 
   const useStyles = makeStyles({
@@ -124,7 +125,7 @@ useEffect(() => {
     };
 
     fetchAllChannels();
-  }, [token, allChannels.length]);
+  }, [token, allChannels.length, addedChannel]);
 
   useEffect(() => {
     if (loggedIn) {
@@ -147,7 +148,7 @@ useEffect(() => {
 
       fetchMyChannels();
     }
-  }, [loggedIn, token, myChannels.length]);
+  }, [loggedIn, token, myChannels.length, addedChannel]);
 
 
   return (
@@ -175,7 +176,15 @@ useEffect(() => {
             <ListItemText primary="CHANNELS" style={{color:'white'}}/>
             {loggedIn && (
               <Tooltip title="New channel" >
-                <IconButton onClick={() => setChannelModalOpen(true)} style={{color:'white'}}>
+                <IconButton 
+                  onClick={() => {
+                    setChannelModalOpen(true);
+                    
+                    // Set the item in localStorage
+                    localStorage.setItem('lastPath', 'NewChannel');
+                  }} 
+                  style={{color:'white'}}
+                >
                   <AddCircleIcon />
                 </IconButton>
               </Tooltip>
@@ -302,14 +311,14 @@ useEffect(() => {
       </Drawer>
   </div>
   {isChannelModalOpen && (
-        <Channel
-          isOpen={isChannelModalOpen}
-          onClose={() => {
-            setSidebarMinimized(true);
-            setChannelModalOpen(false);
-          }}
-        />
-      )}
+    <Channel
+      isOpen={isChannelModalOpen}
+      onClose={() => {
+        setSidebarMinimized(true);
+        setChannelModalOpen(false);
+      }}
+    />
+  )}
     </>
   );
 

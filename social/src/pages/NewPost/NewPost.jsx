@@ -41,6 +41,7 @@ function NewPost() {
   const [alert, setAlert] = useState({ open: false, message: '', severity: '' });
   const token = localStorage.getItem('token');
   const username = localStorage.getItem('username');
+  const addedChannel = localStorage.getItem('addedChannel');
   const navigate = useNavigate();
 
 
@@ -56,7 +57,6 @@ function NewPost() {
     // Ogni volta che lo stato cambia, salvalo in localStorage
     localStorage.setItem('token', token);
   }, [token, loggedIn]);
-
 
   useEffect(() => {
     setIsFormValid(subject !== '' && (postText !== '' || image !== null || position ) && keywords !== '');
@@ -124,7 +124,7 @@ function NewPost() {
 
       fetchMyChannels();
     }
-  }, [loggedIn, token]);
+  }, [loggedIn, token, addedChannel]);
 
   const handlePostTypeChange = (event) => {
     setPostType(event.target.value);
@@ -438,6 +438,7 @@ function NewPost() {
     }
 
     const handleOpen = () => {
+      localStorage.setItem('lastPath', 'NewPost');
       setOpen(true);
     };
     
@@ -655,11 +656,9 @@ function NewPost() {
                     onChange={(e) => setChannel(e.target.value)}
                     disabled={postType === 'direct'}
                     endAdornment={
-                      myChannels.filter(ch => !ch.name.startsWith('__direct__')).length === 0 && (
-                        <IconButton onClick={handleOpen}>
-                          <AddCircleIcon />
-                        </IconButton>
-                      )
+                    <IconButton onClick={handleOpen}>
+                      <AddCircleIcon />
+                    </IconButton>
                     }
                   >
                     {myChannels.filter(ch => !ch.name.startsWith('__direct__')).map((ch) => (

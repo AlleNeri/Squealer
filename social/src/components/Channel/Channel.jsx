@@ -33,7 +33,10 @@ const Channel = ({ isOpen, onClose }) => {
                 throw new Error('Network response was not ok');
             }
             const data = await response.json();
-            navigate(`/AllChannels/${data._id}`);
+            if(localStorage.getItem('lastPath') === "NewChannel"){
+                navigate(`/AllChannels/${data._id}`);
+            }
+            localStorage.setItem('addedChannel', data._id);
             onClose();
         } catch (error) {
             console.error('Error creating channel', error);
