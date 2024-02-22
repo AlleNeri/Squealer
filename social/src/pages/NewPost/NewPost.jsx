@@ -186,25 +186,38 @@ function NewPost() {
   const handleKeywordsChange = (e) => {
     const value = e.target.value;
     const lastChar = value.charAt(value.length - 1);
-  
+
     // Se l'utente sta cercando di inserire '#' dopo '#', non permetterlo
     if (value.length > 1 && lastChar === '#' && value.charAt(value.length - 2) === '#') {
-      alert('Ogni keyword deve avere un solo cancelletto!')
+      setAlert('Ogni keyword deve avere un solo cancelletto!')
       return;
     }
-  
+
     // Se l'utente sta cercando di inserire un carattere non valido dopo '#', non permetterlo
     if (value.startsWith('#') && !lastChar.match(/[a-zA-Z0-9#]/)) {
-      alert('Non puoi scrivere simboli nella keyword, ma solo lettere e numeri!')
+      setAlert('Non puoi scrivere simboli nella keyword, ma solo lettere e numeri!')
       return;
     }
-  
+
     // Se l'utente sta cercando di inserire un carattere prima di '#', non permetterlo
     if (!value.startsWith('#') && value.length > 0) {
-      alert('Inizia la keyword con #!')
+      setAlert('Inizia la keyword con #!')
       return;
     }
-  
+
+    // Calculate the length of the string without '#'
+    const lengthWithoutHash = value.replace(/#/g, '').length;
+
+    // Check the post type
+    if (postType === 'normal') {
+      // Subtract the length from the character availability
+      setCharAvailability(prevAvailability => ({
+        dayly: prevAvailability.dayly - (lengthWithoutHash - keywords.replace(/#/g, '').length),
+        weekly: prevAvailability.weekly - (lengthWithoutHash - keywords.replace(/#/g, '').length),
+        monthly: prevAvailability.monthly - (lengthWithoutHash - keywords.replace(/#/g, '').length),
+      }));
+    }
+
     // Aggiorna lo stato con il nuovo valore
     setKeywords(value);
   }
@@ -228,14 +241,13 @@ function NewPost() {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-          if (latitude !== null && longitude !== null) {
-            setPosition({latitude, longitude});
-            setHasPosition(true); // Set hasPosition to true after getting the position
-          } else {
-            setAllert('Could not get current position');
-          }
+
           // Update character availability only if it's the first time getting the position
           if(postType === 'normal' && !hasPosition){
+            if (charAvailability?.dayly - 125 < 0 || charAvailability?.weekly - 125 < 0 || charAvailability?.monthly - 125 < 0) {
+              setAlert({ open: true, message: 'You have reached your daily, weekly, or monthly character limit', severity: 'error' });
+              return; // return early to prevent further execution
+            }
             setCharAvailability(prevState => ({
               ...prevState,
               dayly: prevState?.dayly - 125,
@@ -244,6 +256,14 @@ function NewPost() {
             }));
             setLessChar(125);
           }
+
+          if (latitude !== null && longitude !== null) {
+            setPosition({latitude, longitude});
+            setHasPosition(true); // Set hasPosition to true after getting the position
+          } else {
+            setAllert('Could not get current position');
+          }
+          
         },
         (error) => {
           setAllert('Error getting current position', error);
@@ -266,6 +286,10 @@ function NewPost() {
     setImage(file);
 
     if(postType === 'normal' && !hasImage){
+      if (charAvailability?.dayly - 125 < 0 || charAvailability?.weekly - 125 < 0 || charAvailability?.monthly - 125 < 0) {
+        setAlert({ open: true, message: 'You have reached your daily, weekly, or monthly character limit', severity: 'error' });
+        return; // return early to prevent further execution
+      }
       // Update character availability
       setCharAvailability(prevState => ({
         ...prevState,
@@ -422,7 +446,38 @@ function NewPost() {
           const imageResponseData = await imageResponse.json();
           newPost.post.content.img = imageResponseData.imgId; // Assuming the image ID is available as imgId
         }
-        
+      
+        try {
+          const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/${localStorage.getItem('userId')}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': token,
+            },
+            body: JSON.stringify({
+              user: {
+                char_availability: {
+                  dayly: charAvailability.dayly,
+                  weekly: charAvailability.weekly,
+                  monthly: charAvailability.monthly,
+                },
+              },
+            }),
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.msg);
+          }
+
+          // Handle successful update
+          console.log('User updated', response);
+        } catch (error) {
+          // Handle error
+          console.error('Failed to update user', error);
+        }
+
         // Updated the posts list
         setPosts(prevPosts => [...prevPosts, newPost]);
 
@@ -676,6 +731,7 @@ function NewPost() {
                   onChange={(e) => handleKeywordsChange(e)}
                   variant="outlined"
                   fullWidth
+                  helperText="Please enter keywords separated by '#'"
                 />    
               </Grid>
 
