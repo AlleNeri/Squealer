@@ -145,16 +145,19 @@ postRoute.put("/:id/position", Auth.authorize, (req: Request, res: Response) => 
 
 //update a post
 //only a mod can update a post
+//a body is required: { title?, content?, keywords? }
+//if the attribute isn't in the body the related field of the post wont be updated
+//so for example, to delete all keywords the field has to be an empty array
 postRoute.put("/:id", Auth.authorize, Auth.isMod, (req: Request, res: Response) => {
 	PostSchema.findById(req.params.id)
 		.then((post: Post | null) => {
-			if(!post) res.status(404).json({ msg: "Post not found" });
-			else {
-				const updatedPost: Post=new PostSchema(req.body.post);
-				updatedPost.save()
-					.then((post: Post) => res.status(200).json(post))
-					.catch((err: Error) => res.status(500).json({ msg: "Error updating post", err: err }));
-			}
+			if(!post) return res.status(404).json({ msg: "Post not found" });
+			//update the post
+			if(req.body.title) post.title = req.body.title;
+			if(req.body.content) post.content = req.body.content;
+			if(req.body.keywords) post.keywords = req.body.keywords;
+			post.save();
+			res.status(200).json({ msg: "Post updated", post: post });
 		})
 		.catch((err: Error) => res.status(500).json({ msg: "Error updating post", err: err }));
 });

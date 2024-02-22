@@ -51,8 +51,9 @@ userRoute.get('/:id', Auth.softAuthorize, (req: Request, res: Response) => {
 });
 
 //update a user
-userRoute.put('/:id', Auth.authorize, Auth.isMod, (req: Request, res: Response) => {
+userRoute.put('/:id', Auth.authorize, (req: Request, res: Response) => {
 	const id: string = req.params.id || req.user?.id;
+	if(req.user!.type !== UserType.MOD && id !== req.user?.id) return res.status(401).json({ msg: 'Unauthorized' });
 	UserSchema.findByIdAndUpdate(req.params.id, req.body.user)
 		.then((user: User | null) => {
 			if(!user) res.status(404).json({ msg: 'User not found' });
