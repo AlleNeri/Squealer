@@ -21,7 +21,7 @@ import { SidebarContext } from '../../context/SidebarContext/SidebarContext';
 import { UserPostsContext } from '../../context/UserPostsContext/UserPostsContext';
 import { PostsContext } from '../../context/PostsContext/PostsContext';
 import { SearchContext } from '../../context/SearchContext/SearchContext';
-import { Menu, MenuItem, IconButton, Typography, Popover, Avatar, Divider} from '@mui/material';
+import { Menu, MenuItem, IconButton, Typography, Popover, Avatar, Divider, Badge} from '@mui/material';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 export default function ButtonAppBar() {
@@ -33,6 +33,7 @@ export default function ButtonAppBar() {
   const { posts, setPosts } = useContext(PostsContext);
   const [channelPosts, setChannelPosts] = useState([]);
   const [notificationEl, setNotificationEl] = useState(null);
+  const [totalNotifications, setTotalNotifications] = useState(0);
   const [notifications, setNotifications] = useState([]);
   const [myChannels, setMyChannels] = useState([]);
   const { userPosts, setUserPosts } = useContext(UserPostsContext);
@@ -68,6 +69,9 @@ export default function ButtonAppBar() {
   }
 
   const handleNotificationClick = (event) => {
+    if (totalNotifications > 0) {
+      setNotificationEl(event.currentTarget);
+    }
     setNotificationEl(event.currentTarget);
   };
   
@@ -239,7 +243,13 @@ export default function ButtonAppBar() {
     return groups;
   }, {});
 
-  return (
+  useEffect(() => {
+    const total = Object.values(groupedNotifications).reduce((total, notifications) => total + notifications.length, 0);
+    setTotalNotifications(total);
+  }, [groupedNotifications]);
+
+  
+  return ( 
     <div className="header" style={headerStyle}>
         <Toolbar className="Toolbar" style={{ flexDirection: 'column' }}>
         <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
@@ -313,14 +323,15 @@ export default function ButtonAppBar() {
             <div>
             <IconButton style={{color: 'white'}} onClick={handleNotificationClick}>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  <Tooltip title="Notifications">
-                    <NotificationsIcon />
-                  </Tooltip>
+                    <Tooltip title="Notifications">
+                      <NotificationsIcon />
+                    </Tooltip>
                   <span style={{ fontSize: '0.8rem' }}>Notifications</span>
                 </div>
-              </IconButton>
+            </IconButton>
 
               <Popover
+                key={totalNotifications}
                 id={id}
                 open={open}
                 anchorEl={notificationEl}
@@ -335,32 +346,39 @@ export default function ButtonAppBar() {
                 }}
                 style={{ maxHeight: '300px', overflow: 'auto' }} // Aggiungi qui la proprietà border
               >
-                {Object.entries(groupedNotifications).map(([date, notifications], index) => (
-                  <div key={index}>
-                    <Typography variant="body1" style={{ textTransform: 'uppercase', fontWeight: 'bold' }}>{date}</Typography>
-                    {notifications.map((notification, index) => (
-                      <Link to={`AllChannels/${notification.posted_on}`} style={{ textDecoration: 'none', color: 'inherit' }} key={index} onClick={handleNotificationClose}>
-                        <div>
-                          <Typography onMouseOver={(e) => e.target.style.color = 'blue'} onMouseOut={(e) => e.target.style.color = 'inherit'}>
-                            {notification.img ? (
-                              <div>
-                                <img src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${notification.img}`} alt="Profile" style={{height:"20px", width:"20px", borderRadius: "50%"}} />
-                                <span style={{ marginLeft: '5px' }}>{notification.u_name} sent you a message!</span>
-                              </div>
-                              ) : (
-                              <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <Avatar style={{height:"20px", width:"20px"}}>{notification.u_name.charAt(0)}</Avatar>
-                                <span style={{ marginLeft: '5px' }}>{notification.u_name} sent you a message!</span>
-                              </div>
-                            )}
-                            
-                          </Typography>
-                          <Divider style={{ backgroundColor: 'black' }} /> 
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                ))}
+                {totalNotifications > 0 ? (
+                  <>
+                  {
+                  Object.entries(groupedNotifications).map(([date, notifications], index) => (
+                    <div key={index}>
+                      <Typography variant="body1" style={{ textTransform: 'uppercase', fontWeight: 'bold' }}>{date}</Typography>
+                      {notifications.map((notification, index) => (
+                        <Link to={`AllChannels/${notification.posted_on}`} style={{ textDecoration: 'none', color: 'inherit' }} key={index} onClick={handleNotificationClose}>
+                          <div>
+                            <Typography onMouseOver={(e) => e.target.style.color = 'blue'} onMouseOut={(e) => e.target.style.color = 'inherit'}>
+                              {notification.img ? (
+                                <div>
+                                  <img src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${notification.img}`} alt="Profile" style={{height:"20px", width:"20px", borderRadius: "50%"}} />
+                                  <span style={{ marginLeft: '5px' }}>{notification.u_name} sent you a message!</span>
+                                </div>
+                                ) : (
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                  <Avatar style={{height:"20px", width:"20px"}}>{notification.u_name.charAt(0)}</Avatar>
+                                  <span style={{ marginLeft: '5px' }}>{notification.u_name} sent you a message!</span>
+                                </div>
+                              )}
+                              
+                            </Typography>
+                            <Divider style={{ backgroundColor: 'black' }} /> 
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  ))}
+                  </>
+                ) : (
+                  <Typography variant="body1" style={{ textTransform: 'uppercase', fontWeight: 'bold' }}>No notifications</Typography>
+                )}
               </Popover>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -419,6 +437,7 @@ export default function ButtonAppBar() {
               </IconButton>
 
               <Popover
+                key={totalNotifications}
                 id={id}
                 open={open}
                 anchorEl={notificationEl}
@@ -431,34 +450,41 @@ export default function ButtonAppBar() {
                   vertical: 'top',
                   horizontal: 'center',
                 }}
-                style={{ maxHeight: '300px', overflow: 'auto' }} 
+                style={{ maxHeight: '300px', overflow: 'auto' }} // Aggiungi qui la proprietà border
               >
-                {Object.entries(groupedNotifications).map(([date, notifications], index) => (
-                  <div key={index}>
-                    <Typography variant="body1" style={{ textTransform: 'uppercase', fontWeight: 'bold' }}>{date}</Typography>
-                    {notifications.map((notification, index) => (
-                      <Link to={`AllChannels/${notification.posted_on}`} style={{ textDecoration: 'none', color: 'inherit' }} key={index} onClick={handleNotificationClose}>
-                        <div>
-                          <Typography onMouseOver={(e) => e.target.style.color = 'blue'} onMouseOut={(e) => e.target.style.color = 'inherit'}>
-                            {notification.img ? (
-                              <div>
-                                <img src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${notification.img}`} alt="Profile" style={{height:"20px", width:"20px", borderRadius: "50%"}} />
-                                <span style={{ marginLeft: '5px' }}>{notification.u_name} sent you a message!</span>
-                              </div>
-                              ) : (
-                              <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <Avatar style={{height:"20px", width:"20px"}}>{notification.u_name.charAt(0)}</Avatar>
-                                <span style={{ marginLeft: '5px' }}>{notification.u_name} sent you a message!</span>
-                              </div>
-                            )}
-                            
-                          </Typography>
-                          <Divider style={{ backgroundColor: 'black' }} /> 
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                ))}
+                {totalNotifications > 0 ? (
+                  <>
+                  {
+                  Object.entries(groupedNotifications).map(([date, notifications], index) => (
+                    <div key={index}>
+                      <Typography variant="body1" style={{ textTransform: 'uppercase', fontWeight: 'bold' }}>{date}</Typography>
+                      {notifications.map((notification, index) => (
+                        <Link to={`AllChannels/${notification.posted_on}`} style={{ textDecoration: 'none', color: 'inherit' }} key={index} onClick={handleNotificationClose}>
+                          <div>
+                            <Typography onMouseOver={(e) => e.target.style.color = 'blue'} onMouseOut={(e) => e.target.style.color = 'inherit'}>
+                              {notification.img ? (
+                                <div>
+                                  <img src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${notification.img}`} alt="Profile" style={{height:"20px", width:"20px", borderRadius: "50%"}} />
+                                  <span style={{ marginLeft: '5px' }}>{notification.u_name} sent you a message!</span>
+                                </div>
+                                ) : (
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                  <Avatar style={{height:"20px", width:"20px"}}>{notification.u_name.charAt(0)}</Avatar>
+                                  <span style={{ marginLeft: '5px' }}>{notification.u_name} sent you a message!</span>
+                                </div>
+                              )}
+                              
+                            </Typography>
+                            <Divider style={{ backgroundColor: 'black' }} /> 
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  ))}
+                  </>
+                ) : (
+                  <Typography variant="body1" style={{ textTransform: 'uppercase', fontWeight: 'bold' }}>No notifications</Typography>
+                )}
               </Popover>
 
               <IconButton onClick={handleClick} style={{color: 'white'}}>
