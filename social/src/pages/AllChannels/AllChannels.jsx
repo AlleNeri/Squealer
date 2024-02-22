@@ -163,7 +163,7 @@ const AllChannels = () => {
                 {channel.description}
             </Typography>
             </Box>
-            {channel.private && loggedIn &&
+            {channel.private && loggedIn && !channel.name.startsWith("__direct__") &&
               <>
                 <IconButton onClick={handleOpen2}>
                     <PeopleAltIcon style={{ color: 'black' }} />
