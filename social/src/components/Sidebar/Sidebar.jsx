@@ -43,7 +43,7 @@ const Sidebar = () => {
   const classes = useStyles();
 
   const minimizeSidebar = () => {
-    setSidebarMinimized(!isSidebarMinimized);
+    setSidebarMinimized(prevState => !prevState);
   };
 
   useEffect(() => {
@@ -53,7 +53,7 @@ const Sidebar = () => {
       } else {
         setSidebarMinimized(false);
       }
-  };
+    };
 
     // Attach the event listener
     window.addEventListener('resize', handleResize);
@@ -63,7 +63,8 @@ const Sidebar = () => {
 
     // Remove the event listener when the component is unmounted
     return () => window.removeEventListener('resize', handleResize);
-  }, [setSidebarMinimized]);
+  }, []); // Removed setSidebarMinimized from the dependency array
+
 
   const handleChannelClick = (channelId) => {
     setSelectedChannel(channelId);
@@ -123,7 +124,7 @@ useEffect(() => {
     };
 
     fetchAllChannels();
-  }, [token]);
+  }, [token, allChannels.length]);
 
   useEffect(() => {
     if (loggedIn) {
@@ -146,7 +147,7 @@ useEffect(() => {
 
       fetchMyChannels();
     }
-  }, [loggedIn, token]);
+  }, [loggedIn, token, myChannels.length]);
 
 
   return (
@@ -300,11 +301,13 @@ useEffect(() => {
         </List>
       </Drawer>
   </div>
-      {isChannelModalOpen && (
-        setSidebarMinimized(true),
+  {isChannelModalOpen && (
         <Channel
           isOpen={isChannelModalOpen}
-          onClose={() => setChannelModalOpen(false)}
+          onClose={() => {
+            setSidebarMinimized(true);
+            setChannelModalOpen(false);
+          }}
         />
       )}
     </>

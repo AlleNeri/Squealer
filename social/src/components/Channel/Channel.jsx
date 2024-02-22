@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button, TextField, Typography, Dialog, FormControlLabel, Checkbox, Grid, Divider, Box} from '@mui/material';
 
 const Channel = ({ isOpen, onClose }) => {
@@ -6,6 +7,7 @@ const Channel = ({ isOpen, onClose }) => {
     const [description, setDescription] = useState('');
     const [isPrivate, setPrivate] = useState(false);
     const token = localStorage.getItem('token');
+    const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -31,6 +33,7 @@ const Channel = ({ isOpen, onClose }) => {
                 throw new Error('Network response was not ok');
             }
             const data = await response.json();
+            navigate(`/AllChannels/${data._id}`);
             onClose();
         } catch (error) {
             console.error('Error creating channel', error);
