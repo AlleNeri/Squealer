@@ -120,9 +120,12 @@ function populatePosts() {
 										: ''
 								}
 							</div>
-							<div class='post-footer'>
-								<p>Keywords: ${post.keywords.map((keyword: string) => `#${keyword}`).join(', ')}</p>
-							</div>
+							${post.keywords?.length > 0
+								?	`<div class='post-footer'>
+										<p>${post.keywords.map((keyword: string) => `#${keyword}`).join(', ')}</p>
+									</div>`
+								: ''
+							}
 							`;
 							postsDiv.appendChild(tmp);
         					addListenerToEditButton(post._id);

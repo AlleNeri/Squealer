@@ -1,10 +1,7 @@
 import { env } from '../env';
 import { getToken } from '../utils/storage';
 
-const postId: string = 'post';
-let channels: any[] = [];
-
-export function fetchChannels() {
+async function fetchChannels() {
     const token: string = getToken()!;
     return fetch(
         `${env.BACKEND_URL}/channels/all`,
@@ -14,20 +11,14 @@ export function fetchChannels() {
         }
     )
     .then(response => response.json())
-    .then(data => {
-        channels = data;
-        return channels;
-    });
 }
 
 export function showPost(postId: string) {
-    fetchChannels().then(() => {
-        document.querySelector<HTMLElement>(`#${env.CONTENT_DIV}`)!.innerHTML = `
-            <h1>Post</h1>
-            <div id="post"></div>
-        `;
-        populatePost(postId);
-    });
+    document.querySelector<HTMLElement>(`#${env.CONTENT_DIV}`)!.innerHTML = `
+        <h1>Post</h1>
+        <div id="post"></div>
+    `;
+    populatePost(postId);
 }
 
 function setupRemoveButton(removeButton: HTMLElement) {
@@ -37,9 +28,10 @@ function setupRemoveButton(removeButton: HTMLElement) {
     });
 }
 
-function populatePost(postId: string) {
+async function populatePost(postId: string) {
 	const token: string = getToken()!;
 	const postDiv = document.querySelector<HTMLElement>('#post')!;
+	const channels = await fetchChannels();
 	fetch(
 		`${env.BACKEND_URL}/posts/${postId}`,
 		{
@@ -58,7 +50,7 @@ function populatePost(postId: string) {
 				}
 			)
 			.then(response => response.json())
-			.then(user => {
+			.then(async (user) => {
 				const channel = channels.find((channel: any) => channel._id === post.posted_on);
 				postDiv.innerHTML = `
 					<div class='post'>
@@ -85,45 +77,61 @@ function populatePost(postId: string) {
 									: ''
 							}
 						</div>
-						<div class='post-footer'>
-							<p>Keywords: ${post.keywords.map((keyword: string) => `#${keyword}`).join(', ')}</p>
-						</div>
-					</div>
-					<form id="edit-form-${post._id}" class="edit-form" style="display: none;">
-						<label class="form-label">
-							Title:
-							<input type="text" name="title" value="${post.title}" class="form-input">
-						</label>
-						${
-							post.content.text
-								? `<label class="form-label">
-									Text:
-									<textarea name="text" class="form-input">${post.content.text}</textarea>
-								   </label>`
-								: ''
+						${post.keywords?.length > 0
+							?	`<div class='post-footer'>
+									<p>${post.keywords.map((keyword: string) => `#${keyword}`).join(', ')}</p>
+								</div>`
+							: ''
 						}
-						<div class="form-label">
-							Keywords:
-							<div id="keywords-container">
-								${post.keywords.map((keyword: string) => {
-									// Remove special characters from the keyword
-									const sanitizedKeyword = keyword.replace(/[^\w\s]/gi, '');
-									return `<div class="keyword-row"><span class="keyword">${sanitizedKeyword}</span><button class="remove-keyword" type="button">-</button></div>`;
-								}).join('')}
+					</div>
+					<div class='post'>
+						<form id="edit-form-${post._id}" class="edit-form" style="display: none;">
+							<label class="form-label">
+								Title:
+								<input type="text" name="title" value="${post.title}" class="form-input">
+							</label>
+							${
+								post.content.text
+									? `<label class="form-label">
+										Text:
+										<textarea name="text" class="form-input">${post.content.text}</textarea>
+									   </label>`
+									: ''
+							}
+							<div class="form-label">
+								Keywords:
+								<div id="keywords-container">
+									${post.keywords.map((keyword: string) => {
+										// Remove special characters from the keyword
+										const sanitizedKeyword = keyword.replace(/[^\w\s]/gi, '');
+										return `<div class="keyword-row"><span class="keyword">${sanitizedKeyword}</span><button class="remove-keyword" type="button">-</button></div>`;
+									}).join('')}
+								</div>
+								<div class="input-container">
+									<input type="text" id="new-keyword" class="form-input">
+									<button id="add-keyword" type="button">+</button>
+								</div>
 							</div>
-							<div class="input-container">
-								<input type="text" id="new-keyword" class="form-input">
-								<button id="add-keyword" type="button">+</button>
-							</div>
-						</div>
-						<label class="form-label">
-							Channel:
-							<select name="posted_on" class="form-input">
-								${channels.filter((channel: any) => !channel.name.startsWith("__direct__")).map((channel: any) => `<option value="${channel._id}"${channel._id === post.posted_on ? ' selected' : ''}>${channel.name}</option>`).join('')}
-							</select>
-						</label>
-						<button type="submit" class="form-button">Update</button>
-					</form>
+							<label class="form-label">
+								Channel:
+								<select name="posted_on" class="form-input">
+									${
+										channels.filter((channel: any) =>
+											!channel.name.startsWith("__direct__")).map((channel: any) =>
+												`<option value="${channel._id}"
+													${
+														channel._id === post.posted_on
+															? ' selected'
+															: ''
+													}
+												>${channel.name}</option>`
+											).join('')
+									}
+								</select>
+							</label>
+							<button type="submit" class="form-button">Update</button>
+						</form>
+					</div>
 				`;
 
 				document.getElementById('add-keyword')!.addEventListener('click', (event) => {
