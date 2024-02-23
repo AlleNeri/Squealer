@@ -73,13 +73,6 @@ UserSchema.virtual('isBot').get(function() {
 	return this.type===UserType.BOT;
 });
 
-UserSchema.virtual('isSubscribedTp').get(function(id: string) {
-	return this.appartenence.reduce((accumulatior: boolean, currVal: mongoose.Types.ObjectId)=> {
-		if(accumulatior) return true;
-		else return currVal.toString()==id;
-	});
-});
-
 UserSchema.methods.isClient=function(user_id: string): boolean {
 	if(!this.isSMM) return false;
 	else return this.client.reduce((accumulatior: boolean, currVal: mongoose.Types.ObjectId)=> {
@@ -159,13 +152,13 @@ UserSchema.methods.canPost=function(amount: number): boolean {
 	}
 };
 
-UserSchema.methods.addQoute=function(percent: number=1): void {
+UserSchema.methods.addQuote=function(percent: number=1): void {
 	this.quote.dayly+=Math.round(this.quote.dayly*percent);
 	this.quote.weekly+=Math.round(this.quote.weekly*percent);
 	this.quote.monthly+=Math.round(this.quote.monthly*percent);
 };
 
-UserSchema.methods.removeQoute=function(percent: number=1): void {
+UserSchema.methods.removeQuote=function(percent: number=1): void {
 	this.quote.dayly-=Math.round(this.quote.dayly*percent);
 	this.quote.weekly-=Math.round(this.quote.weekly*percent);
 	this.quote.monthly-=Math.round(this.quote.monthly*percent);
@@ -175,7 +168,7 @@ UserSchema.methods.addPopular=function(): void {
 	this.messagePopularity.positive++;
 	if(this.messagePopularity.positive >= process.env.POPULAR_POSTS_LIMIT_POS!) {
 		this.messagePopularity.positive=0;
-		this.addQoute();
+		this.addQuote();
 	}
 };
 
@@ -187,7 +180,7 @@ UserSchema.methods.addUnpopular=function(): void {
 	this.messagePopularity.negative++;
 	if(this.messagePopularity.negative >= process.env.POPULAR_POSTS_LIMIT_NEG!) {
 		this.messagePopularity.negative=0;
-		this.removeQoute();
+		this.removeQuote();
 	}
 };
 
