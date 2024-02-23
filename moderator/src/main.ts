@@ -4,6 +4,7 @@ import { showLogin } from './features/login';
 import { env } from './env';
 import { showDashboard } from './features/dashboard';
 import { showUsers } from './features/users';
+import { showUser } from './features/user';
 import { showPosts } from './features/posts';
 import { showPost } from './features/post';
 
@@ -19,6 +20,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 router.add("", showDashboard)
 	.add("login", showLogin)
 	.add("users", showUsers)
+	.add("users/{userId}", showUser)
 	.add("posts", showPosts)
 	.add("posts/{postId}", showPost);
 

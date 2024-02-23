@@ -1,3 +1,4 @@
+import { router } from '../utils/router';
 import { getToken } from '../utils/storage';
 import { env } from '../env';
 
@@ -39,25 +40,40 @@ function populateUsers(type: string[]) {
 			headers: { 'Authorization': token }
 		}
 	)
-		.then(response => response.json())
-		.then(users => {
-			if(!users) return;
-			const usersDiv = document.querySelector<HTMLDivElement>(`#${usersId}`)!;
-			usersDiv.innerHTML = '';
-			users.map((user: any) => {
-				if(type.includes(user.type) && (!name || user.u_name.includes(name))) usersDiv.innerHTML += `
-							<div class='user'>
-								<div class='user-header'>
-									<h3>${user.u_name}</h3>
-									<i>${user.name.first} ${user.name.last}</i>
-								</div>
-								<div>
-									<button>Edit</button>
-								</div>
-							</div>
-						`;
+	.then(response => response.json())
+	.then(users => {
+		if(!users) return;
+		const usersDiv = document.querySelector<HTMLDivElement>(`#${usersId}`)!;
+		usersDiv.innerHTML = '';
+		users.map((user: any) => {
+			if(type.includes(user.type) && (!name || user.u_name.includes(name))) {
+				usersDiv.innerHTML += `
+					<div class='user'>
+						<div class='user-header'>
+							<h3>${user.u_name}</h3>
+							<i>${user.name.first} ${user.name.last}</i>
+						</div>
+						<div>
+							<form onsubmit="event.preventDefault();">
+								<button type="button" class="edit-button" data-user-id="${user._id}">Edit</button>
+							</form>
+						</div>
+					</div>
+				`;
+			}
+		});
+
+		// Add event listeners to the edit buttons
+		// Add event listeners to the edit buttons
+		Array.from(document.getElementsByClassName('edit-button')).forEach((editButton: HTMLElement) => {
+			editButton.addEventListener('click', (event) => {
+				event.preventDefault();
+				const userId = editButton.getAttribute('data-user-id');
+				router.navigateTo(`/users/${userId}`);
 			});
 		});
+
+	});
 }
 
 function setNameFilterListener() {
