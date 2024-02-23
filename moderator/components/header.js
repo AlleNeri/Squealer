@@ -21,7 +21,6 @@ class Header extends HTMLElement {
 	connectedCallback() { this.render(); }
 
 	render() {
-		console.log(this.isLogged);
 		this.shadow.innerHTML = `
 			<style>
 				.header {
