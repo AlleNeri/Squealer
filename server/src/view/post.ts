@@ -115,7 +115,7 @@ postRoute.post("/", Auth.authorize, (req: Request, res: Response) => {
 			else {
 				const newPost: Post=new PostSchema(post);
 				newPost.save()
-					.then((post: Post) => res.status(200).json(post))
+					.then((post: Post) => res.status(200).json({ post }))
 					.catch((err: Error) => res.status(500).json({ msg: "Error creating post", err: err }));
 			}
 		})
