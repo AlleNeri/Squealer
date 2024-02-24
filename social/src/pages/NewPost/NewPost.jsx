@@ -7,6 +7,8 @@ import { TextField, Button, InputLabel, FormControl, MenuItem, Select, Box, Link
     Typography, Avatar, Checkbox, FormControlLabel,
     Container, Grid, Paper, Table, TableBody, TableCell, TableRow, Divider, IconButton } from '@material-ui/core';
 import { Autocomplete } from '@mui/material';
+import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import ClearIcon from '@mui/icons-material/Clear';
 import FaceIcon from '@material-ui/icons/Face';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { Alert } from '@mui/material';
@@ -128,6 +130,18 @@ function NewPost() {
 
   const handlePostTypeChange = (event) => {
     setPostType(event.target.value);
+  };
+
+  const handleClearImage = () => {
+    setCharAvailability(prevState => ({
+      ...prevState,
+      dayly: prevState?.dayly + lessChar,
+      weekly: prevState?.weekly + lessChar,
+      monthly: prevState?.monthly + lessChar,
+    }));
+
+    setLessChar(0);
+    setImage(null);
   };
 
   const handlePostTextChange = event => {
@@ -313,9 +327,8 @@ function NewPost() {
     });
 
     if (!response.ok) {
-      console.log(response);
-      throw new Error('Error creating channel');
-        }
+        throw new Error('Error creating channel');
+      }
 
         const data = await response.json();
         return data;
@@ -472,7 +485,6 @@ function NewPost() {
           }
 
           // Handle successful update
-          console.log('User updated', response);
         } catch (error) {
           // Handle error
           console.error('Failed to update user', error);
@@ -651,11 +663,23 @@ function NewPost() {
 
               {contentType === 'image' && (
                 <Grid item xs={12}>
-                  <Button variant="contained" component="label">
-                    Upload Image
-                    <input type="file" hidden accept="image/*" onChange={handleImageChange} />
-                  </Button>
-                  {image && <img src={preview} alt="preview" style={{height:"100px", width:"100px"}}/>}
+                  {image && (
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                      <div>
+                        <img src={preview} alt="preview" style={{maxHeight:"200px", width:"50%", objectFit:'cover'}}/>
+                      </div>
+                      <IconButton style={{ color: 'red' }} onClick={handleClearImage}>
+                        <ClearIcon />
+                      </IconButton>
+                    </div>
+                  )}
+                  {!image && (
+                    <Button variant="contained" component="label">
+                      <AddPhotoAlternateIcon />
+                      Upload Image
+                      <input type="file" hidden accept="image/*" onChange={handleImageChange} />
+                    </Button>
+                  )}
                 </Grid>
               )}
 
@@ -669,37 +693,6 @@ function NewPost() {
                   )}
                 </Grid>
               )}
-              
-              {postType === 'normal' && charAvailability &&
-                <Table>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell component="th" scope="row">
-                        <Box fontWeight="fontWeightBold">
-                          Characters remaining daily:
-                        </Box>
-                      </TableCell>
-                      <TableCell align="right">{charAvailability.dayly}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell component="th" scope="row">
-                        <Box fontWeight="fontWeightBold">
-                          Characters remaining weekly:
-                        </Box>
-                      </TableCell>
-                      <TableCell align="right">{charAvailability.weekly}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell component="th" scope="row">
-                        <Box fontWeight="fontWeightBold">
-                          Characters remaining monthly:
-                        </Box>
-                      </TableCell>
-                      <TableCell align="right">{charAvailability.monthly}</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              }
 
               <Grid item xs={12}>
                 <FormControl variant="outlined" fullWidth>
@@ -734,6 +727,37 @@ function NewPost() {
                   helperText="Please enter keywords separated by '#'"
                 />    
               </Grid>
+              
+              {postType === 'normal' && charAvailability &&
+                <Table>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell component="th" scope="row">
+                        <Box fontWeight="fontWeightBold">
+                          Characters remaining daily:
+                        </Box>
+                      </TableCell>
+                      <TableCell align="right">{charAvailability.dayly}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell component="th" scope="row">
+                        <Box fontWeight="fontWeightBold">
+                          Characters remaining weekly:
+                        </Box>
+                      </TableCell>
+                      <TableCell align="right">{charAvailability.weekly}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell component="th" scope="row">
+                        <Box fontWeight="fontWeightBold">
+                          Characters remaining monthly:
+                        </Box>
+                      </TableCell>
+                      <TableCell align="right">{charAvailability.monthly}</TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              }
 
               {alert.open && (
                   <Grid item xs={12}>

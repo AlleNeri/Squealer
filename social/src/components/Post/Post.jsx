@@ -280,7 +280,7 @@ export default function Post({post}) {
                       : <p></p>
                     }
                     {content && content.position && <div ref={mapRef} style={{ width: '100%', height: '300px', zIndex: 500 }}></div>}
-                    {content && content.img && <img src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${content.img}`} alt="description" style={{ width: '100%', height: '200px' }} />}
+                    {content && content.img && <img src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${content.img}`} alt="description" style={{ width: '100%', maxHeight: '400px', objectFit: 'cover', objectPosition: 'center' }} />}
                     <Typography variant="body2" component="p">
                       {keywords && renderKeywords(keywords)}
                     </Typography>
