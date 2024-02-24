@@ -2,12 +2,17 @@ import { Backend } from '../utils/backend.js';
 import { Auth } from '../utils/auth.js';
 
 class Login extends HTMLElement {
+	loginFormId = 'loginForm';
+
 	constructor() {
 		super();
 		this.attachShadow({ mode: 'open' });
 	}
 
-	connectedCallback() { this.render(); }
+	connectedCallback() {
+		if(!Auth.isTokenExpired()) window.location.href = '/posts.html';
+		else this.render();
+	}
 
 	login(e) {
 		e.preventDefault();
@@ -18,9 +23,10 @@ class Login extends HTMLElement {
 				if(data.success) {
 					Auth.setToken(data.jwt.token);
 					// redirect to the home page
-					window.location.href = '/post.html';
+					window.location.href = '/posts.html';
 				}
-			});
+			})
+			.catch(_ => alert("Qualcosa è andato storto durante il login, riprovare!"));
 	}
 
 	render() {
@@ -38,7 +44,7 @@ class Login extends HTMLElement {
 					margin-bottom: 15px;
 				}
 			</style>
-			<form class="login" id="login">
+			<form class="login" id="${this.loginFormId}">
 				<h1>Login</h1>
 				<label for="username">Username: </label>
 				<input type="text" placeholder="Username" id="username" />
@@ -47,7 +53,7 @@ class Login extends HTMLElement {
 				<input type="submit" value="Login" />
 			</form>
 		`;
-		this.shadowRoot.querySelector('#login')
+		this.shadowRoot.querySelector(`#${this.loginFormId}`)
 			.addEventListener('submit', this.login.bind(this));
 	}
 }

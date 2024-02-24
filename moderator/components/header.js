@@ -1,4 +1,8 @@
+import { Auth } from '../utils/auth.js';
+
 class Header extends HTMLElement {
+	logoutId = 'logout';
+
 	constructor() {
 		super();
 		this.attachShadow({ mode: 'open' });
@@ -40,12 +44,16 @@ class Header extends HTMLElement {
 					text-decoration: none;
 					color: #ffffffa6;
 				}
+				.logout-link {
+					cursor: pointer;
+				}
 			</style>
 			<nav class="header">
 				<ul>
-					<li><a href="./index.html">Home</a></li>
+					${ !this.isLogged ? `<li><a href="./login.html">Login</a></li>` : '' }
 					${ this.isLogged
-						? `	<li><a href="./posts.html">Posts</a></li>
+						? ` <li><a id="${this.logoutId}" class="logout-link">Logout</a></li>
+							<li><a href="./posts.html">Posts</a></li>
 							<li><a href="./users.html">Users</a></li>
 							<li><a href="./channels.html">Channels</a></li>`
 						: ''
@@ -53,6 +61,13 @@ class Header extends HTMLElement {
 				</ul>
 			</nav>
 		`;
+		// Add event listener to logout button
+		if(this.isLogged)
+			this.shadowRoot.querySelector(`#${this.logoutId}`)
+				.addEventListener('click', () => {
+					Auth.removeToken()
+					window.location.href = './login.html';
+				});
 	}
 }
 
