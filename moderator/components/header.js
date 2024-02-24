@@ -1,7 +1,7 @@
 class Header extends HTMLElement {
 	constructor() {
 		super();
-		this.shadow = this.attachShadow({ mode: 'open' });
+		this.attachShadow({ mode: 'open' });
 	}
 
 	get isLogged() {
@@ -21,7 +21,7 @@ class Header extends HTMLElement {
 	connectedCallback() { this.render(); }
 
 	render() {
-		this.shadow.innerHTML = `
+		this.shadowRoot.innerHTML = `
 			<style>
 				.header {
 					color: #ffffffa6;
