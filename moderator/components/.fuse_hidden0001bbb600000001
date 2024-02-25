@@ -34,7 +34,6 @@ class Header extends HTMLElement {
 					padding: 10px 50px;
 					position: fixed;
 					top: 0;
-					width: 100%;
 				}
 				.header ul {
 					list-style-type: none;

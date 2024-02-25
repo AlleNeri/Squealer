@@ -1,13 +1,15 @@
 import { env } from '../env.js';
 
 export class Backend {
+	static at(url) { return `${env.BACKEND_URL}${url}`; }
+
 	static async get(url) {
-		const response = await fetch(`${env.apiUrl}${url}`);
+		const response = await fetch(this.at(url));
 		return response.json();
 	}
 
 	static async get(url, token) {
-		const response = await fetch(`${env.apiUrl}${url}`, {
+		const response = await fetch(this.at(url), {
 			headers: {
 				'Authorization': token
 			}
@@ -16,7 +18,7 @@ export class Backend {
 	}
 
 	static async post(url, data) {
-		const response = await fetch(`${env.BACKEND_URL}${url}`, {
+		const response = await fetch(this.at(url), {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
