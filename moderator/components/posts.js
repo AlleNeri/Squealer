@@ -25,9 +25,6 @@ class Posts extends HTMLElement {
 		await this.loadPosts();
 		this.shadowRoot.innerHTML = `
 			<style>
-				.post-container {
-					width: 40%;
-				}
 			</style>
 			<div>
 				${

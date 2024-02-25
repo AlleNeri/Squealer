@@ -8,7 +8,7 @@ class Post extends HTMLElement {
 
 	get post() {
 		try { return JSON.parse(this.getAttribute('post')); }
-		catch (e) { return {}; }
+		catch(e) { return {}; }
 	}
 
 	set post(value) { this.setAttribute('post', JSON.stringify(value)); }
@@ -16,13 +16,12 @@ class Post extends HTMLElement {
 	static get observedAttributes() { return ['post']; }
 
 	attributeChangedCallback(name, oldValue, newValue) {
-		if(name === 'post' && oldValue !== newValue) this.render();
+		if(name === 'post'  && oldValue !== newValue) this.render();
 	}
 
 	connectedCallback() { this.render(); }
 
 	render() {
-		this.post.popular = true;
 		this.shadowRoot.innerHTML = `
 			<style>
 				.post {
@@ -51,15 +50,13 @@ class Post extends HTMLElement {
 					font-size: 0.7em;
 				}
 			</style>
-			<div>
-				<div class="post">
-					<h2>${this.post.title}</h2>
-					${this.renderContent()}
-					${this.renderKeywords()}
-					${this.renderReactions()}
-					</br>
-					${this.renderDate()}
-				</div>
+			<div class="post">
+				<h2>${this.post.title}</h2>
+				${this.renderContent()}
+				${this.renderKeywords()}
+				${this.renderReactions()}
+				</br>
+				${this.renderDate()}
 			</div>
 		`;
 	}
