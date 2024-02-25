@@ -276,15 +276,15 @@ export default function ButtonAppBar() {
           }
 
           {!isSidebarMinimized &&
-            <div>
-              <Link to='/HomePage' className="Link">
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems:'center', justifyContent:'space-between' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <Link to='/HomePage' className="Link">
                   <Tooltip title="Homepage">
-                    <HomeIcon/>
+                    <HomeIcon style={{cursor:'pointer'}}/>
                   </Tooltip>
-                  <span style={{ fontSize: '0.8rem' }}>Home</span>
-                </div>
-              </Link>
+                </Link>
+                <span style={{ fontSize: '0.8rem' }}>Home</span>
+              </div>
             </div>
           }
 
@@ -296,39 +296,36 @@ export default function ButtonAppBar() {
           </div>
 
           {!loggedIn &&
-          <div className='regLog'>
-            <Link to='/Register' className="Link">
+            <div className='regLog'>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <Tooltip title="Register">
-                  <AppRegistrationIcon />
-                </Tooltip>
+                <Link to='/Register' className="Link">
+                  <Tooltip title="Register">
+                    <AppRegistrationIcon />
+                  </Tooltip>
+                </Link>
                 <span style={{ fontSize: '0.8rem' }}>Register</span>
               </div>
-            </Link>
-            
-            <Link to='/Login' className="Link">
+
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <Tooltip title="Login">
-                  <LoginIcon />
-                </Tooltip>
+                <Link to='/Login' className="Link">
+                  <Tooltip title="Login">
+                    <LoginIcon />
+                  </Tooltip>
+                </Link>
                 <span style={{ fontSize: '0.8rem' }}>Login</span>
               </div>
-            </Link>
-          </div>
-          
+            </div>
           }
 
           {loggedIn && !matches &&
           <div className='newLog'>
             <div>
-            <IconButton style={{color: 'white'}} onClick={handleNotificationClick}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <Tooltip title="Notifications">
-                      <NotificationsIcon />
-                    </Tooltip>
-                  <span style={{ fontSize: '0.8rem' }}>Notifications</span>
-                </div>
-            </IconButton>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <Tooltip title="Notifications" onClick={handleNotificationClick}>
+                <NotificationsIcon style={{color: 'white', cursor:"pointer"}} />
+              </Tooltip>
+              <span style={{ fontSize: '0.8rem' }}>Notifications</span>
+            </div>
 
               <Popover
                 key={totalNotifications}
@@ -388,53 +385,45 @@ export default function ButtonAppBar() {
               <span style={{ fontSize: '0.8rem' }}>New squeal</span>
             </div>
 
-            <Link to='/Login' className="Link">
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <Tooltip title="Logout">
-                  <LogoutIcon onClick={handleLogout}/>
-                </Tooltip>
-                <span style={{ fontSize: '0.8rem' }}>Logout</span>
-              </div>
-            </Link>
-
-            <div>
-              <IconButton style={{color: 'white'}}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  <Tooltip title="Profile">
-                    <ManageAccountsIcon onClick={handleMenuOpen}/>
-                  </Tooltip>
-                  <span style={{ fontSize: '0.8rem' }}>Profile</span>
-                </div>
-              </IconButton>
-              <Menu
-                anchorEl={anchorEl}
-                keepMounted
-                open={Boolean(anchorEl)}
-                onClose={handleMenuClose}
-              >
-                <MenuItem onClick={handleProfileClick}>
-                  <AccountCircleIcon/>
-                  My profile
-                </MenuItem>
-                <MenuItem onClick={handleSettingsClick}>
-                  <ManageAccountsIcon />
-                  Settings
-                </MenuItem>
-              </Menu>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <Tooltip title="Logout">
+                <LogoutIcon style={{ cursor:"pointer" }} onClick={handleLogout}/>
+              </Tooltip>
+              <span style={{ fontSize: '0.8rem' }}>Logout</span>
             </div>
-            
+
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <Tooltip title="Profile" onClick={handleMenuOpen}>
+                <ManageAccountsIcon style={{color: 'white', cursor:"pointer"}} />
+              </Tooltip>
+              <span style={{ fontSize: '0.8rem' }}>Profile</span>
+            </div>
+
+            <Menu
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+            >
+              <MenuItem onClick={handleProfileClick}>
+                <AccountCircleIcon/>
+                My profile
+              </MenuItem>
+              <MenuItem onClick={handleSettingsClick}>
+                <ManageAccountsIcon />
+                Settings
+              </MenuItem>
+            </Menu>
           </div>}
           
           {loggedIn && isSidebarMinimized && matches && 
-            <div>
-              <IconButton style={{color: 'white'}} onClick={handleNotificationClick}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  <Tooltip title="Notifications">
-                    <NotificationsIcon />
-                  </Tooltip>
-                  <span style={{ fontSize: '0.8rem' }}>Notifications</span>
-                </div>
-              </IconButton>
+            <div style={{display:'flex'}}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginRight:'10px'}}>
+                <Tooltip title="Notifications" onClick={handleNotificationClick}>
+                  <NotificationsIcon style={{color: 'white'}} />
+                </Tooltip>
+                <span style={{ fontSize: '0.8rem' }}>Notifications</span>
+              </div>
 
               <Popover
                 key={totalNotifications}
@@ -486,15 +475,13 @@ export default function ButtonAppBar() {
                 )}
               </Popover>
 
-              <IconButton onClick={handleClick} style={{color: 'white'}}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  <Tooltip title="Other">
-                    <AppsIcon />
-                  </Tooltip>
-                  <span style={{ fontSize: '0.8rem' }}>Other</span>
-                </div>
-              </IconButton>
-
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <Tooltip title="Other" onClick={handleClick}>
+                  <AppsIcon style={{color: 'white'}} />
+                </Tooltip>
+                <span style={{ fontSize: '0.8rem' }}>Other</span>
+              </div>
+              
               <Menu
                 anchorEl={anchorEl}
                 keepMounted
