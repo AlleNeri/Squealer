@@ -73,9 +73,9 @@ const Channel = ({ isOpen, onClose }) => {
                                     label="Name"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
-                                    variant="outlined"
                                     fullWidth
                                     required
+                                    variant="standard" // This makes the TextField standard
                                 />
                             </Grid>
 
@@ -84,8 +84,8 @@ const Channel = ({ isOpen, onClose }) => {
                                     label="Description"
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
-                                    variant="outlined"
                                     fullWidth
+                                    variant="standard" // This makes the TextField standard
                                 />
                             </Grid>
 

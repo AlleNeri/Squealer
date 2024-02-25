@@ -1,10 +1,10 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { LoginContext } from '../../context/LoginContext/LoginContext';
 import { PostsContext } from '../../context/PostsContext/PostsContext';
 import { TimeContext } from '../../context/TimeContext/TimeContext';
 import Channel from '../../components/Channel/Channel';
 import { TextField, Button, InputLabel, FormControl, MenuItem, Select, Box, Link, 
-    Typography, Avatar, Checkbox, FormControlLabel,
+    Typography, Avatar, Checkbox, FormControlLabel, Chip, InputAdornment,
     Container, Grid, Paper, Table, TableBody, TableCell, TableRow, Divider, IconButton } from '@material-ui/core';
 import { Autocomplete } from '@mui/material';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
@@ -31,7 +31,8 @@ function NewPost() {
   const [position, setPosition] = useState(undefined);
   const [hasPosition, setHasPosition] = useState(false);
   const [hasImage, setHasImage] = useState(false);
-  const [keywords, setKeywords] = useState('');
+  const [inputValue, setInputValue] = useState('');
+  const [keywords, setKeywords] = useState([]);
   const [contentType, setcontentType] = useState('geolocation'); // ['text', 'image', 'geo']
   const [postType, setPostType] = useState('normal');
   const [directRecipient, setDirectRecipient] = useState('');
@@ -45,7 +46,6 @@ function NewPost() {
   const username = localStorage.getItem('username');
   const addedChannel = localStorage.getItem('addedChannel');
   const navigate = useNavigate();
-
 
   useEffect(() => {
     // Quando il componente viene montato, leggi lo stato da localStorage
@@ -197,44 +197,35 @@ function NewPost() {
     setSubject(newSubject);
   };
 
-  const handleKeywordsChange = (e) => {
-    const value = e.target.value;
-    const lastChar = value.charAt(value.length - 1);
+  const handleAddKeyword = () => {
+    if (inputValue && !keywords.includes(inputValue)) {
+      if (postType === 'normal') {
+        // Subtract the length from the character availability
+        setCharAvailability(prevAvailability => ({
+          dayly: prevAvailability.dayly - (inputValue.length),
+          weekly: prevAvailability.weekly - (inputValue.length),
+          monthly: prevAvailability.monthly - inputValue.length,
+        }));
+      }
 
-    // Se l'utente sta cercando di inserire '#' dopo '#', non permetterlo
-    if (value.length > 1 && lastChar === '#' && value.charAt(value.length - 2) === '#') {
-      setAlert('Ogni keyword deve avere un solo cancelletto!')
-      return;
+      setKeywords([...keywords, inputValue]);
+      setInputValue('');
     }
 
-    // Se l'utente sta cercando di inserire un carattere non valido dopo '#', non permetterlo
-    if (value.startsWith('#') && !lastChar.match(/[a-zA-Z0-9#]/)) {
-      setAlert('Non puoi scrivere simboli nella keyword, ma solo lettere e numeri!')
-      return;
-    }
+    
+  };
 
-    // Se l'utente sta cercando di inserire un carattere prima di '#', non permetterlo
-    if (!value.startsWith('#') && value.length > 0) {
-      setAlert('Inizia la keyword con #!')
-      return;
-    }
-
-    // Calculate the length of the string without '#'
-    const lengthWithoutHash = value.replace(/#/g, '').length;
-
-    // Check the post type
+  const handleDeleteKeyword = (keywordToDelete) => () => {
     if (postType === 'normal') {
-      // Subtract the length from the character availability
+      // Add the length back to the character availability
       setCharAvailability(prevAvailability => ({
-        dayly: prevAvailability.dayly - (lengthWithoutHash - keywords.replace(/#/g, '').length),
-        weekly: prevAvailability.weekly - (lengthWithoutHash - keywords.replace(/#/g, '').length),
-        monthly: prevAvailability.monthly - (lengthWithoutHash - keywords.replace(/#/g, '').length),
+        dayly: prevAvailability.dayly + keywordToDelete.length,
+        weekly: prevAvailability.weekly + keywordToDelete.length,
+        monthly: prevAvailability.monthly + keywordToDelete.length,
       }));
     }
-
-    // Aggiorna lo stato con il nuovo valore
-    setKeywords(value);
-  }
+    setKeywords(keywords.filter((keyword) => keyword !== keywordToDelete));
+  };
 
   const handlecontentTypeChange = (event) => {
     if(lessChar > 0){
@@ -353,17 +344,6 @@ function NewPost() {
       const handleSubmit = async (event) => {
         event.preventDefault();
 
-        // Dividi la stringa di input in base al carattere '#'
-        const splitKeywords = keywords.split('#');
-
-        // Rimuovi la stringa vuota all'inizio dell'array, se presente
-        if (splitKeywords[0] === '') {
-          splitKeywords.shift();
-        }
-
-        // Rimuovi qualsiasi keyword che sia solo '#'
-        const validKeywords = splitKeywords.filter(keyword => keyword.length > 1);
-
         if (!directRecipient && postType === 'direct') {
           setAlert('Please select a recipient.');
           return;
@@ -418,7 +398,7 @@ function NewPost() {
               position: position || undefined,
             },
             timed: isTimed,
-            keywords: validKeywords || [],
+            keywords: keywords || [],
             posted_on: channelId || null,
             popular: false,
           };
@@ -551,7 +531,7 @@ function NewPost() {
                     onChange={(event, newValue) => {
                       setDirectRecipient(newValue);
                     }}
-                    renderInput={(params) => <TextField {...params} label="Recipient Username" variant="outlined" required />}
+                    renderInput={(params) => <TextField {...params} label="Recipient Username" required />}
                     fullWidth
                   />
                 </Grid>
@@ -562,7 +542,6 @@ function NewPost() {
                   label="Subject"
                   value={subject}
                   onChange={(e) => handleSubjectChange(e)}
-                  variant="outlined"
                   fullWidth
                 />
               </Grid>
@@ -600,7 +579,7 @@ function NewPost() {
               </Grid>
 
               <Grid item xs={12}>
-                <FormControl variant="outlined" fullWidth>
+                <FormControl fullWidth>
                   <InputLabel id="post-type-label">Post Content</InputLabel>
                   <Select
                     labelId="post-type-label"
@@ -674,7 +653,7 @@ function NewPost() {
                     </div>
                   )}
                   {!image && (
-                    <Button variant="contained" component="label">
+                    <Button variant="contained" fullWidth component="label">
                       <AddPhotoAlternateIcon />
                       Upload Image
                       <input type="file" hidden accept="image/*" onChange={handleImageChange} />
@@ -685,7 +664,7 @@ function NewPost() {
 
               {contentType === 'geolocation' && (
                 <Grid item xs={12}>
-                  <Button variant="contained" onClick={handlePositionChange}>Get Current Position</Button>
+                  <Button variant="contained" fullWidth onClick={handlePositionChange}>Get Current Position</Button>
                   {position && (
                     <Typography variant="body1">
                       Latitude: {position.latitude}, Longitude: {position.longitude}
@@ -695,7 +674,7 @@ function NewPost() {
               )}
 
               <Grid item xs={12}>
-                <FormControl variant="outlined" fullWidth>
+                <FormControl fullWidth>
                   <InputLabel id="channel-label">Channel</InputLabel>
                   <Select
                     labelId="channel-label"
@@ -703,29 +682,49 @@ function NewPost() {
                     value={channel}
                     onChange={(e) => setChannel(e.target.value)}
                     disabled={postType === 'direct'}
-                    endAdornment={
-                    <IconButton onClick={handleOpen}>
-                      <AddCircleIcon />
-                    </IconButton>
-                    }
                   >
                     {myChannels.filter(ch => !ch.name.startsWith('__direct__')).map((ch) => (
                       <MenuItem key={ch._id} value={ch._id}>{ch.name}</MenuItem>
                     ))}
                   </Select>
                 </FormControl>
+                <Button variant="contained"  fullWidth onClick={handleOpen} style={{ marginTop: '10px' }}>
+                  Add Channel
+                </Button>
                 <Channel isOpen={open} onClose={handleClose} />
               </Grid>
 
               <Grid item xs={12}>
-                <TextField
-                  label="Keywords"
-                  value={keywords}
-                  onChange={(e) => handleKeywordsChange(e)}
-                  variant="outlined"
+                <TextField 
+                  value={inputValue} 
+                  onChange={(e) => {
+                    const isValid = /^[a-zA-Z0-9]+$/.test(e.target.value);
+                    if (isValid || e.target.value === '') {
+                      setInputValue(e.target.value);
+                    }
+                  }} 
                   fullWidth
-                  helperText="Please enter keywords separated by '#'"
-                />    
+                  label="Add keyword"
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={handleAddKeyword}>
+                          <AddCircleIcon />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <Box mt={2}>
+                  {keywords.map((keyword, index) => (
+                    <Chip
+                      key={index}
+                      label={`#${keyword}`}
+                      onDelete={handleDeleteKeyword(keyword)}
+                      style={{ margin: '0 5px 5px 0' }}
+                    />
+                  ))}
+                </Box>
               </Grid>
               
               {postType === 'normal' && charAvailability &&
