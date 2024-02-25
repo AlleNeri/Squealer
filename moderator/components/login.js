@@ -20,10 +20,14 @@ class Login extends HTMLElement {
 		const password = this.shadowRoot.querySelector('#password').value;
 		Backend.post('users/login', { username, password })
 			.then(data => {
-				if(data.success) {
+				if(data.success && data.userType === 'mod') {
 					Auth.setToken(data.jwt.token);
 					// redirect to the home page
 					window.location.href = '/posts.html';
+				}
+				else if(data.userType !== 'mod') {
+					Auth.removeToken();
+					alert("Non hai i permessi per accedere a questa pagina!");
 				}
 			})
 			.catch(_ => alert("Qualcosa è andato storto durante il login, riprovare!"));
