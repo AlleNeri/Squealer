@@ -493,6 +493,10 @@ function NewPost() {
       setOpen(false);
     };
 
+    const handleTimedChange = (event) => {
+      setIsTimed(event.target.checked);
+      setcontentType('geolocation');
+    };
     return (
     <Container maxWidth="sm">
       <Paper elevation={3}>
@@ -551,7 +555,7 @@ function NewPost() {
                   control={
                     <Checkbox
                       checked={isTimed}
-                      onChange={() => setIsTimed(!isTimed)}
+                      onChange={handleTimedChange}
                       name="isTimed"
                       color="primary"
                     />
@@ -599,7 +603,7 @@ function NewPost() {
                 </FormControl>
               </Grid>
 
-              {contentType === 'text' && (
+              {contentType === 'text' && !isTimed && (
                 <Grid item xs={12}>
                   <MentionsInput 
                     value={postText} 
