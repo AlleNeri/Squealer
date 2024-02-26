@@ -98,13 +98,13 @@ const Sidebar = () => {
   }, []);
 
   
-useEffect(() => {
-  // Deselect the channel when the page changes, unless it's the selected channel
-  if (location.pathname !== `/AllChannels/${selectedChannel}`) {
-    setSelectedChannel(null);
-    localStorage.removeItem('selectedChannel'); // Remove the selected channel ID from local storage
-  }
-}, [location]);
+  useEffect(() => {
+    // Deselect the channel when the page changes, unless it's the selected channel
+    if (location.pathname !== `/AllChannels/${selectedChannel}`) {
+      setSelectedChannel(null);
+      localStorage.removeItem('selectedChannel'); // Remove the selected channel ID from local storage
+    }
+  }, [location]);
   
   useEffect(() => {
     const fetchAllChannels = async () => {
@@ -152,22 +152,22 @@ useEffect(() => {
 
 
   return (
-    <>
-    <div style={{ display: 'flex' }}>
-    <IconButton
-      color="inherit"
-      aria-label="open drawer"
-      onClick={minimizeSidebar}
-      edge="start"
-    >
+      <>
+        <div style={{ display: 'flex' }}>
+        <IconButton
+          color="inherit"
+          aria-label="open drawer"
+          onClick={minimizeSidebar}
+          edge="start"
+        >
 
-    </IconButton>
+        </IconButton>
 
-      <Drawer
-      variant="persistent"
-      open={!isSidebarMinimized}
-      classes={{ paper: classes.paper }}
-    >
+        <Drawer
+          variant="persistent"
+          open={!isSidebarMinimized}
+          classes={{ paper: classes.paper }}
+        >
         <List>
         <ListItem className={classes.channel}>
             <MenuIcon onClick={minimizeSidebar} style={{color:'white', cursor:'pointer'}}>

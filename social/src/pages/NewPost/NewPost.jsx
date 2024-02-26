@@ -129,6 +129,8 @@ function NewPost() {
   }, [loggedIn, token, addedChannel]);
 
   const handlePostTypeChange = (event) => {
+    setHasImage(false);
+    setHasPosition(false);
     setPostType(event.target.value);
   };
 
@@ -142,6 +144,7 @@ function NewPost() {
 
     setLessChar(0);
     setImage(null);
+    setHasImage(false);
   };
 
   const handlePostTextChange = event => {
@@ -238,6 +241,8 @@ function NewPost() {
 
       setLessChar(0);
     }
+    setHasImage(false);
+    setHasPosition(false);
     setcontentType(event.target.value);
   };
 
@@ -259,6 +264,7 @@ function NewPost() {
               weekly: prevState?.weekly - 125,
               monthly: prevState?.monthly - 125,
             }));
+            setHasPosition(true); // Set hasPosition to true after getting the position
             setLessChar(125);
           }
 
