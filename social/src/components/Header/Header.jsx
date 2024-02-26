@@ -341,28 +341,28 @@ export default function ButtonAppBar() {
                   vertical: 'top',
                   horizontal: 'center',
                 }}
-                style={{ maxHeight: '300px', overflow: 'auto' }} // Aggiungi qui la proprietà border
+                style={{ maxHeight: '300px', overflow: 'auto'}}
               >
                 {totalNotifications > 0 ? (
                   <>
                   {
                   Object.entries(groupedNotifications).map(([date, notifications], index) => (
-                    <div key={index}>
+                    <div style={{margin:'10px'}} key={index}>
                       <Typography variant="body1" style={{ textTransform: 'uppercase', fontWeight: 'bold' }}>{date}</Typography>
                       {notifications.map((notification, index) => (
                         <Link to={`AllChannels/${notification.posted_on}`} style={{ textDecoration: 'none', color: 'inherit' }} key={index} onClick={handleNotificationClose}>
                           <div>
                             <Typography component="div" onMouseOver={(e) => e.target.style.color = 'blue'} onMouseOut={(e) => e.target.style.color = 'inherit'}>
                               {notification.img ? (
-                                <div>
-                                  <img src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${notification.img}`} alt="Profile" style={{height:"20px", width:"20px", borderRadius: "50%"}} />
-                                  <span style={{ marginLeft: '5px' }}>{notification.u_name} sent you a message!</span>
-                                </div>
+                                  <div>
+                                    <img src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${notification.img}`} alt="Profile" style={{height:"20px", width:"20px", borderRadius: "50%"}} />
+                                    <span style={{ marginLeft: '5px' }}>{notification.u_name} sent you a message!</span>
+                                  </div>
                                 ) : (
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                  <Avatar style={{height:"20px", width:"20px"}}>{notification.u_name.charAt(0)}</Avatar>
-                                  <span style={{ marginLeft: '5px' }}>{notification.u_name} sent you a message!</span>
-                                </div>
+                                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <Avatar style={{height:"20px", width:"20px"}}>{notification.u_name.charAt(0)}</Avatar>
+                                    <span style={{ marginLeft: '5px' }}>{notification.u_name} sent you a message!</span>
+                                  </div>
                               )}
                             </Typography>
                             <Divider style={{ backgroundColor: 'black' }} /> 
@@ -373,8 +373,7 @@ export default function ButtonAppBar() {
                   ))}
                   </>
                 ) : (
-                  <div><Typography>No notifications</Typography></div>
-
+                  <div style={{margin:'10px'}}><Typography>No notifications</Typography></div>
                 )}
               </Popover>
             </div>
@@ -445,7 +444,7 @@ export default function ButtonAppBar() {
                   <>
                   {
                   Object.entries(groupedNotifications).map(([date, notifications], index) => (
-                    <div key={index}>
+                    <div key={index} style={{ margin:'10px' }}>
                       <Typography variant="body1" style={{ textTransform: 'uppercase', fontWeight: 'bold' }}>{date}</Typography>
                       {notifications.map((notification, index) => (
                         <Link to={`AllChannels/${notification.posted_on}`} style={{ textDecoration: 'none', color: 'inherit' }} key={index} onClick={handleNotificationClose}>
@@ -471,7 +470,7 @@ export default function ButtonAppBar() {
                   ))}
                   </>
                 ) : (
-                  <div><Typography>No notifications</Typography></div>
+                  <div style={{ margin:'10px' }}><Typography>No notifications</Typography></div>
                 )}
               </Popover>
 
