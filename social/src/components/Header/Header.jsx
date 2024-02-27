@@ -159,7 +159,7 @@ export default function ButtonAppBar() {
     };
 
     fetchPosts();
-  }, [myChannels, userId]);
+  }, [myChannels]);
   
   useEffect(() => {
     const fetchNotifications = async () => {
