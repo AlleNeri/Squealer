@@ -14,8 +14,20 @@
 				<h1>Posts</h1>
 				<my-posts></my-posts>
 			</div>
+			<my-edit-post id="edit-post-section"></my-edit-post>
 		<script type="module" src="./components/header.js"></script>
 		<script type="module" src="./components/sidebar.js"></script>
 		<script type="module" src="./components/posts.js"></script>
+		<script type="module" src="./components/edit-post.js"></script>
+		<script>
+			// catch the edit post event
+			document.addEventListener('edit-post', function(e) {
+				// get the post data
+				const post = e.detail;
+				// set the post data to the edit-posts component
+				const editPosts = document.querySelector('#edit-post-section');
+				editPosts.setAttribute('post', JSON.stringify(post));
+			});
+		</script>
 	</body>
 </html>

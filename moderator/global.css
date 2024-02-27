@@ -16,3 +16,12 @@ body {
 .header-space {
 	margin-top: 71px;
 }
+
+span.keyword {
+	margin-right: 5px;
+	border: 1px solid #91d5ff;
+	color: #1890ff;
+	background: #e6f7ff;
+	padding: 3px 5px;
+	border-radius: 2px;
+}

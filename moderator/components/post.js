@@ -1,6 +1,8 @@
 import { Backend } from "../utils/backend.js";
 
 class Post extends HTMLElement {
+	editId = 'edit-post';
+
 	constructor() {
 		super();
 		this.attachShadow({ mode: 'open' });
@@ -27,18 +29,12 @@ class Post extends HTMLElement {
 				.post {
 					padding: 10px;
 					margin: 10px 0;
+					background-color: white;
+					border-radius: 5px;
 				}
 				.post img {
 					max-height: 300px;
 					max-width: 50%;
-				}
-				.post span.keyword {
-					margin-right: 5px;
-					border: 1px solid #91d5ff;
-					color: #1890ff;
-					background: #e6f7ff;
-					padding: 3px 5px;
-					border-radius: 2px;
 				}
 				.post span.reactions {
 					color: #00000073;
@@ -49,16 +45,40 @@ class Post extends HTMLElement {
 					color: #00000073;
 					font-size: 0.7em;
 				}
+				.post div.post-head {
+					display: flex;
+					justify-content: space-between;
+					align-items: center;
+				}
+				.post div.post-head h2 {
+					margin: 0;
+				}
 			</style>
 			<div class="post">
-				<h2>${this.post.title}</h2>
+				<div class="post-head">
+					<div>
+						<h2>${this.post.title}</h2>
+						${this.renderDate()}
+					</div>
+					<button id="${this.editId + this.post._id}">Modifica</button>
+				</div>
 				${this.renderContent()}
 				${this.renderKeywords()}
 				${this.renderReactions()}
-				</br>
-				${this.renderDate()}
 			</div>
 		`;
+		this.shadowRoot.getElementById(this.editId + this.post._id)
+			.addEventListener('click', () => {
+				const event = new CustomEvent("edit-post", {
+					bubbles: true,
+					composed: true,
+					detail: this.post
+				});
+				this.dispatchEvent(event);
+			});
+		// Copy styles from the main document to the shadow root to make the component styleable
+		const styles = document.querySelectorAll('style, link[rel="stylesheet"]');
+		styles.forEach(style => this.shadowRoot.appendChild(style.cloneNode(true)));
 	}
 
 	renderContent() {
