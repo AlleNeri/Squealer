@@ -358,44 +358,44 @@ const Profile = () => {
             </div>
           </Grid>
         )}
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Buy Chars</DialogTitle>
-        <DialogContent>
-          <Grid container spacing={3} alignItems="center" justifyContent="center">
-            <Grid item xs={12} sm={4}>
-              <Select
-                value={period}
-                onChange={(e) => setPeriod(e.target.value)}
-                fullWidth
-              >
-                <MenuItem value="day">Day</MenuItem>
-                <MenuItem value="week">Week</MenuItem>
-                <MenuItem value="month">Month</MenuItem>
-              </Select>
+        <Dialog open={open} onClose={handleClose}>
+          <DialogTitle>Buy Chars</DialogTitle>
+          <DialogContent>
+            <Grid container spacing={3} alignItems="center" justifyContent="center">
+              <Grid item xs={12} sm={4}>
+                <Select
+                  value={period}
+                  onChange={(e) => setPeriod(e.target.value)}
+                  fullWidth
+                >
+                  <MenuItem value="day">Day</MenuItem>
+                  <MenuItem value="week">Week</MenuItem>
+                  <MenuItem value="month">Month</MenuItem>
+                </Select>
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  label="Quantity"
+                  type="number"
+                  value={quantity}
+                  onChange={(e) => setQuantity((e.target.value))}
+                  fullWidth
+                />
+              </Grid>
             </Grid>
-            <Grid item xs={12} sm={4}>
-              <TextField
-                label="Quantity"
-                type="number"
-                value={quantity}
-                onChange={(e) => setQuantity((e.target.value))}
-                fullWidth
-              />
-            </Grid>
-          </Grid>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} variant="contained" color="secondary">
-            Cancel
-          </Button>
-          <Button 
-            onClick={handleSubmit} 
-            style={{ backgroundColor: 'green', color: 'white' }}
-          >
-            Buy
-          </Button>
-        </DialogActions>
-      </Dialog>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} variant="contained" color="secondary">
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleSubmit} 
+              style={{ backgroundColor: 'green', color: 'white' }}
+            >
+              Buy
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Grid>
       
       </CardContent>
