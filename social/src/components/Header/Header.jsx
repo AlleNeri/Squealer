@@ -42,6 +42,9 @@ export default function ButtonAppBar() {
   const location = useLocation();
   const token = localStorage.getItem('token');
   const userId = localStorage.getItem('userId');
+  const [userImage, setUserImage] = useState('');
+  const username = localStorage.getItem('username');
+  let avatarContent = userImage ? <img src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${userImage}`} style={{width:'20px', height:'20px'}} alt="Profile" /> : username[0].toUpperCase();
 
   const headerStyle = {
     paddingLeft: isSidebarMinimized ? '0' : '200px',
@@ -175,6 +178,22 @@ export default function ButtonAppBar() {
   
     fetchNotifications();
   }, [channelPosts]);
+
+  useEffect(() => {
+    const fetchUserImage = async () => {
+      const token = localStorage.getItem('token');
+
+      const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/${userId}`, {
+        headers: {
+          'Authorization': `${token}`,
+        },
+      });
+
+      const user = await response.json();
+      setUserImage(user.img);
+    };
+    fetchUserImage();
+  }, [userId]);
 
   const getChannelName = async (channelId) => {
     const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels/${channelId}`);
@@ -392,7 +411,9 @@ export default function ButtonAppBar() {
 
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <Tooltip title="Profile" onClick={handleMenuOpen}>
-                <ManageAccountsIcon style={{color: 'white', cursor:"pointer"}} />
+                <Avatar style={{ backgroundColor: 'white', color: 'black', width:'24px', height:'24px', marginTop:'2px', cursor:'pointer' }}>
+                  {avatarContent}
+                </Avatar>
               </Tooltip>
               <span style={{ fontSize: '0.8rem' }}>Profile</span>
             </div>
@@ -475,7 +496,9 @@ export default function ButtonAppBar() {
 
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <Tooltip title="Other" onClick={handleClick}>
-                  <AppsIcon style={{color: 'white'}} />
+                  <Avatar style={{ backgroundColor: 'white', color: 'black', width:'24px', height:'24px' }}>
+                    {avatarContent}
+                  </Avatar>
                 </Tooltip>
                 <span style={{ fontSize: '0.8rem' }}>Other</span>
               </div>
