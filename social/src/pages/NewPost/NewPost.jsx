@@ -4,22 +4,28 @@ import { PostsContext } from '../../context/PostsContext/PostsContext';
 import { TimeContext } from '../../context/TimeContext/TimeContext';
 import Channel from '../../components/Channel/Channel';
 import { TextField, Button, InputLabel, FormControl, MenuItem, Select, Box, Link, 
-    Typography, Avatar, Checkbox, FormControlLabel, Chip, InputAdornment,
-    Container, Grid, Paper, Table, TableBody, TableCell, TableRow, Divider, IconButton } from '@material-ui/core';
+    Typography, Avatar, Checkbox, FormControlLabel, Chip, InputAdornment, Dialog, DialogTitle,
+    Container, Grid, Paper, Table, TableBody, TableCell, TableRow, Divider, IconButton, DialogActions, DialogContent } from '@material-ui/core';
 import { Autocomplete } from '@mui/material';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import ClearIcon from '@mui/icons-material/Clear';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import FaceIcon from '@material-ui/icons/Face';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { Alert } from '@mui/material';
 import { MentionsInput, Mention } from 'react-mentions';
 import './newPost.css';
 import { useNavigate } from 'react-router-dom';
+import { purple } from '@mui/material/colors';
 
 function NewPost() {
   const { loggedIn } = useContext(LoginContext);
   const [charAvailability, setCharAvailability] = useState({ dayly: 0, weekly: 0, monthly: 0 });
   const [initialCharAvailability, setInitialCharAvailability] = useState({ dayly: 0, weekly: 0, monthly: 0 });
+  const [openPurchase, setOpenPurchase] = useState(false);
+  const [purchased, setPurchased] = useState(false);
+  const [period, setPeriod] = useState('day');
+  const [quantity, setQuantity] = useState(0);
   const { updateInterval, setUpdateInterval, updateTimes, setUpdateTimes } = useContext(TimeContext);
   const [open, setOpen] = useState(false);
   const [isTimed, setIsTimed] = useState(false);
@@ -80,7 +86,7 @@ function NewPost() {
       .catch(error => {
         console.error('Error fetching user data', error);
       });
-  }, []);
+  }, [purchased]);
 
   useEffect(() => {
     // This function runs whenever contentType changes
@@ -351,7 +357,37 @@ function NewPost() {
         event.preventDefault();
 
         if (!directRecipient && postType === 'direct') {
-          setAlert('Please select a recipient.');
+          setAlert({ open: true, message: 'Please select a recipient', severity: 'error' });
+          return;
+        }
+
+        if(!subject){
+          setAlert({ open: true, message: 'Please enter a subject', severity: 'error' });
+          return;
+        }
+
+        if(isTimed && (updateInterval === 0 || updateTimes === 0)){
+          setAlert({open: true, message: 'Please enter an update interval and update times', severity: 'error'});
+          return;
+        }
+        
+        if(contentType === 'text' && !postText){
+          setAlert({ open: true, message: 'Please enter a post text', severity: 'error' });
+          return;
+        }
+
+        if(contentType === 'image' && !image){
+          setAlert({ open: true, message: 'Please upload an image', severity: 'error' });
+          return;
+        }
+
+        if(contentType === 'geolocation' && !position){
+          setAlert({ open: true, message: 'Please get the current position', severity: 'error' });
+          return;
+        }
+
+        if(!channel){
+          setAlert({ open: true, message: 'Please select a channel or add a new one', severity: 'error' });
           return;
         }
 
@@ -503,6 +539,44 @@ function NewPost() {
       setIsTimed(event.target.checked);
       setcontentType('geolocation');
     };
+
+    const handleClickOpenPurchase = () => {
+      setOpenPurchase(true);
+    };
+
+    const handleClosePurchase = () => {
+      setOpenPurchase(false);
+    };
+
+    const handleSubmitPurchase = async () => {
+      const parsedQuantity = parseInt(quantity, 10);
+
+      try {
+        const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/${localStorage.getItem('userId')}/char`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token,
+          },
+          body: JSON.stringify({
+            period: period,
+            quantity: parsedQuantity,
+          }),
+        });
+    
+        if (response.ok) {
+          setPurchased(!purchased);
+          // Update your state here to reflect the new char availability
+        } else {
+          console.log('Failed to add char availability');
+        }
+      } catch (error) {
+        console.error('An error occurred while adding char availability:', error);
+      }
+    
+      handleClosePurchase();
+    }
+
     return (
     <Container maxWidth="sm">
       <Paper elevation={3}>
@@ -768,15 +842,56 @@ function NewPost() {
                 </Table>
               }
 
-              {alert.open && (
+              {alert.open && (          
                   <Grid item xs={12}>
                     <Alert severity={alert.severity}>{alert.message}</Alert>
                   </Grid>
-                )}
+              )}
               <Grid item xs={12} style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <Button variant="contained" style={{ marginRight: '10px' }} onClick={() => navigate('/Homepage')}>
                   Cancel
                 </Button>
+                <Button onClick={handleClickOpenPurchase} startIcon={<AttachMoneyIcon />} color="primary" variant="contained" style={{ marginRight: '10px' }}>
+                  Buy Chars
+                </Button>
+                <Dialog open={openPurchase} onClose={handleClosePurchase}>
+                  <DialogTitle>Buy Chars</DialogTitle>
+                  <DialogContent>
+                    <Grid container spacing={3} alignItems="center" justifyContent="center">
+                      <Grid item xs={12} sm={4}>
+                        <Select
+                          value={period}
+                          onChange={(e) => setPeriod(e.target.value)}
+                          fullWidth
+                        >
+                          <MenuItem value="day">Day</MenuItem>
+                          <MenuItem value="week">Week</MenuItem>
+                          <MenuItem value="month">Month</MenuItem>
+                        </Select>
+                      </Grid>
+                      <Grid item xs={12} sm={4}>
+                        <TextField
+                          label="Quantity"
+                          type="number"
+                          value={quantity}
+                          onChange={(e) => setQuantity(e.target.value)}
+                          fullWidth
+                        />
+                      </Grid>
+                    </Grid>
+                  </DialogContent>
+                  <DialogActions>
+                  <Button onClick={handleClosePurchase} variant="contained" color="secondary">
+                    Cancel
+                  </Button>
+                  <Button 
+                    onClick={handleSubmitPurchase} 
+                    style={{ backgroundColor: 'green', color: 'white' }}
+                  >
+                    Buy
+                  </Button>
+                </DialogActions>
+              </Dialog>
                 <Button variant="contained" color="primary" type="submit" onClick={handleSubmit}>
                   Submit
                 </Button>

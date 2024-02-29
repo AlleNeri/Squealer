@@ -289,8 +289,7 @@ export default function ButtonAppBar() {
           }
 
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            {!matches && <img src={logo} alt="Logo" style={{ height: '50px', marginRight: '10px' }} />}
-            <Typography className="Typography" fontWeight="fontWeightBold" style={{marginLeft:'10px'}}>
+            <Typography className="Typography" fontWeight="fontWeightBold">
               SQUEALER
             </Typography>
           </div>
