@@ -12,7 +12,7 @@
 			</my-sidebar>
 			<div>
 				<h1>Posts</h1>
-				<my-posts></my-posts>
+				<my-posts id="all-posts-section"></my-posts>
 			</div>
 			<my-edit-post id="edit-post-section"></my-edit-post>
 		<script type="module" src="./components/header.js"></script>
@@ -27,6 +27,17 @@
 				// set the post data to the edit-posts component
 				const editPosts = document.querySelector('#edit-post-section');
 				editPosts.setAttribute('post', JSON.stringify(post));
+			});
+			// catch the new post event
+			document.addEventListener('new-post', function(e) {
+				// get the new post
+				const post = e.detail;
+				// send the new post to the all-posts component
+				const allPosts = document.querySelector('#all-posts-section');
+				allPosts.updatePost(post);
+				// reset the edit-post component
+				const editPosts = document.querySelector('#edit-post-section');
+				editPosts.removeAttribute('post');
 			});
 		</script>
 	</body>

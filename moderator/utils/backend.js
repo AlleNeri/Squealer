@@ -27,4 +27,28 @@ export class Backend {
 		});
 		if(response.ok) return await response.json();
 	}
+
+	static async put(url, data, token) {
+		const response = await fetch(this.at(url), {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': token
+			},
+			body: JSON.stringify(data)
+		});
+		if(response.ok) return await response.json();
+	}
+
+	static async delete(url, body, token) {
+		const response = await fetch(this.at(url), {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': token
+			},
+			body: JSON.stringify(body)
+		});
+		if(response.ok) return await response.json();
+	}
 }

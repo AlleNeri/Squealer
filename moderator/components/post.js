@@ -87,7 +87,7 @@ class Post extends HTMLElement {
 			if(this.post.content.text)
 				res += `<p>${this.post.content.text}</p>`;
 			if(this.post.content.img)
-				res += `<img src="${Backend.at('media/image/'+this.post.content.img)}" alt="immagine del post"></br>`;
+				res += `<img src="${Backend.at('media/image/'+this.post.content.img)}" alt="immagine del post">`;
 			if(this.post.content.position)
 				res += `<p>Latitudine: ${this.post.content.position.latitude}, Longitudine: ${this.post.content.position.longitude}</p>`;
 		}
@@ -95,7 +95,8 @@ class Post extends HTMLElement {
 	}
 
 	renderKeywords() {
-		if(!this.post.keywords) return '';
+		if(!this.post.keywords) return '</br>';
+		if(this.post.keywords.length === 0) return '</br>';
 		const keywords = this.post.keywords.map(keyword => `<span class="keyword">#${keyword}</span>`);
 		return keywords.join('') + '</br></br>';
 	}

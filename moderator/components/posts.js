@@ -35,6 +35,12 @@ class Posts extends HTMLElement {
 			</div>
 		`;
 	}
+
+	updatePost(post) {
+		const index = this.posts.findIndex(p => p._id === post._id);
+		this.posts[index] = post;
+		this.render();
+	}
 }
 
 customElements.define('my-posts', Posts);
