@@ -3,20 +3,17 @@ import { LoginContext } from '../../context/LoginContext/LoginContext';
 import { PostsContext } from '../../context/PostsContext/PostsContext';
 import { TimeContext } from '../../context/TimeContext/TimeContext';
 import Channel from '../../components/Channel/Channel';
-import { TextField, Button, InputLabel, FormControl, MenuItem, Select, Box, Link, 
-    Typography, Avatar, Checkbox, FormControlLabel, Chip, InputAdornment, Dialog, DialogTitle,
+import { TextField, Button, InputLabel, FormControl, MenuItem, Select, Box, Link, Popover, List, ListItem,
+    Typography, Avatar, Checkbox, FormControlLabel, Chip, InputAdornment, Dialog, DialogTitle, makeStyles, ListItemText,
     Container, Grid, Paper, Table, TableBody, TableCell, TableRow, Divider, IconButton, DialogActions, DialogContent } from '@material-ui/core';
 import { Autocomplete } from '@mui/material';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import ClearIcon from '@mui/icons-material/Clear';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-import FaceIcon from '@material-ui/icons/Face';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { Alert } from '@mui/material';
-import { MentionsInput, Mention } from 'react-mentions';
 import './newPost.css';
 import { useNavigate } from 'react-router-dom';
-import { purple } from '@mui/material/colors';
 
 function NewPost() {
   const { loggedIn } = useContext(LoginContext);
@@ -41,6 +38,7 @@ function NewPost() {
   const [keywords, setKeywords] = useState([]);
   const [contentType, setcontentType] = useState('geolocation'); // ['text', 'image', 'geo']
   const [postType, setPostType] = useState('normal');
+  const [anchorEl, setAnchorEl] = useState(null);
   const [directRecipient, setDirectRecipient] = useState('');
   const [isFormValid, setIsFormValid] = useState(false);
   const [channel, setChannel] = useState(''); // New state variable for the selected channel
@@ -51,7 +49,35 @@ function NewPost() {
   const token = localStorage.getItem('token');
   const username = localStorage.getItem('username');
   const addedChannel = localStorage.getItem('addedChannel');
+  const [mentionFilter, setMentionFilter] = useState('');
+  const openMention = Boolean(anchorEl);
+  const id = openMention ? 'simple-popover' : undefined;
   const navigate = useNavigate();
+
+  const useStyles = makeStyles((theme) => ({
+    listItem: {
+      '&:hover': {
+        backgroundColor: theme.palette.action.hover,
+      },
+      cursor: 'pointer',
+      display: 'flex',
+      justifyContent: 'space-between',
+      width: '100%',
+    },
+    avatar: {
+      marginRight: theme.spacing(1),
+    },
+  }));
+
+  const classes = useStyles();
+
+  const textFieldRef = useRef(null); // add this line
+
+  useEffect(() => {
+    if (anchorEl) {
+      textFieldRef.current.focus();
+    }
+  }, [anchorEl]);
 
   useEffect(() => {
     // Quando il componente viene montato, leggi lo stato da localStorage
@@ -155,6 +181,19 @@ function NewPost() {
 
   const handlePostTextChange = event => {
     const newPostText = event.target.value;
+  const words = newPostText.split(' ');
+  const lastWord = words[words.length - 1];
+
+  if (lastWord.startsWith('@')) {
+    setAnchorEl(event.currentTarget);
+    setMentionFilter(lastWord.slice(1));
+  } else if (anchorEl && newPostText.includes('@')) {
+    setMentionFilter(lastWord);
+  } else {
+    setPostText(newPostText);
+    setAnchorEl(null);
+  }
+
     if(postType === 'normal'){
       const diff = postText.length - newPostText.length;
       if (diff > 0 && charAvailability?.dayly < initialCharAvailability?.dayly) {
@@ -533,6 +572,7 @@ function NewPost() {
     
     const handleClose = () => {
       setOpen(false);
+      setAnchorEl(null);
     };
 
     const handleTimedChange = (event) => {
@@ -576,6 +616,20 @@ function NewPost() {
     
       handleClosePurchase();
     }
+
+    const handleListItemClick = (userName) => {
+      const words = postText.split(' ');
+      const lastWord = words[words.length - 1];
+
+      if (lastWord.startsWith('@')) {
+        words[words.length - 1] = `@${userName}`;
+      } else {
+        words.push(`@${userName}`);
+      }
+
+      setPostText(words.join(' ') + ' ');
+      handleClose();
+    };
 
     return (
     <Container maxWidth="sm">
@@ -685,42 +739,46 @@ function NewPost() {
 
               {contentType === 'text' && !isTimed && (
                 <Grid item xs={12}>
-                  <MentionsInput 
-                    value={postText} 
-                    onChange={handlePostTextChange} 
-                    placeholder="Squeal text" 
-                    style={{ width: '100%', height: '100%', border: 'none', padding: '18.5px 14px' }}
+                  <TextField
+                    value={postText}
+                    onChange={handlePostTextChange}
+                    inputRef={textFieldRef}
+                    variant="standard"
+                    fullWidth
+                    label="Squeal Text"
+                  />
+                  <Popover
+                    id={id}
+                    open={openMention}
+                    anchorEl={anchorEl}
+                    onClose={handleClose}
+                    anchorOrigin={{
+                      vertical: 'bottom',
+                      horizontal: 'left',
+                    }}
+                    transformOrigin={{
+                      vertical: 'top',
+                      horizontal: 'left',
+                    }}
                   >
-                    <Mention
-                      trigger="@"
-                      data={(query, callback) => {
-                        if (Array.isArray(users)) {
-                          const matches = users
-                            .filter(user => typeof user.u_name === 'string' && user.u_name.includes(query))
-                            .map(user => ({ id: user.id, display: user.u_name, img: user.img }));
-                          callback(matches);
-                        } else {
-                          console.error('Users is not an array:', users);
-                        }
-                      }}
-                      renderSuggestion={(suggestion) => {
-                        return (
-                          <div className="user-suggestion" style={{ color:'#000', display: 'flex', alignItems: 'center' }}>
-                            <Avatar 
-                              src={suggestion.img ? `${import.meta.env.VITE_DEFAULT_URL}/media/image/${suggestion.img}` : undefined} 
-                              alt="img" 
-                              style={{ width: '20px', height: '20px' }}
-                            >
-                              {!suggestion.img && <FaceIcon />}
-                            </Avatar>
-                            {suggestion.display} 
-                          </div>
-                        );
-                      }}
-                      markup="@[__display__](__id__)"
-                      displayTransform={(id, u_name) => `@${u_name}`}
-                    />
-                  </MentionsInput>
+                  <List style={{ maxHeight: '200px', overflow: 'auto' }}>
+                    {users.filter(user => user.u_name.startsWith(mentionFilter)).map((user, index) => (
+                      <React.Fragment key={user.id}>
+                        <ListItem
+                          button
+                          className={classes.listItem}
+                          onClick={() => handleListItemClick(user.u_name)}
+                        >
+                          <Avatar className={classes.avatar} src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${user.img}`}>
+                            {!user.img && user.u_name[0].toUpperCase()}
+                          </Avatar>
+                          <ListItemText primary={user.u_name} />
+                        </ListItem>
+                        {index < users.length - 1 && <Divider />}
+                      </React.Fragment>
+                    ))}
+                  </List>
+                  </Popover>
                 </Grid>
               )}
 

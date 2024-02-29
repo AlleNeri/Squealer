@@ -14,6 +14,7 @@ import {Link} from 'react-router-dom';
 export default function Post({post}) {
   const {title, content, keywords, reactions, posted_by, posted_on, timed, popular, unpopular, date} = post;
     const [user, setUser] = useState(null);
+    const [users, setUsers] = useState([]);
     const [channel, setChannel] = useState(null);
     const mapRef = useRef(); // Assign useRef to a variable
     const token = localStorage.getItem('token');
@@ -107,23 +108,42 @@ export default function Post({post}) {
     });
   };
 
+  useEffect(() => {
+    // Fai una richiesta al backend per ottenere le informazioni degli utenti
+    fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/mention`, {
+      headers: {
+        'Authorization': token,
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      setUsers(data);
+    })
+    .catch(error => {
+      console.error('There was an error!', error);
+    });
+  }, []);
+
   function replaceMentionsWithLinks(text) {
     if(!text) return [];
     // Dividi il testo in parti utilizzando la menzione come separatore
-    const parts = text.split(/(@\[[^\]]+\]\([^)]+\))/g);
-  
+    const parts = text.split(/(@\w+)/g);
+
     // Mappa ogni parte in un elemento React
     return parts.map((part, i) => {
       // Se la parte è una menzione, sostituiscila con un link
-      const match = part.match(/@\[([^\]]+)\]\(([^)]+)\)/);
+      const match = part.match(/@(\w+)/);
       if (match) {
-        return (
-          <Link to={`/profile/${match[2]}`} key={i}>
-            @{match[1]}
-          </Link>
-        );
+        const user = users.find(user => user.u_name === match[1]);
+        if (user) {
+          return (
+            <Link to={`/profile/${user.id}`} key={i}>
+              @{user.u_name}
+            </Link>
+          );
+        }
       }
-  
+
       // Altrimenti, restituisci la parte come testo
       return part;
     });
