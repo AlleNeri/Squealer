@@ -44,6 +44,7 @@ userRoute.get('/:id', Auth.softAuthorize, (req: Request, res: Response) => {
 			if(req.user===undefined) return res.status(200).json(getUserPublicInfo(user));
 			else if(req.user?.isClient(req.params.id)) return res.status(200).json(user);
 			else if(req.user?.id === req.params.id) return res.status(200).json(user);
+			else if(req.user?.type === UserType.MOD) return res.status(200).json(user);
 			else return res.status(200).json(getUserPublicInfo(user));
 		})
 		.catch(err=> res.status(404).json({ msg: 'User not found', err: err }));
@@ -52,7 +53,7 @@ userRoute.get('/:id', Auth.softAuthorize, (req: Request, res: Response) => {
 //update a user
 userRoute.put('/:id', Auth.authorize, (req: Request, res: Response) => {
 	const id: string = req.params.id || req.user?.id;
-	if(id !== req.user?.id) return res.status(401).json({ msg: 'Unauthorized' });
+	if(req.user!.type !== UserType.MOD && id !== req.user?.id) return res.status(401).json({ msg: 'Unauthorized' });
 	UserSchema.findByIdAndUpdate(req.params.id, req.body.user)
 		.then((user: User | null) => {
 			if(!user) res.status(404).json({ msg: 'User not found' });

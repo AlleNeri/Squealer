@@ -4,19 +4,13 @@ import ChannelSchema, { Channel } from "./Channel";
 import UserSchema, { User } from "./User";
 
 let CM_COEFFICIENT: any | undefined=process.env.CM_COEFFICIENT;
-const {CONTROVERSIAL_CHANNEL, DBCOLLECTION_IMAGE, POPULAR_CHANNEL}=process.env;
+const {	DBCOLLECTION_IMAGE } = process.env;
 
 if(CM_COEFFICIENT === undefined) throw new Error("CM_COEFFICIENT is not defined in the config.env file.");
-if(CONTROVERSIAL_CHANNEL === undefined) throw new Error("CONTROVERSIAL_CHANNEL is not defined in the config.env file.");
 if(DBCOLLECTION_IMAGE === undefined) throw new Error("DBCOLLECTION_IMAGE is not defined in the config.env file.");
-if(POPULAR_CHANNEL === undefined) throw new Error("POPULAR_CHANNEL is not defined in the config.env file.");
 if(!process.env.DBCOLLECTION_POST) throw new Error("DBCOLLECTION_POST is not defined in the config.env file.");
 
-//TODO: test if the post ar added to the corret channels
-let controversialChannel: Channel=ChannelSchema.where({ name: CONTROVERSIAL_CHANNEL }).then((channel: Channel)=> channel);
-let popularChannel: Channel=ChannelSchema.where({ name: POPULAR_CHANNEL }).then((channel: Channel)=> channel);
-
-CM_COEFFICIENT=parseFloat(CM_COEFFICIENT);
+CM_COEFFICIENT = parseFloat(CM_COEFFICIENT);
 
 const PostSchema: mongoose.Schema=new mongoose.Schema({
 	title: {type: String, required: true},
@@ -75,11 +69,11 @@ PostSchema.methods.addControversial=function(): void {
 			user.removeUnpopular();
 			user.save();
 		});
-	this.appartains_to.push(controversialChannel._id);
+	this.popular=true;
+	this.unpopular=true;
 };
 
 PostSchema.methods.removeControversial=function(): void {
-	let index: number=this.appartains_to.indexOf(controversialChannel._id);
 	UserSchema.findById(this.posted_by)
 		.then((user: User | null)=> {
 			if(!user) return;
@@ -87,7 +81,8 @@ PostSchema.methods.removeControversial=function(): void {
 			user.addUnpopular();
 			user.save();
 		});
-	if(index != -1) this.appartains_to.splice(index, 1);
+	if(this.posReaction > (this.views * CM_COEFFICIENT)) this.unpopular=false;
+	else if(this.negReaction > (this.views * CM_COEFFICIENT)) this.popular=false;
 };
 
 PostSchema.methods.addPopular=function(): void {
@@ -98,7 +93,6 @@ PostSchema.methods.addPopular=function(): void {
 			user.save();
 		});
 	this.popular=true;
-	this.appartains_to.push(popularChannel._id);
 };
 
 PostSchema.methods.removePopular=function(): void {
@@ -109,8 +103,6 @@ PostSchema.methods.removePopular=function(): void {
 			user.save();
 		});
 	this.popular=false;
-	let index: number=this.appartains_to.indexOf(popularChannel._id);
-	if(index != -1) this.appartains_to.splice(index, 1);
 };
 
 PostSchema.methods.addUnpopular=function(): void {

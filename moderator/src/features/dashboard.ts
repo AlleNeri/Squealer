@@ -1,4 +1,4 @@
-import { Navigate } from '../utils/navigate';
+import { router } from '../utils/router';
 import { env } from '../env';
 
 const dashboardId = 'dashboard',
@@ -19,9 +19,9 @@ export function showDashboard() {
 }
 
 function addActionToUserButton() {
-	document.querySelector<HTMLButtonElement>(`#${usersButtonId}`)!.addEventListener('click', () => Navigate.getInstance().to("users"));
+	document.querySelector<HTMLButtonElement>(`#${usersButtonId}`)!.addEventListener('click', () => router.navigateTo("users"));
 }
 
 function addActionToPostsButton() {
-	document.querySelector<HTMLButtonElement>(`#${postsButtonId}`)!.addEventListener('click', () => Navigate.getInstance().to("posts"));
+	document.querySelector<HTMLButtonElement>(`#${postsButtonId}`)!.addEventListener('click', () => router.navigateTo("posts"));
 }

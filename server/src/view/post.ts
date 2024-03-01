@@ -143,6 +143,25 @@ postRoute.put("/:id/position", Auth.authorize, (req: Request, res: Response) => 
 		.catch((err: Error) => res.status(500).json({ msg: "Error updating post", err: err }));
 });
 
+//update a post
+//only a mod can update a post
+//a body is required: { title?, content?, keywords? }
+//if the attribute isn't in the body the related field of the post wont be updated
+//so for example, to delete all keywords the field has to be an empty array
+postRoute.put("/:id", Auth.authorize, Auth.isMod, (req: Request, res: Response) => {
+	PostSchema.findById(req.params.id)
+		.then((post: Post | null) => {
+			if(!post) return res.status(404).json({ msg: "Post not found" });
+			//update the post
+			if(req.body.title) post.title = req.body.title;
+			if(req.body.content) post.content = req.body.content;
+			if(req.body.keywords) post.keywords = req.body.keywords;
+			post.save();
+			res.status(200).json({ msg: "Post updated", post: post });
+		})
+		.catch((err: Error) => res.status(500).json({ msg: "Error updating post", err: err }));
+});
+
 //delete a post
 postRoute.delete("/:id", Auth.authorize, (req: Request, res: Response) => {
 	PostSchema.findByIdAndDelete(req.params.id)
@@ -178,7 +197,11 @@ postRoute.patch("/:id/visualize", Auth.authorize, (req: Request, res: Response) 
 //a body is neaded with the reaction field: { reaction: -2 | -1 | 1 | 2 }
 postRoute.patch("/:id/react", Auth.authorize, (req: Request, res: Response) => {
 	if(!req.body.reaction) res.status(400).json({ msg: "Bad request, no reaction provided" });
+<<<<<<< HEAD
+	else if(Math.abs(req.body.reaction) > 2) res.status(400).json({ msg: "Bad request, reaction not valid" });
+=======
 	else if(Math.abs(req.body.reaction) > 2 || req.body.reaction == 0) res.status(400).json({ msg: "Bad request, reaction not valid" });
+>>>>>>> main
 
 	PostSchema.findById(req.params.id)
 		.then((post: Post | null) => {
