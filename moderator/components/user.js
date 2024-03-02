@@ -22,7 +22,6 @@ class User extends HTMLElement {
 	connectedCallback() { this.render(); }
 
 	render() {
-		console.log(this.user);
 		this.shadowRoot.innerHTML = `
 			<style>
 				.user {

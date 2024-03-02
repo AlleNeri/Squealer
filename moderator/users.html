@@ -9,13 +9,28 @@
 		<div class="grid-container header-space">
 			<my-sidebar>
 				<h3>Menu</h3>
+				<my-users-filter></my-users-filter>
 			</my-sidebar>
 			<div>
 				<h1>Users</h1>
-				<my-users></my-users>
+				<my-users id="all-users-section" filterFirstName="" filterLastName="" filterType=""></my-users>
 			</div>
 		<script type="module" src="./components/header.js"></script>
 		<script type="module" src="./components/sidebar.js"></script>
 		<script type="module" src="./components/users.js"></script>
+		<script type="module" src="./components/my-users-filter.js"></script>
+		<script>
+			// catch the filter-applied event
+			document.addEventListener('filter-applied', (e) => {
+				const firstName = e.detail.filterFirstName;
+				const lastName = e.detail.filterLastName;
+				const type = e.detail.filterType;
+				const myUsers = document.querySelector('#all-users-section');
+				myUsers.setAttribute('filterFirstName', firstName);
+				myUsers.setAttribute('filterLastName', lastName);
+				myUsers.setAttribute('filterType', type);
+				myUsers.render();
+			});
+		</script>
 	</body>
 </html>

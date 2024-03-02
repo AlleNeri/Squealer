@@ -10,12 +10,56 @@ export class Users extends HTMLElement {
 		this.attachShadow({ mode: 'open' });
 	}
 
+	get filterFirstName() {
+        return this.getAttribute('filterFirstName');
+    }
+
+    set filterFirstName(value) {
+        this.setAttribute('filterFirstName', value);
+    }
+
+    get filterLastName() {
+        return this.getAttribute('filterLastName');
+    }
+
+    set filterLastName(value) {
+        this.setAttribute('filterLastName', value);
+    }
+
+    get filterType() {
+        return this.getAttribute('filterType');
+    }
+
+    set filterType(value) {
+        this.setAttribute('filterType', value);
+    }
+
+	static get observedAttributes() {
+		return ['filterFirstName', 'filterLastName', 'filterType'];
+	}
+
+	attributeChangedCallback(name, oldValue, newValue) {
+		if (['filterFirstName', 'filterLastName', 'filterType'].includes(name) && oldValue !== newValue) {
+			this.render();
+		}
+	}
+
 	async loadUsers() {
 		await Backend.get('users', Auth.getToken())
-			.then(data => this.users = data)
+			.then(data => {
+				this.users = data;
+				if (this.filterFirstName || this.filterLastName || this.filterType) {
+					this.users = this.users.filter(user => {
+						if (this.filterFirstName && user.name.first && !user.name.first.includes(this.filterFirstName)) return false;
+						if (this.filterLastName && user.name.last && !user.name.last.includes(this.filterLastName)) return false;
+						if (this.filterType && user.type && !user.type.includes(this.filterType)) return false;
+						return true;
+					});
+				}
+			})
 			.catch(error => {
 				alert('Si è verificato un errore durante il caricamento degli utenti');
-				console.error(error)
+				console.error(error);
 			});
 	}
 
