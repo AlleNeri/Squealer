@@ -191,5 +191,18 @@ userRoute.delete('/clients/:id', Auth.authorize, Auth.isSMM, (req: Request, res:
 		.catch(err=> res.status(404).json({ msg: 'Client not found', err: err }));
 });
 
+//block a user
+//only a moderator can do this
+userRoute.put(':id/block', Auth.authorize, Auth.isMod, (req: Request, res: Response) => {
+	UserSchema.findById(req.params.id)
+		.then((user: User | null) => {
+			if(!user) return res.status(404).json({ msg: 'User not found' });
+			user.block = true;
+			user.save();
+			res.status(200).json({ msg: 'User blocked' });
+		})
+		.catch(err=> res.status(404).json({ msg: 'User not found', err: err }));
+});
+
 //authentication routes
 userRoute.use('/', authenticationRoute);

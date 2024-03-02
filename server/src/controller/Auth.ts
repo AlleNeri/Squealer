@@ -107,6 +107,7 @@ abstract class Auth {
 	}
 
 	public static async signInWithUser(user: User, password: string): Promise<any | null> {
+		if(user.block) return { userId: user._id, userType: user.type, block: true };
 		return CredentialsSchema.findOne({ user_id: user._id })
 			.then((credentials: Credentials | null) => {
 				if(!credentials) return null;
