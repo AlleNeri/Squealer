@@ -15,11 +15,34 @@
 				<h1>Users</h1>
 				<my-users id="all-users-section" filterFirstName="" filterLastName="" filterType=""></my-users>
 			</div>
+			<my-edit-user id="edit-user-section"></my-edit-user>
+		</div>
 		<script type="module" src="./components/header.js"></script>
 		<script type="module" src="./components/sidebar.js"></script>
 		<script type="module" src="./components/users.js"></script>
+		<script type="module" src="./components/edit-user.js"></script>
 		<script type="module" src="./components/my-users-filter.js"></script>
 		<script>
+			// catch the edit user event
+			document.addEventListener('edit-user', function(e) {
+				// get the user data
+				const user = e.detail;
+				// set the user data to the edit-user component
+				const editUsers = document.querySelector('#edit-user-section');
+				editUsers.setAttribute('user', JSON.stringify(user));
+			});
+			// catch the new user event
+			document.addEventListener('new-user', function(e) {
+				// get the new user
+				const user = e.detail;
+				// send the new user to the all-users component
+				const allUsers = document.querySelector('#all-users-section');
+				allUsers.updateUser(user);
+				// reset the edit-user component
+				const editUsers = document.querySelector('#edit-user-section');
+				editUsers.removeAttribute('user');
+			});
+
 			// catch the filter-applied event
 			document.addEventListener('filter-applied', (e) => {
 				const firstName = e.detail.filterFirstName;

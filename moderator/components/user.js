@@ -1,28 +1,30 @@
 import { Backend } from "../utils/backend.js";
 
 class User extends HTMLElement {
-	constructor() {
-		super();
-		this.attachShadow({ mode: 'open' });
-	}
+    editId = 'edit-user';
 
-	get user() {
-		try { return JSON.parse(this.getAttribute("user")); }
-		catch(e) { return {}; }
-	}
+    constructor() {
+        super();
+        this.attachShadow({ mode: 'open' });
+    }
 
-	set user(value) { this.setAttribute("user", JSON.stringify(value)); }
+    get user() {
+        try { return JSON.parse(this.getAttribute("user")); }
+        catch(e) { return {}; }
+    }
 
-	static get observedAttributes() { return ["user"]; }
+    set user(value) { this.setAttribute("user", JSON.stringify(value)); }
 
-	attributeChangedCallback(name, oldValue, newValue) {
-		if(name === "user" && oldValue !== newValue) this.render();
-	}
+    static get observedAttributes() { return ["user"]; }
 
-	connectedCallback() { this.render(); }
+    attributeChangedCallback(name, oldValue, newValue) {
+        if(name === "user" && oldValue !== newValue) this.render();
+    }
 
-	render() {
-		this.shadowRoot.innerHTML = `
+    connectedCallback() { this.render(); }
+
+    render() {
+        this.shadowRoot.innerHTML = `
 			<style>
 				.user {
 					padding: 10px;
@@ -55,34 +57,47 @@ class User extends HTMLElement {
 					object-position: center;
 				}
 			</style>
-			<div class='user'>
-				<div class="inline">
-					${ this.user.img
-						? `<img src="${Backend.at('media/image/'+this.user.img)}" class="avatar" alt="avatar dell'utente" >`
-						: ""
-					}
-					<h2>${this.user.u_name}</h2>
-					${this.renderType()}
-				</div>
-				<span class="name">${this.user.name.first} ${this.user.name.last}</span>
-				<span class="email">${this.user.email}</span>
-			</div>
-		`;
-	}
+            <div class='user'>
+                <div class="inline">
+                    ${ this.user.img
+                        ? `<img src="${Backend.at('media/image/'+this.user.img)}" class="avatar" alt="avatar dell'utente" >`
+                        : ""
+                    }
+                    <h2>${this.user.u_name}</h2>
+                    ${this.renderType()}
+                    <button id="${this.editId + this.user._id}">Modifica</button>
+                </div>
+                <span class="name">${this.user.name.first} ${this.user.name.last}</span>
+                <span class="email">${this.user.email}</span>
+            </div>
+        `;
+        this.shadowRoot.getElementById(this.editId + this.user._id)
+            .addEventListener('click', () => {
+                const event = new CustomEvent("edit-user", {
+                    bubbles: true,
+                    composed: true,
+                    detail: this.user
+                });
+                this.dispatchEvent(event);
+            });
+        // Copy styles from the main document to the shadow root to make the component styleable
+        const styles = document.querySelectorAll('style, link[rel="stylesheet"]');
+        styles.forEach(style => this.shadowRoot.appendChild(style.cloneNode(true)));
+    }
 
-	renderType() {
-		switch(this.user.type) {
-			case "mod":
-				return "<span class='type'>Moderatore</span>";
-			case "smm":
-				return "<span class='type'>Social Media Manager</span>";
-			case "normal":
-				return "<span class='type'>Normale</span>";
-			case "vip":
-				return "<span class='type'>Vip</span>";
-			default: return "";
-		}
-	}
+    renderType() {
+        switch(this.user.type) {
+            case "mod":
+                return "<span class='type'>Moderatore</span>";
+            case "smm":
+                return "<span class='type'>Social Media Manager</span>";
+            case "normal":
+                return "<span class='type'>Normale</span>";
+            case "vip":
+                return "<span class='type'>Vip</span>";
+            default: return "";
+        }
+    }
 }
 
 customElements.define("my-user", User);
