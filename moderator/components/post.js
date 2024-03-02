@@ -112,7 +112,7 @@ class Post extends HTMLElement {
 
 	renderDate() {
 		const date = new Date(this.post.date);
-		return `<span class="date">${date.getDate()}/${date.getMonth()}/${date.getFullYear()} ${date.toLocaleTimeString()}</span>`;
+		return `<span class="date">${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} ${date.toLocaleTimeString()}</span>`;
 	}
 }
 

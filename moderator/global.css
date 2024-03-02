@@ -13,6 +13,22 @@ body {
 	padding: 0;
 }
 
+.container {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	width: 80%;
+}
+
+.container div {
+	width: 80%;
+	margin-bottom: 10px;
+}
+
+.container input {
+	width: 80%;
+}
+
 .header-space {
 	margin-top: 71px;
 }
@@ -25,3 +41,4 @@ span.keyword {
 	padding: 3px 5px;
 	border-radius: 2px;
 }
+
