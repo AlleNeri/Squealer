@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
@@ -22,6 +22,8 @@ export class PostAsClientComponent implements OnInit {
   @Input({required: true}) client!: Client;
   @Output() newPost: EventEmitter<IPost>;
   protected isDrawerVisible: boolean;
+  protected keywordsInputVisible: boolean;
+  @ViewChild('keywordsInput', { static: false }) keywordsInput?: ElementRef;
   protected postForm: FormGroup;
   protected channels: IChannel[];
   protected mentions: IUser[];
@@ -33,6 +35,7 @@ export class PostAsClientComponent implements OnInit {
     private msgService: NzMessageService
   ) {
     this.isDrawerVisible = false;
+    this.keywordsInputVisible = false;
     this.channels = [];
     this.mentions = [];
     this.newPost = new EventEmitter<IPost>();
@@ -54,18 +57,15 @@ export class PostAsClientComponent implements OnInit {
     this.backend.get(`channels/all`, this.auth.token!)
       .subscribe(res => this.channels = res as IChannel[]);
     this.backend.get(`users/mention`, this.auth.token!)
-      .subscribe(res => {
-        this.mentions = res as IUser[]
-        console.log("mentions:", this.mentions);
-      });
+      .subscribe(res => this.mentions = res as IUser[]);
   }
 
   get userCharAvailability(): IChar {
     const char: IChar = this.client.charNumber!;
     const used: number =
-      (this.postForm.get('text')?.value.length || 0) +
-      (this.postForm.get('title')?.value.length || 0) +
-      (this.postForm.get('keywords')?.value.reduce((acc: number, curr: string) => acc + curr.length, 0) || 0) +
+      (this.postForm.get('text')?.value?.length || 0) +
+      (this.postForm.get('title')?.value?.length || 0) +
+      (this.postForm.get('keywords')?.value?.reduce((acc: number, curr: string) => acc + curr.length, 0) || 0) +
       (this.postForm.get('img')?.value ? 125 : 0) +
       (this.postForm.get('position')?.value ? 125 : 0)
     ;
@@ -134,6 +134,7 @@ export class PostAsClientComponent implements OnInit {
         });
       }
       (event.target as HTMLInputElement).value = '';
+      this.toggleKeywordsInputVisibility();
     }
   }
 
@@ -159,25 +160,51 @@ export class PostAsClientComponent implements OnInit {
       post: {
         title: this.postForm.value.title,
         content: {
-          text: this.postForm.value.text,
-          img: this.postForm.value.img == '' ? null : this.postForm.value.img,
+          text: this.postForm.value.text || null,
           position: this.postForm.value.position
         },
         posted_on: this.postForm.value.channel,
         keywords: this.postForm.value.keywords,
       }
     };
-    console.log("body:", body);
     this.backend.post(`posts?as=${this.client.id}`, body, this.auth.token!)
       .subscribe((res: any) => {
-          console.log(res);
           if(res.user_char_availability) this.client.charNumber = res.user_char_availability;
-          if(res.post) this.newPost.emit(res.post);
-          this.postForm.reset();
+          if(this.postForm.value.img) {
+            const formData = new FormData();
+            formData.append('image', this.postForm.value.img as any);
+            formData.append('postId', res.post._id);
+            this.backend.put(`media/image`, formData, this.auth.token!)
+              .subscribe((resImg: any) => {
+                if(resImg.user_char_availability) this.client.charNumber = resImg.user_char_availability;
+                if(resImg.msg) this.msgService.warning(resImg.msg);
+                if(resImg.imgId) {
+                  res.post.content.img = resImg.imgId;
+                  this.newPost.emit(res.post);
+                }
+              });
+          }
+          else if(res.post) this.newPost.emit(res.post);
           this.toggleDrawer();
         }
       );
   }
 
-  protected toggleDrawer(): void { this.isDrawerVisible = !this.isDrawerVisible; }
+  protected toggleDrawer(): void {
+    if(this.isDrawerVisible)
+      this.postForm.reset({
+        title: '',
+        text: '',
+        img: null,
+        position: null,
+        channel: '',
+        keywords: []
+      });
+    this.isDrawerVisible = !this.isDrawerVisible;
+  }
+
+  protected toggleKeywordsInputVisibility(): void {
+    this.keywordsInputVisible = !this.keywordsInputVisible;
+    if(this.keywordsInputVisible) setTimeout(() => this.keywordsInput?.nativeElement.focus(), 10);
+  }
 }

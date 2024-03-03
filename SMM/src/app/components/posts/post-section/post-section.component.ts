@@ -17,17 +17,19 @@ export class PostSectionComponent implements OnInit, OnChanges {
   protected posts: Post[];
   protected popularPosts: Post[];
   protected unpopularPosts: Post[];
+  protected controversialPosts: Post[];
 
   constructor(protected backendComunication: BackendComunicationService, protected authService: AuthenticationService) {
     this.posts = [];
     this.popularPosts = [];
     this.unpopularPosts = [];
+    this.controversialPosts = [];
   }
 
   ngOnInit(): void { this.loadPosts(); }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if(changes["client"].currentValue.id !== changes["client"].previousValue.id)
+    if(changes["client"].currentValue.id !== changes["client"].previousValue?.id)
       this.loadPosts();
   }
 
@@ -39,15 +41,18 @@ export class PostSectionComponent implements OnInit, OnChanges {
           this.posts = (posts as Post[]).sort((a: Post, b: Post)=> new Date(b.date).getTime() - new Date(a.date).getTime())
           this.popularPosts = this.getPopularPosts();
           this.unpopularPosts = this.getUnpopularPosts();
+          this.controversialPosts = this.getControversialPosts();
         });
   }
 
-  getPopularPosts(): Post[] { return this.posts.filter((post: Post)=> post.popular); }
-  getUnpopularPosts(): Post[] { return this.posts.filter((post: Post)=> post.unpopular); }
+  getPopularPosts(): Post[] { return this.posts.filter((post: Post)=> post.popular && !post.unpopular); }
+  getUnpopularPosts(): Post[] { return this.posts.filter((post: Post)=> !post.popular && post.unpopular); }
+  getControversialPosts(): Post[] { return this.posts.filter((post: Post)=> post.popular && post.unpopular); }
 
   protected addNewPost(post: Post): void {
     this.posts.unshift(post);
     this.popularPosts = this.getPopularPosts();
     this.unpopularPosts = this.getUnpopularPosts();
+    this.controversialPosts = this.getControversialPosts();
   }
 }

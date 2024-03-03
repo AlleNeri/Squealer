@@ -50,8 +50,8 @@ authenticationRoute.post("/login", (req: Request, res: Response) => {
 		//find the user in the database
 		Auth.signIn(req.body.username, req.body.password)
 			.then((token: any | null)=> {
-				console.log(token)
-				if(!token) res.status(500).json({ success: false, msg: "Error accessing user. It's probably a server error." });
+				if(!token) res.status(500).json({ success: false, msg: "Error accessing user." });
+				else if(token.block) res.status(401).json({ success: false, msg: "User is blocked.", id: token.userId, userType: token.userType, block: true });
 				else res.status(200).json({ success: true, msg: "Successful login.", jwt: token.authToken, id: token.userId, userType: token.userType });
 			})
 			.catch((err: Error)=> res.status(500).json({ success: false, msg: "Error accessing user.", err: err }));

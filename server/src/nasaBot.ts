@@ -70,25 +70,51 @@ import ImgaeSchema, { Image } from './model/Image';
 	corn.schedule('05 00 * * *', async () => {
 		const { NASA_API_KEY } = process.env;
 		const response = await axios.get(`https://api.nasa.gov/planetary/apod?api_key=${NASA_API_KEY}`);
-		const daylyImage: String = await axios.get(response.data.url, { responseType: 'arraybuffer' })
-			.then((response) => Buffer.from(response.data, 'binary').toString('base64'))
-			.catch((error) => {
-				console.log("Error occurred while creating nasa bot.\n", error)
-				return '';
-			});
-		const savedDaylyImage: Image = new ImgaeSchema({ data: daylyImage, contentType: 'image/png' });
-		await savedDaylyImage.save();
-		const daylyPost: Post= new PostSchema({
-			title: response.data.title,
-			content: {
-				text: response.data.explanation,
-				img: savedDaylyImage._id,
-			},
-			keywords: listOfTags(response.data.explanation),
-			posted_by: nasabotProfile!._id,
-			posted_on: nasabotChannel!._id,
-		});
-		await daylyPost.save();
+		switch (response.data.media_type) {
+			case 'image': {
+				const daylyImage: String = await axios.get(response.data.url, { responseType: 'arraybuffer' })
+					.then((response) => Buffer.from(response.data, 'binary').toString('base64'))
+					.catch((error) => {
+						console.log("Error occurred while creating nasa bot.\n", error)
+						return '';
+					});
+				const savedDaylyImage: Image = new ImgaeSchema({ data: daylyImage, contentType: 'image/png' });
+				await savedDaylyImage.save();
+				const daylyPost: Post= new PostSchema({
+					title: response.data.title,
+					content: {
+						text: response.data.explanation,
+						img: savedDaylyImage._id,
+					},
+					keywords: listOfTags(response.data.explanation),
+					posted_by: nasabotProfile!._id,
+					posted_on: nasabotChannel!._id,
+				});
+				await daylyPost.save();
+			} break;
+			case 'video': {
+				const daylyPost: Post= new PostSchema({
+					title: response.data.title,
+					content: {
+						text: response.data.explanation + " " + response.data.url,
+					},
+					keywords: listOfTags(response.data.explanation),
+					posted_by: nasabotProfile!._id,
+					posted_on: nasabotChannel!._id,
+				});
+				await daylyPost.save();
+			} break;
+			default: {
+				const daylyPost: Post= new PostSchema({
+					title: response.data.title,
+					content: { text: response.data.explanation },
+					keywords: listOfTags(response.data.explanation),
+					posted_by: nasabotProfile!._id,
+					posted_on: nasabotChannel!._id,
+				});
+				await daylyPost.save();
+			}
+		}
 	}, {
 		scheduled: true,
 		timezone: 'Europe/Rome'

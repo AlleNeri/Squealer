@@ -9,3 +9,10 @@
 .header-menu {
   line-height: 64px;
 }
+
+/* header responsive height */
+@media only screen and (max-width: 600px) {
+  .header-height {
+    height: 128px;
+  }
+}

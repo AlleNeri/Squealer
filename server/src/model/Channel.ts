@@ -24,7 +24,7 @@ const ChannelSchema: mongoose.Schema=new mongoose.Schema({
 
 //prevent to change the name of a direct message channel
 ChannelSchema.pre('save', function(next) {
-	if(this.name.startsWith("__direct__") && this.isModified('name')) return next(new Error("Can't change the name of a direct message channel"));
+	if(!this.isNew && this.name.startsWith("__direct__") && this.isModified('name')) return next(new Error("Can't change the name of a direct message channel"));
 	next();
 });
 

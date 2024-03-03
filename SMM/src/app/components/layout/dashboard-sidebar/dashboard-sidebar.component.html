@@ -5,9 +5,10 @@
   class="sider-menu"
 >
   <li nz-menu-item>
-    <a routerLink="/smm/general">General</a>
+    <span nz-icon nzType="dashboard"></span>
+    <span><a routerLink="/smm/general">General</a></span>
   </li>
-  <li nz-submenu nzTitle="Clients">
+  <li nz-submenu nzTitle="Clients" nzIcon="user">
     <ul>
       <li *ngFor="let client of this.clients" nz-menu-item>
         <a  [routerLink]="['/smm', 'clients', client.id]">{{client.username}}</a>

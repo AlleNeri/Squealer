@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Posts</title>
+		<link rel="stylesheet" href="./global.css">
+	</head>
+	<body>
+		<my-header isLogged="true"></my-header>
+		<div class="grid-container header-space">
+			<my-sidebar>
+				<h3>Menu</h3>
+				<my-posts-filter></my-posts-filter>
+			</my-sidebar>
+			<div>
+                <h1>Posts</h1>
+                <my-posts id="all-posts-section" filterDate="" filterSender="" filterRecipient=""></my-posts>
+            </div>
+			<my-edit-post id="edit-post-section"></my-edit-post>
+		<script type="module" src="./components/header.js"></script>
+		<script type="module" src="./components/sidebar.js"></script>
+		<script type="module" src="./components/posts.js"></script>
+		<script type="module" src="./components/edit-post.js"></script>
+		<script type="module" src="./components/my-posts-filter.js"></script>
+		<script>
+			// catch the edit post event
+			document.addEventListener('edit-post', function(e) {
+				// get the post data
+				const post = e.detail;
+				// set the post data to the edit-posts component
+				const editPosts = document.querySelector('#edit-post-section');
+				editPosts.setAttribute('post', JSON.stringify(post));
+			});
+			// catch the new post event
+			document.addEventListener('new-post', function(e) {
+				// get the new post
+				const post = e.detail;
+				// send the new post to the all-posts component
+				const allPosts = document.querySelector('#all-posts-section');
+				allPosts.updatePost(post);
+				// reset the edit-post component
+				const editPosts = document.querySelector('#edit-post-section');
+				editPosts.removeAttribute('post');
+			});
+
+			// catch the filter-applied event
+			document.addEventListener('filter-applied', (e) => {
+				const date = e.detail.filterDate;
+				const sender = e.detail.filterSender;
+				const recipient = e.detail.filterRecipient;
+				const myPosts = document.querySelector('#all-posts-section');
+				myPosts.setAttribute('filterDate', date);
+				myPosts.setAttribute('filterSender', sender);
+				myPosts.setAttribute('filterRecipient', recipient);
+				myPosts.render();
+			});
+
+		</script>
+	</body>
+</html>
