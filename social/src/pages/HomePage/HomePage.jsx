@@ -58,16 +58,16 @@ function HomePage() {
           
           // Get my channels
           const myChannelsResponse = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels/all`);
-          const myChannels = await myChannelsResponse.json();
-
+          const myChannels = myChannelsResponse ? await myChannelsResponse.json() : [];
+  
           // Get all posts of my channels
           const channelsPosts = await Promise.all(myChannels.map(async (channel) => {
               const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels/${channel._id}/posts`, options);
-              return response.json();
+              return response ? await response.json() : [];
           }));
           
           // Flatten the array of arrays into a single array
-          const allChannelsPosts = channelsPosts.flat();
+          const allChannelsPosts = Array.isArray(channelsPosts) ? channelsPosts.flat() : [];
           
           // Combine my posts and channel posts
           let allPosts = [...allChannelsPosts];
