@@ -88,27 +88,16 @@ class PostsFilter extends HTMLElement {
             div {
                 display: flex;
                 flex-direction: column;
-                align-items: flex-start; /* Align items to the start */
+                align-items: flex-start;
             }
         </style>
         <div>
+            <label for="filterDate">Publish date:</label>
             <input type="date" id="filterDate" value="${this.filterDate || ''}" />
-            <select id="filterSender">
-                <option value="">-- Select --</option>
-                ${this.users.map(user => `<option value="${user.u_name}">${user.u_name}</option>`).join('')}
-            </select>
-            <select id="filterRecipient">
-                <option value="">-- Select --</option>
-                <optgroup label="Public channels">
-                    ${this.channels.filter(channel => !channel.private).map(channel => `<option value="${channel.name}">${channel.name}</option>`).join('')}
-                </optgroup>
-                <optgroup label="Private channels">
-                    ${this.channels.filter(channel => channel.private && !channel.name.startsWith('__direct__')).map(channel => `<option value="${channel.name}">${channel.name}</option>`).join('')}
-                </optgroup>
-                <optgroup label="Direct messages">
-                    ${this.channels.filter(channel => channel.name.startsWith('__direct__')).map(channel => `<option value="${channel.name}">${channel.name}</option>`).join('')}
-                </optgroup>
-            </select>
+            <label for="filterSender">Sender:</label>
+            <input type="text" id="filterSender" placeholder="Enter Sender">
+            <label for="filterRecipient">Recipient:</label>
+            <input type="text" id="filterRecipient" placeholder="Enter Recipient">
             <button id="applyFilter">Apply Filters</button>
         </div>
         `;
@@ -119,9 +108,6 @@ class PostsFilter extends HTMLElement {
             const filterDate = this.shadowRoot.getElementById('filterDate').value;
             const filterSender = this.shadowRoot.getElementById('filterSender').value;
             const filterRecipient = this.shadowRoot.getElementById('filterRecipient').value;
-            console.log(`Filter date in event listener: ${filterDate}`);
-            console.log(`Filter sender in event listener: ${filterSender}`);
-            console.log(`Filter recipient in event listener: ${filterRecipient}`);
 
             // Dispatch the custom event
             const event = new CustomEvent('filter-applied', { bubbles: true, composed: true, detail: { filterDate, filterSender, filterRecipient } });
