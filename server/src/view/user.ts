@@ -193,7 +193,7 @@ userRoute.delete('/clients/:id', Auth.authorize, Auth.isSMM, (req: Request, res:
 
 //block a user
 //only a moderator can do this
-userRoute.put(':id/block', Auth.authorize, Auth.isMod, (req: Request, res: Response) => {
+userRoute.put('/:id/block', Auth.authorize, Auth.isMod, (req: Request, res: Response) => {
 	UserSchema.findById(req.params.id)
 		.then((user: User | null) => {
 			if(!user) return res.status(404).json({ msg: 'User not found' });
@@ -206,7 +206,7 @@ userRoute.put(':id/block', Auth.authorize, Auth.isMod, (req: Request, res: Respo
 
 //unblock a user
 //only a moderator can do this
-userRoute.put(':id/unblock', Auth.authorize, Auth.isMod, (req: Request, res: Response) => {
+userRoute.put('/:id/unblock', Auth.authorize, Auth.isMod, (req: Request, res: Response) => {
 	UserSchema.findById(req.params.id)
 		.then((user: User | null) => {
 			if(!user) return res.status(404).json({ msg: 'User not found' });

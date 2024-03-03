@@ -67,8 +67,8 @@ class PostsFilter extends HTMLElement {
     render(){
         this.shadowRoot.innerHTML = `
         <style>
-            input[type="date"], select, button {
-                width: 80%;
+            input[type="date"], input[type="text"], select, button {
+                width: 50%;
                 padding: 12px 20px;
                 margin: 8px 0;
                 box-sizing: border-box;
