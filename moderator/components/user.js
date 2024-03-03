@@ -25,51 +25,53 @@ class User extends HTMLElement {
 
     render() {
         this.shadowRoot.innerHTML = `
-			<style>
-				.user {
-					padding: 10px;
-					margin: 10px 0;
-				}
-				.user span.name,
-				.user span.type {
-					color: #00000073;
-					font-size: 0.9em;
-					margin-right: 5px;
-				}
-				.user span.type {
-					margin-left: 5px;
-				}
-				.user span.email {
-					color: #00000073;
-					font-size: 0.7em;
-				}
-				.user div.inline {
-					display: flex;
-					/* vertical align middle */
-					align-items: center;
-				}
-				.user div.inline img.avatar {
-					width: 40px;
-					height: 40px;
-					border-radius: 50%;
-					margin-right: 10px;
-					object-fit: cover;
-					object-position: center;
-				}
-			</style>
-            <div class='user'>
-                <div class="inline">
-                    ${ this.user.img
-                        ? `<img src="${Backend.at('media/image/'+this.user.img)}" class="avatar" alt="avatar dell'utente" >`
-                        : ""
-                    }
+        <style>
+            .user {
+                padding: 10px;
+                margin: 10px 0;
+                background-color: white;
+                border-radius: 5px;
+            }
+            .user img {
+                max-height: 300px;
+                max-width: 50%;
+            }
+            .user span.name,
+            .user span.type {
+                color: #00000073;
+                font-size: 0.9em;
+                margin-right: 5px;
+                display: block;
+            }
+            .user span.email {
+                color: #00000073;
+                font-size: 0.7em;
+            }
+            .user div.user-head {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .user div.user-head h2 {
+                margin: 0;
+            }
+        </style>
+        <div class="user">
+            <div class="user-head">
+                <div>
                     <h2>${this.user.u_name}</h2>
-                    ${this.renderType()}
-                    <button id="${this.editId + this.user._id}">Modifica</button>
+                    <span class="email">${this.user.email}</span>
                 </div>
-                <span class="name">${this.user.name.first} ${this.user.name.last}</span>
-                <span class="email">${this.user.email}</span>
+                <button id="${this.editId + this.user._id}">Modifica</button>
             </div>
+            <div class="inline">
+                ${ this.user.img
+                    ? `<img src="${Backend.at('media/image/'+this.user.img)}" class="avatar" alt="avatar dell'utente" >`
+                    : ""
+                }
+                <span class="name">${this.user.name.first} ${this.user.name.last}</span>
+            </div>
+        </div>
         `;
         this.shadowRoot.getElementById(this.editId + this.user._id)
             .addEventListener('click', () => {

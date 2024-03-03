@@ -54,7 +54,7 @@ class MyUsersFilter extends HTMLElement {
     render() {
         this.shadowRoot.innerHTML = `
             <style>
-                input[type="date"], select, button {
+                input[type="date"], input[type="text"], select, button {
                     width: 50%;
                     padding: 12px 20px;
                     margin: 8px 0;
