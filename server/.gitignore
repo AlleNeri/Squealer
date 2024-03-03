@@ -9,3 +9,7 @@ rsa-keys/
 
 #.env file
 config.env
+
+#frontends
+social/
+smm/
