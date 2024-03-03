@@ -152,6 +152,7 @@ function Register() {
             value={user.u_name}
             onChange={(e) => setUser({ ...user, u_name: e.target.value })}
             fullWidth
+            style={{ marginTop: '10px' }}
           />
         
           <TextField
@@ -160,6 +161,7 @@ function Register() {
             value={user.name.first}
             onChange={(e) => setUser({ ...user, name: { ...user.name, first: e.target.value } })}
             fullWidth
+            style={{ marginTop: '10px' }}
           />
         
           <TextField
@@ -168,6 +170,7 @@ function Register() {
             value={user.name.last}
             onChange={(e) => setUser({ ...user, name: { ...user.name, last: e.target.value } })}
             fullWidth
+            style={{ marginTop: '10px' }}
           />
 
           <TextField
@@ -180,6 +183,7 @@ function Register() {
             }}
             onChange={(e) => setUser({ ...user, b_date: e.target.value })}
             fullWidth
+            style={{ marginTop: '10px' }}
           />
 
           <TextField
@@ -188,6 +192,7 @@ function Register() {
             value={user.email}
             onChange={handleEmailChange}
             fullWidth
+            style={{ marginTop: '10px' }}
           />
         
           <TextField
@@ -197,13 +202,15 @@ function Register() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             fullWidth
+            style={{ marginTop: '10px' }}
           />
 
-          <InputLabel>Type</InputLabel>
+          <InputLabel style={{marginTop:'10px'}}>Type</InputLabel>
           <Select
             value={user.type}
             onChange={(e) => setUser({ ...user, type: e.target.value })}
             fullWidth
+            style={{ marginTop: '10px' }}
           >
             <MenuItem value={'normal'}>Normal</MenuItem>
             <MenuItem value={'vip'}>VIP</MenuItem>
@@ -217,7 +224,9 @@ function Register() {
               <input
                 type="file"
                 hidden
+                fullWidth
                 onChange={handleImageSelection}
+                style={{ marginTop: '10px' }}
               />
             </Button>
             {uploadComplete && <CheckCircleIcon style={{ color: green[500] }} />}
@@ -228,6 +237,8 @@ function Register() {
             type="submit"
             variant="contained" // This gives the button a solid background
             color="primary" // This makes the button blue
+            fullWidth // This makes the button take up the full width of the container
+            style={{ marginTop: '10px' }} // This adds some space above the button
           >
             Register
           </Button>

@@ -82,6 +82,7 @@ function Login() {
               disabled={isDisabled}
               variant="contained" // This gives the button a solid background
               color="primary" // This makes the button blue
+              style={{ marginTop: '10px' }} // This adds some space above the button
             >
               Login
             </Button>

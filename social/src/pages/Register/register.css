@@ -14,16 +14,6 @@
     width: 100%;
     padding: 0.5rem;
 }
-  
-.register-button[type="submit"] {
-    width: 100%;
-    padding: 1rem;
-    background: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
 
 .register-button[disabled] {
     opacity: 0.5; 

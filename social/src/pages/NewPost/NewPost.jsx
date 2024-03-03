@@ -1,16 +1,17 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { LoginContext } from '../../context/LoginContext/LoginContext';
 import { PostsContext } from '../../context/PostsContext/PostsContext';
 import { TimeContext } from '../../context/TimeContext/TimeContext';
 import Channel from '../../components/Channel/Channel';
-import { TextField, Button, InputLabel, FormControl, MenuItem, Select, Box, Link, 
-    Typography, Avatar, Checkbox, FormControlLabel,
-    Container, Grid, Paper, Table, TableBody, TableCell, TableRow, Divider, IconButton } from '@material-ui/core';
+import { TextField, Button, InputLabel, FormControl, MenuItem, Select, Box, Link, Popover, List, ListItem,
+    Typography, Avatar, Checkbox, FormControlLabel, Chip, InputAdornment, Dialog, DialogTitle, makeStyles, ListItemText,
+    Container, Grid, Paper, Table, TableBody, TableCell, TableRow, Divider, IconButton, DialogActions, DialogContent } from '@material-ui/core';
 import { Autocomplete } from '@mui/material';
-import FaceIcon from '@material-ui/icons/Face';
+import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import ClearIcon from '@mui/icons-material/Clear';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { Alert } from '@mui/material';
-import { MentionsInput, Mention } from 'react-mentions';
 import './newPost.css';
 import { useNavigate } from 'react-router-dom';
 
@@ -18,6 +19,10 @@ function NewPost() {
   const { loggedIn } = useContext(LoginContext);
   const [charAvailability, setCharAvailability] = useState({ dayly: 0, weekly: 0, monthly: 0 });
   const [initialCharAvailability, setInitialCharAvailability] = useState({ dayly: 0, weekly: 0, monthly: 0 });
+  const [openPurchase, setOpenPurchase] = useState(false);
+  const [purchased, setPurchased] = useState(false);
+  const [period, setPeriod] = useState('day');
+  const [quantity, setQuantity] = useState(0);
   const { updateInterval, setUpdateInterval, updateTimes, setUpdateTimes } = useContext(TimeContext);
   const [open, setOpen] = useState(false);
   const [isTimed, setIsTimed] = useState(false);
@@ -29,9 +34,11 @@ function NewPost() {
   const [position, setPosition] = useState(undefined);
   const [hasPosition, setHasPosition] = useState(false);
   const [hasImage, setHasImage] = useState(false);
-  const [keywords, setKeywords] = useState('');
+  const [inputValue, setInputValue] = useState('');
+  const [keywords, setKeywords] = useState([]);
   const [contentType, setcontentType] = useState('geolocation'); // ['text', 'image', 'geo']
   const [postType, setPostType] = useState('normal');
+  const [anchorEl, setAnchorEl] = useState(null);
   const [directRecipient, setDirectRecipient] = useState('');
   const [isFormValid, setIsFormValid] = useState(false);
   const [channel, setChannel] = useState(''); // New state variable for the selected channel
@@ -41,8 +48,36 @@ function NewPost() {
   const [alert, setAlert] = useState({ open: false, message: '', severity: '' });
   const token = localStorage.getItem('token');
   const username = localStorage.getItem('username');
+  const addedChannel = localStorage.getItem('addedChannel');
+  const [mentionFilter, setMentionFilter] = useState('');
+  const openMention = Boolean(anchorEl);
+  const id = openMention ? 'simple-popover' : undefined;
   const navigate = useNavigate();
 
+  const useStyles = makeStyles((theme) => ({
+    listItem: {
+      '&:hover': {
+        backgroundColor: theme.palette.action.hover,
+      },
+      cursor: 'pointer',
+      display: 'flex',
+      justifyContent: 'space-between',
+      width: '100%',
+    },
+    avatar: {
+      marginRight: theme.spacing(1),
+    },
+  }));
+
+  const classes = useStyles();
+
+  const textFieldRef = useRef(null); // add this line
+
+  useEffect(() => {
+    if (anchorEl) {
+      textFieldRef.current.focus();
+    }
+  }, [anchorEl]);
 
   useEffect(() => {
     // Quando il componente viene montato, leggi lo stato da localStorage
@@ -56,7 +91,6 @@ function NewPost() {
     // Ogni volta che lo stato cambia, salvalo in localStorage
     localStorage.setItem('token', token);
   }, [token, loggedIn]);
-
 
   useEffect(() => {
     setIsFormValid(subject !== '' && (postText !== '' || image !== null || position ) && keywords !== '');
@@ -78,7 +112,7 @@ function NewPost() {
       .catch(error => {
         console.error('Error fetching user data', error);
       });
-  }, []);
+  }, [purchased]);
 
   useEffect(() => {
     // This function runs whenever contentType changes
@@ -124,14 +158,42 @@ function NewPost() {
 
       fetchMyChannels();
     }
-  }, [loggedIn, token]);
+  }, [loggedIn, token, addedChannel]);
 
   const handlePostTypeChange = (event) => {
+    setHasImage(false);
+    setHasPosition(false);
     setPostType(event.target.value);
+  };
+
+  const handleClearImage = () => {
+    setCharAvailability(prevState => ({
+      ...prevState,
+      dayly: prevState?.dayly + lessChar,
+      weekly: prevState?.weekly + lessChar,
+      monthly: prevState?.monthly + lessChar,
+    }));
+
+    setLessChar(0);
+    setImage(null);
+    setHasImage(false);
   };
 
   const handlePostTextChange = event => {
     const newPostText = event.target.value;
+  const words = newPostText.split(' ');
+  const lastWord = words[words.length - 1];
+
+  if (lastWord.startsWith('@')) {
+    setAnchorEl(event.currentTarget);
+    setMentionFilter(lastWord.slice(1));
+  } else if (anchorEl && newPostText.includes('@')) {
+    setMentionFilter(lastWord);
+  } else {
+    setPostText(newPostText);
+    setAnchorEl(null);
+  }
+
     if(postType === 'normal'){
       const diff = postText.length - newPostText.length;
       if (diff > 0 && charAvailability?.dayly < initialCharAvailability?.dayly) {
@@ -183,31 +245,35 @@ function NewPost() {
     setSubject(newSubject);
   };
 
-  const handleKeywordsChange = (e) => {
-    const value = e.target.value;
-    const lastChar = value.charAt(value.length - 1);
-  
-    // Se l'utente sta cercando di inserire '#' dopo '#', non permetterlo
-    if (value.length > 1 && lastChar === '#' && value.charAt(value.length - 2) === '#') {
-      alert('Ogni keyword deve avere un solo cancelletto!')
-      return;
+  const handleAddKeyword = () => {
+    if (inputValue && !keywords.includes(inputValue)) {
+      if (postType === 'normal') {
+        // Subtract the length from the character availability
+        setCharAvailability(prevAvailability => ({
+          dayly: prevAvailability.dayly - (inputValue.length),
+          weekly: prevAvailability.weekly - (inputValue.length),
+          monthly: prevAvailability.monthly - inputValue.length,
+        }));
+      }
+
+      setKeywords([...keywords, inputValue]);
+      setInputValue('');
     }
-  
-    // Se l'utente sta cercando di inserire un carattere non valido dopo '#', non permetterlo
-    if (value.startsWith('#') && !lastChar.match(/[a-zA-Z0-9#]/)) {
-      alert('Non puoi scrivere simboli nella keyword, ma solo lettere e numeri!')
-      return;
+
+    
+  };
+
+  const handleDeleteKeyword = (keywordToDelete) => () => {
+    if (postType === 'normal') {
+      // Add the length back to the character availability
+      setCharAvailability(prevAvailability => ({
+        dayly: prevAvailability.dayly + keywordToDelete.length,
+        weekly: prevAvailability.weekly + keywordToDelete.length,
+        monthly: prevAvailability.monthly + keywordToDelete.length,
+      }));
     }
-  
-    // Se l'utente sta cercando di inserire un carattere prima di '#', non permetterlo
-    if (!value.startsWith('#') && value.length > 0) {
-      alert('Inizia la keyword con #!')
-      return;
-    }
-  
-    // Aggiorna lo stato con il nuovo valore
-    setKeywords(value);
-  }
+    setKeywords(keywords.filter((keyword) => keyword !== keywordToDelete));
+  };
 
   const handlecontentTypeChange = (event) => {
     if(lessChar > 0){
@@ -220,6 +286,8 @@ function NewPost() {
 
       setLessChar(0);
     }
+    setHasImage(false);
+    setHasPosition(false);
     setcontentType(event.target.value);
   };
 
@@ -228,22 +296,30 @@ function NewPost() {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-          if (latitude !== null && longitude !== null) {
-            setPosition({latitude, longitude});
-            setHasPosition(true); // Set hasPosition to true after getting the position
-          } else {
-            setAllert('Could not get current position');
-          }
+
           // Update character availability only if it's the first time getting the position
           if(postType === 'normal' && !hasPosition){
+            if (charAvailability?.dayly - 125 < 0 || charAvailability?.weekly - 125 < 0 || charAvailability?.monthly - 125 < 0) {
+              setAlert({ open: true, message: 'You have reached your daily, weekly, or monthly character limit', severity: 'error' });
+              return; // return early to prevent further execution
+            }
             setCharAvailability(prevState => ({
               ...prevState,
               dayly: prevState?.dayly - 125,
               weekly: prevState?.weekly - 125,
               monthly: prevState?.monthly - 125,
             }));
+            setHasPosition(true); // Set hasPosition to true after getting the position
             setLessChar(125);
           }
+
+          if (latitude !== null && longitude !== null) {
+            setPosition({latitude, longitude});
+            setHasPosition(true); // Set hasPosition to true after getting the position
+          } else {
+            setAllert('Could not get current position');
+          }
+          
         },
         (error) => {
           setAllert('Error getting current position', error);
@@ -266,6 +342,10 @@ function NewPost() {
     setImage(file);
 
     if(postType === 'normal' && !hasImage){
+      if (charAvailability?.dayly - 125 < 0 || charAvailability?.weekly - 125 < 0 || charAvailability?.monthly - 125 < 0) {
+        setAlert({ open: true, message: 'You have reached your daily, weekly, or monthly character limit', severity: 'error' });
+        return; // return early to prevent further execution
+      }
       // Update character availability
       setCharAvailability(prevState => ({
         ...prevState,
@@ -289,9 +369,8 @@ function NewPost() {
     });
 
     if (!response.ok) {
-      console.log(response);
-      throw new Error('Error creating channel');
-        }
+        throw new Error('Error creating channel');
+      }
 
         const data = await response.json();
         return data;
@@ -316,19 +395,38 @@ function NewPost() {
       const handleSubmit = async (event) => {
         event.preventDefault();
 
-        // Dividi la stringa di input in base al carattere '#'
-        const splitKeywords = keywords.split('#');
-
-        // Rimuovi la stringa vuota all'inizio dell'array, se presente
-        if (splitKeywords[0] === '') {
-          splitKeywords.shift();
+        if (!directRecipient && postType === 'direct') {
+          setAlert({ open: true, message: 'Please select a recipient', severity: 'error' });
+          return;
         }
 
-        // Rimuovi qualsiasi keyword che sia solo '#'
-        const validKeywords = splitKeywords.filter(keyword => keyword.length > 1);
+        if(!subject){
+          setAlert({ open: true, message: 'Please enter a subject', severity: 'error' });
+          return;
+        }
 
-        if (!directRecipient && postType === 'direct') {
-          setAlert('Please select a recipient.');
+        if(isTimed && (updateInterval === 0 || updateTimes === 0)){
+          setAlert({open: true, message: 'Please enter an update interval and update times', severity: 'error'});
+          return;
+        }
+        
+        if(contentType === 'text' && !postText){
+          setAlert({ open: true, message: 'Please enter a post text', severity: 'error' });
+          return;
+        }
+
+        if(contentType === 'image' && !image){
+          setAlert({ open: true, message: 'Please upload an image', severity: 'error' });
+          return;
+        }
+
+        if(contentType === 'geolocation' && !position){
+          setAlert({ open: true, message: 'Please get the current position', severity: 'error' });
+          return;
+        }
+
+        if(!channel){
+          setAlert({ open: true, message: 'Please select a channel or add a new one', severity: 'error' });
           return;
         }
 
@@ -381,7 +479,7 @@ function NewPost() {
               position: position || undefined,
             },
             timed: isTimed,
-            keywords: validKeywords || [],
+            keywords: keywords || [],
             posted_on: channelId || null,
             popular: false,
           };
@@ -422,7 +520,37 @@ function NewPost() {
           const imageResponseData = await imageResponse.json();
           newPost.post.content.img = imageResponseData.imgId; // Assuming the image ID is available as imgId
         }
-        
+      
+        try {
+          const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/${localStorage.getItem('userId')}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': token,
+            },
+            body: JSON.stringify({
+              user: {
+                char_availability: {
+                  dayly: charAvailability.dayly,
+                  weekly: charAvailability.weekly,
+                  monthly: charAvailability.monthly,
+                },
+              },
+            }),
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.msg);
+          }
+
+          // Handle successful update
+        } catch (error) {
+          // Handle error
+          console.error('Failed to update user', error);
+        }
+
         // Updated the posts list
         setPosts(prevPosts => [...prevPosts, newPost]);
 
@@ -438,11 +566,69 @@ function NewPost() {
     }
 
     const handleOpen = () => {
+      localStorage.setItem('lastPath', 'NewPost');
       setOpen(true);
     };
     
     const handleClose = () => {
       setOpen(false);
+      setAnchorEl(null);
+    };
+
+    const handleTimedChange = (event) => {
+      setIsTimed(event.target.checked);
+      setcontentType('geolocation');
+    };
+
+    const handleClickOpenPurchase = () => {
+      setOpenPurchase(true);
+    };
+
+    const handleClosePurchase = () => {
+      setOpenPurchase(false);
+    };
+
+    const handleSubmitPurchase = async () => {
+      const parsedQuantity = parseInt(quantity, 10);
+
+      try {
+        const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/${localStorage.getItem('userId')}/char`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token,
+          },
+          body: JSON.stringify({
+            period: period,
+            quantity: parsedQuantity,
+          }),
+        });
+    
+        if (response.ok) {
+          setPurchased(!purchased);
+          // Update your state here to reflect the new char availability
+        } else {
+          console.log('Failed to add char availability');
+        }
+      } catch (error) {
+        console.error('An error occurred while adding char availability:', error);
+      }
+    
+      handleClosePurchase();
+    }
+
+    const handleListItemClick = (userName) => {
+      const words = postText.split(' ');
+      const lastWord = words[words.length - 1];
+
+      if (lastWord.startsWith('@')) {
+        words[words.length - 1] = `@${userName}`;
+      } else {
+        words.push(`@${userName}`);
+      }
+
+      setPostText(words.join(' ') + ' ');
+      handleClose();
     };
 
     return (
@@ -483,7 +669,7 @@ function NewPost() {
                     onChange={(event, newValue) => {
                       setDirectRecipient(newValue);
                     }}
-                    renderInput={(params) => <TextField {...params} label="Recipient Username" variant="outlined" required />}
+                    renderInput={(params) => <TextField {...params} label="Recipient Username" required />}
                     fullWidth
                   />
                 </Grid>
@@ -494,7 +680,6 @@ function NewPost() {
                   label="Subject"
                   value={subject}
                   onChange={(e) => handleSubjectChange(e)}
-                  variant="outlined"
                   fullWidth
                 />
               </Grid>
@@ -504,7 +689,7 @@ function NewPost() {
                   control={
                     <Checkbox
                       checked={isTimed}
-                      onChange={() => setIsTimed(!isTimed)}
+                      onChange={handleTimedChange}
                       name="isTimed"
                       color="primary"
                     />
@@ -532,7 +717,7 @@ function NewPost() {
               </Grid>
 
               <Grid item xs={12}>
-                <FormControl variant="outlined" fullWidth>
+                <FormControl fullWidth>
                   <InputLabel id="post-type-label">Post Content</InputLabel>
                   <Select
                     labelId="post-type-label"
@@ -552,60 +737,76 @@ function NewPost() {
                 </FormControl>
               </Grid>
 
-              {contentType === 'text' && (
+              {contentType === 'text' && !isTimed && (
                 <Grid item xs={12}>
-                  <MentionsInput 
-                    value={postText} 
-                    onChange={handlePostTextChange} 
-                    placeholder="Squeal text" 
-                    style={{ width: '100%', height: '100%', border: 'none', padding: '18.5px 14px' }}
+                  <TextField
+                    value={postText}
+                    onChange={handlePostTextChange}
+                    inputRef={textFieldRef}
+                    variant="standard"
+                    fullWidth
+                    label="Squeal Text"
+                  />
+                  <Popover
+                    id={id}
+                    open={openMention}
+                    anchorEl={anchorEl}
+                    onClose={handleClose}
+                    anchorOrigin={{
+                      vertical: 'bottom',
+                      horizontal: 'left',
+                    }}
+                    transformOrigin={{
+                      vertical: 'top',
+                      horizontal: 'left',
+                    }}
                   >
-                    <Mention
-                      trigger="@"
-                      data={(query, callback) => {
-                        if (Array.isArray(users)) {
-                          const matches = users
-                            .filter(user => typeof user.u_name === 'string' && user.u_name.includes(query))
-                            .map(user => ({ id: user.id, display: user.u_name, img: user.img }));
-                          callback(matches);
-                        } else {
-                          console.error('Users is not an array:', users);
-                        }
-                      }}
-                      renderSuggestion={(suggestion) => {
-                        return (
-                          <div className="user-suggestion" style={{ color:'#000', display: 'flex', alignItems: 'center' }}>
-                            <Avatar 
-                              src={suggestion.img ? `${import.meta.env.VITE_DEFAULT_URL}/media/image/${suggestion.img}` : undefined} 
-                              alt="img" 
-                              style={{ width: '20px', height: '20px' }}
-                            >
-                              {!suggestion.img && <FaceIcon />}
-                            </Avatar>
-                            {suggestion.display} 
-                          </div>
-                        );
-                      }}
-                      markup="@[__display__](__id__)"
-                      displayTransform={(id, u_name) => `@${u_name}`}
-                    />
-                  </MentionsInput>
+                  <List style={{ maxHeight: '200px', overflow: 'auto' }}>
+                    {users.filter(user => user.u_name.startsWith(mentionFilter)).map((user, index) => (
+                      <React.Fragment key={user.id}>
+                        <ListItem
+                          button
+                          className={classes.listItem}
+                          onClick={() => handleListItemClick(user.u_name)}
+                        >
+                          <Avatar className={classes.avatar} src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${user.img}`}>
+                            {!user.img && user.u_name[0].toUpperCase()}
+                          </Avatar>
+                          <ListItemText primary={user.u_name} />
+                        </ListItem>
+                        {index < users.length - 1 && <Divider />}
+                      </React.Fragment>
+                    ))}
+                  </List>
+                  </Popover>
                 </Grid>
               )}
 
               {contentType === 'image' && (
                 <Grid item xs={12}>
-                  <Button variant="contained" component="label">
-                    Upload Image
-                    <input type="file" hidden accept="image/*" onChange={handleImageChange} />
-                  </Button>
-                  {image && <img src={preview} alt="preview" style={{height:"100px", width:"100px"}}/>}
+                  {image && (
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                      <div>
+                        <img src={preview} alt="preview" style={{maxHeight:"200px", width:"50%", objectFit:'cover'}}/>
+                      </div>
+                      <IconButton style={{ color: 'red' }} onClick={handleClearImage}>
+                        <ClearIcon />
+                      </IconButton>
+                    </div>
+                  )}
+                  {!image && (
+                    <Button variant="contained" fullWidth component="label">
+                      <AddPhotoAlternateIcon />
+                      Upload Image
+                      <input type="file" hidden accept="image/*" onChange={handleImageChange} />
+                    </Button>
+                  )}
                 </Grid>
               )}
 
               {contentType === 'geolocation' && (
                 <Grid item xs={12}>
-                  <Button variant="contained" onClick={handlePositionChange}>Get Current Position</Button>
+                  <Button variant="contained" fullWidth onClick={handlePositionChange}>Get Current Position</Button>
                   {position && (
                     <Typography variant="body1">
                       Latitude: {position.latitude}, Longitude: {position.longitude}
@@ -613,6 +814,60 @@ function NewPost() {
                   )}
                 </Grid>
               )}
+
+              <Grid item xs={12}>
+                <FormControl fullWidth>
+                  <InputLabel id="channel-label">Channel</InputLabel>
+                  <Select
+                    labelId="channel-label"
+                    id="channel"
+                    value={channel}
+                    onChange={(e) => setChannel(e.target.value)}
+                    disabled={postType === 'direct'}
+                  >
+                    {myChannels.filter(ch => !ch.name.startsWith('__direct__')).map((ch) => (
+                      <MenuItem key={ch._id} value={ch._id}>{ch.name}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <Button variant="contained"  fullWidth onClick={handleOpen} style={{ marginTop: '10px' }}>
+                  Add Channel
+                </Button>
+                <Channel isOpen={open} onClose={handleClose} />
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextField 
+                  value={inputValue} 
+                  onChange={(e) => {
+                    const isValid = /^[a-zA-Z0-9]+$/.test(e.target.value);
+                    if (isValid || e.target.value === '') {
+                      setInputValue(e.target.value);
+                    }
+                  }} 
+                  fullWidth
+                  label="Add keyword"
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={handleAddKeyword}>
+                          <AddCircleIcon />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <Box mt={2}>
+                  {keywords.map((keyword, index) => (
+                    <Chip
+                      key={index}
+                      label={`#${keyword}`}
+                      onDelete={handleDeleteKeyword(keyword)}
+                      style={{ margin: '0 5px 5px 0' }}
+                    />
+                  ))}
+                </Box>
+              </Grid>
               
               {postType === 'normal' && charAvailability &&
                 <Table>
@@ -645,50 +900,56 @@ function NewPost() {
                 </Table>
               }
 
-              <Grid item xs={12}>
-                <FormControl variant="outlined" fullWidth>
-                  <InputLabel id="channel-label">Channel</InputLabel>
-                  <Select
-                    labelId="channel-label"
-                    id="channel"
-                    value={channel}
-                    onChange={(e) => setChannel(e.target.value)}
-                    disabled={postType === 'direct'}
-                    endAdornment={
-                      myChannels.filter(ch => !ch.name.startsWith('__direct__')).length === 0 && (
-                        <IconButton onClick={handleOpen}>
-                          <AddCircleIcon />
-                        </IconButton>
-                      )
-                    }
-                  >
-                    {myChannels.filter(ch => !ch.name.startsWith('__direct__')).map((ch) => (
-                      <MenuItem key={ch._id} value={ch._id}>{ch.name}</MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                <Channel isOpen={open} onClose={handleClose} />
-              </Grid>
-
-              <Grid item xs={12}>
-                <TextField
-                  label="Keywords"
-                  value={keywords}
-                  onChange={(e) => handleKeywordsChange(e)}
-                  variant="outlined"
-                  fullWidth
-                />    
-              </Grid>
-
-              {alert.open && (
+              {alert.open && (          
                   <Grid item xs={12}>
                     <Alert severity={alert.severity}>{alert.message}</Alert>
                   </Grid>
-                )}
+              )}
               <Grid item xs={12} style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <Button variant="contained" style={{ marginRight: '10px' }} onClick={() => navigate('/Homepage')}>
                   Cancel
                 </Button>
+                <Button onClick={handleClickOpenPurchase} startIcon={<AttachMoneyIcon />} color="primary" variant="contained" style={{ marginRight: '10px' }}>
+                  Buy Chars
+                </Button>
+                <Dialog open={openPurchase} onClose={handleClosePurchase}>
+                  <DialogTitle>Buy Chars</DialogTitle>
+                  <DialogContent>
+                    <Grid container spacing={3} alignItems="center" justifyContent="center">
+                      <Grid item xs={12} sm={4}>
+                        <Select
+                          value={period}
+                          onChange={(e) => setPeriod(e.target.value)}
+                          fullWidth
+                        >
+                          <MenuItem value="day">Day</MenuItem>
+                          <MenuItem value="week">Week</MenuItem>
+                          <MenuItem value="month">Month</MenuItem>
+                        </Select>
+                      </Grid>
+                      <Grid item xs={12} sm={4}>
+                        <TextField
+                          label="Quantity"
+                          type="number"
+                          value={quantity}
+                          onChange={(e) => setQuantity(e.target.value)}
+                          fullWidth
+                        />
+                      </Grid>
+                    </Grid>
+                  </DialogContent>
+                  <DialogActions>
+                  <Button onClick={handleClosePurchase} variant="contained" color="secondary">
+                    Cancel
+                  </Button>
+                  <Button 
+                    onClick={handleSubmitPurchase} 
+                    style={{ backgroundColor: 'green', color: 'white' }}
+                  >
+                    Buy
+                  </Button>
+                </DialogActions>
+              </Dialog>
                 <Button variant="contained" color="primary" type="submit" onClick={handleSubmit}>
                   Submit
                 </Button>
