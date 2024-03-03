@@ -1,11 +1,16 @@
-import { Backend } from "../utils/backend.js";
-import { Auth } from "../utils/auth.js";
-
 class MyUsersFilter extends HTMLElement {
 
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
+    }
+
+    get filterUsername(){
+        return this.getAttribute('filterUsername');
+    }
+
+    set filterUsername(value){
+        this.setAttribute('filterUsername', value);
     }
 
     get filterFirstName() {
@@ -37,18 +42,12 @@ class MyUsersFilter extends HTMLElement {
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
-        if (['filterFirstName', 'filterLastName', 'filterType'].includes(name) && oldValue !== newValue) {
+        if (['filterUsername', 'filterFirstName', 'filterLastName', 'filterType'].includes(name) && oldValue !== newValue) {
             this.render();
         }
     }
 
     async connectedCallback() {
-        try {
-            this.users = await Backend.get('users', Auth.getToken());
-        } catch (error) {
-            console.error('Failed to fetch users:', error);
-            this.users = [];
-        }
         this.render();
     }
 
@@ -76,20 +75,19 @@ class MyUsersFilter extends HTMLElement {
                 div {
                     display: flex;
                     flex-direction: column;
-                    align-items: flex-start; /* Align items to the start */
+                    align-items: flex-start;
                 }
             </style>
             <div>
-                <select id="filterFirstName">
-                    <option value="">-- Select First Name --</option>
-                    ${Array.isArray(this.users) ? this.users.map(user => `<option value="${user.name.first}">${user.name.first}</option>`).join('') : ''}
-                </select>
-                <select id="filterLastName">
-                    <option value="">-- Select Last Name --</option>
-                    ${Array.isArray(this.users) ? this.users.map(user => `<option value="${user.name.last}">${user.name.last}</option>`).join('') : ''}
-                </select>
+                <label for="filterUsername">Username:</label>
+                <input type="text" id="filterUsername" placeholder="Enter Username">
+                <label for="filterFirstName">First Name:</label>
+                <input type="text" id="filterFirstName" placeholder="Enter First Name">
+                <label for="filterLastName">Last Name:</label>
+                <input type="text" id="filterLastName" placeholder="Enter Last Name">
+                <label for="filterType">Type:</label>
                 <select id="filterType">
-                    <option value="">-- Select Type --</option>
+                    <option value="">-- Select user type --</option>
                     <option value="vip">VIP</option>
                     <option value="mod">Moderator</option>
                     <option value="normal">Normal</option>
@@ -102,12 +100,13 @@ class MyUsersFilter extends HTMLElement {
         
         this.shadowRoot.getElementById('ApplyFilter').addEventListener('click', async (e) => {
             e.preventDefault(); // Prevent the form from being submitted normally
+            const filterUsername = this.shadowRoot.getElementById('filterUsername').value;
             const filterFirstName = this.shadowRoot.getElementById('filterFirstName').value;
             const filterLastName = this.shadowRoot.getElementById('filterLastName').value;
             const filterType = this.shadowRoot.getElementById('filterType').value;
 
             // Dispatch the custom event
-            const event = new CustomEvent('filter-applied', { bubbles: true, composed: true, detail: { filterFirstName, filterLastName, filterType } });
+            const event = new CustomEvent('filter-applied', { bubbles: true, composed: true, detail: { filterUsername, filterFirstName, filterLastName, filterType } });
             this.dispatchEvent(event);
         });
 

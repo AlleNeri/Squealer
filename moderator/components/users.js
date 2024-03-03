@@ -10,6 +10,14 @@ export class Users extends HTMLElement {
 		this.attachShadow({ mode: 'open' });
 	}
 
+	get filterUsername(){
+		return this.getAttribute('filterUsername');
+	}
+
+	set filterUsername(value){
+		this.setAttribute('filterUsername', value);
+	}
+
 	get filterFirstName() {
         return this.getAttribute('filterFirstName');
     }
@@ -35,11 +43,11 @@ export class Users extends HTMLElement {
     }
 
 	static get observedAttributes() {
-		return ['filterFirstName', 'filterLastName', 'filterType'];
+		return ['filterUsername', 'filterFirstName', 'filterLastName', 'filterType'];
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-		if (['filterFirstName', 'filterLastName', 'filterType'].includes(name) && oldValue !== newValue) {
+		if (['filterUsername', 'filterFirstName', 'filterLastName', 'filterType'].includes(name) && oldValue !== newValue) {
 			this.render();
 		}
 	}
@@ -48,8 +56,9 @@ export class Users extends HTMLElement {
 		await Backend.get('users', Auth.getToken())
 			.then(data => {
 				this.users = data;
-				if (this.filterFirstName || this.filterLastName || this.filterType) {
+				if (this.filterUsername || this.filterFirstName || this.filterLastName || this.filterType) {
 					this.users = this.users.filter(user => {
+						if (this.filterUsername && user.u_name && !user.u_name.includes(this.filterUsername)) return false;
 						if (this.filterFirstName && user.name.first && !user.name.first.includes(this.filterFirstName)) return false;
 						if (this.filterLastName && user.name.last && !user.name.last.includes(this.filterLastName)) return false;
 						if (this.filterType && user.type && !user.type.includes(this.filterType)) return false;

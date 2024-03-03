@@ -13,7 +13,7 @@
 			</my-sidebar>
 			<div>
 				<h1>Users</h1>
-				<my-users id="all-users-section" filterFirstName="" filterLastName="" filterType=""></my-users>
+				<my-users id="all-users-section" filterUsername="" filterFirstName="" filterLastName="" filterType=""></my-users>
 			</div>
 			<my-edit-user id="edit-user-section"></my-edit-user>
 		</div>
@@ -45,10 +45,12 @@
 
 			// catch the filter-applied event
 			document.addEventListener('filter-applied', (e) => {
+				const username = e.detail.filterUsername;
 				const firstName = e.detail.filterFirstName;
 				const lastName = e.detail.filterLastName;
 				const type = e.detail.filterType;
 				const myUsers = document.querySelector('#all-users-section');
+				myUsers.setAttribute('filterUsername', username);
 				myUsers.setAttribute('filterFirstName', firstName);
 				myUsers.setAttribute('filterLastName', lastName);
 				myUsers.setAttribute('filterType', type);
