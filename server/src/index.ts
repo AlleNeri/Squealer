@@ -54,12 +54,16 @@ apiRouter.use("/media", mediaRoute);
 app.use("/api", apiRouter);
 
 //TODO: remove this route, it's only for testing purposes
+/*
 app.get('/', (_: Request, res: Response)=>{
 	res.status(200).send(`The server seams to run correctly.`);
 });
+*/
 
 /*** Frontends ***/
 const basePath: string = path.join(__dirname, '../');
+
+app.use(express.static(path.join(basePath, 'social')));
 app.use('/smm', express.static(path.join(basePath, 'smm')));
 
 /*** Server start ***/

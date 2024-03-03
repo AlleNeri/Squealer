@@ -67,7 +67,7 @@ import ImgaeSchema, { Image } from './model/Image';
 
 	//create a nasabot post every day at 00:05
 	if(!process.env.NASA_API_KEY) throw new Error('NASA_API_KEY is not defined in the config.env file.');
-	corn.schedule('05 00 * * *', async () => {
+	corn.schedule('13 10 * * *', async () => {
 		const { NASA_API_KEY } = process.env;
 		const response = await axios.get(`https://api.nasa.gov/planetary/apod?api_key=${NASA_API_KEY}`);
 		switch (response.data.media_type) {
