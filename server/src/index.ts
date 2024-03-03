@@ -53,18 +53,15 @@ apiRouter.use("/media", mediaRoute);
 
 app.use("/api", apiRouter);
 
-//TODO: remove this route, it's only for testing purposes
-/*
-app.get('/', (_: Request, res: Response)=>{
-	res.status(200).send(`The server seams to run correctly.`);
-});
-*/
-
 /*** Frontends ***/
 const basePath: string = path.join(__dirname, '../');
 
 app.use(express.static(path.join(basePath, 'social')));
 app.use('/smm', express.static(path.join(basePath, 'smm')));
 
+//redirects
+app.get('/*', (_: Request, res: Response) => res.sendFile(path.join(basePath, 'social/index.html')));
+app.get('/smm/*', (_: Request, res: Response) => res.sendFile(path.join(basePath, 'smm/index.html')));
+
 /*** Server start ***/
-app.listen(PORT, ()=>console.log(`The server responds at: http://localhost:${PORT}`));
+app.listen(PORT, ()=>console.log(`The server responds at: ${process.env.PRODUCTION ? 'https://site222352.tw.cs.unibo.it' : `http://localhost:${PORT}`}`));
