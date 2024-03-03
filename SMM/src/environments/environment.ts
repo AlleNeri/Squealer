@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://site222352.tw.cs.unibo.it/api',
+  apiUrl: 'https://site222352.tw.cs.unibo.it/api',
 };

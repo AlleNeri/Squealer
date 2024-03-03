@@ -178,11 +178,7 @@ postRoute.patch("/:id/visualize", Auth.authorize, (req: Request, res: Response) 
 //a body is neaded with the reaction field: { reaction: -2 | -1 | 1 | 2 }
 postRoute.patch("/:id/react", Auth.authorize, (req: Request, res: Response) => {
 	if(!req.body.reaction) res.status(400).json({ msg: "Bad request, no reaction provided" });
-<<<<<<< HEAD
-	else if(Math.abs(req.body.reaction) > 2) res.status(400).json({ msg: "Bad request, reaction not valid" });
-=======
 	else if(Math.abs(req.body.reaction) > 2 || req.body.reaction == 0) res.status(400).json({ msg: "Bad request, reaction not valid" });
->>>>>>> main
 
 	PostSchema.findById(req.params.id)
 		.then((post: Post | null) => {
