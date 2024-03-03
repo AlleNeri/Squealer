@@ -2,6 +2,7 @@
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
 import mongoose from "mongoose";
+import compression from "compression";
 
 import "./env"; //do not move this line and be careful to not import anything or write any code before this line
 
@@ -33,6 +34,7 @@ const app: Express = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
+app.use(compression());
 
 //TODO: add checkLogin to all protected routes
 app.use("/router", router);	// This is for testing purposes only. TODO: Remove this line.

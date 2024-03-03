@@ -50,6 +50,7 @@ const UserSchema: mongoose.Schema=new mongoose.Schema({
 		},
 		default: { positive: 0, negative: 0 },
 	},
+	block: {type: Boolean, default: false},
 });
 
 UserSchema.virtual('isSMM').get(function() {

@@ -52,12 +52,35 @@ userRoute.get('/:id', Auth.softAuthorize, (req: Request, res: Response) => {
 
 //update a user
 userRoute.put('/:id', Auth.authorize, (req: Request, res: Response) => {
-	const id: string = req.params.id || req.user?.id;
+	const id: string = req.params.id;
 	if(req.user!.type !== UserType.MOD && id !== req.user?.id) return res.status(401).json({ msg: 'Unauthorized' });
-	UserSchema.findByIdAndUpdate(req.params.id, req.body.user)
+	UserSchema.findById(req.params.id)
 		.then((user: User | null) => {
 			if(!user) res.status(404).json({ msg: 'User not found' });
-			else res.status(200).json({ msg: 'User updated' });
+			else {
+				user.
+				res.status(200).json({ msg: 'User updated' });
+			}
+		})
+		.catch(err=> res.status(404).json({ msg: 'User not found', err: err }));
+});
+
+//update the quote of a user
+//only a moderator can do this
+//body: { dayly: number, weekly: number, monthly: number }
+userRoute.put('/:id/quote', Auth.authorize, Auth.isMod, (req: Request, res: Response) => {
+	if(!req.body.dayly || !req.body.weekly || !req.body.monthly) return res.status(400).json({ msg: 'Bad request' });
+	UserSchema.findById(req.params.id)
+		.then((user: User | null) => {
+			if(!user) res.status(404).json({ msg: 'User not found' });
+			else {
+				user.quote.dayly=req.body.dayly;
+				user.quote.weekly=req.body.weekly;
+				user.quote.monthly=req.body.monthly;
+				user.save()
+					.then((_: User) => res.status(200).json({ msg: 'Quote updated', new_quote: user.quote }))
+					.catch((err: any) => res.status(400).json({ msg: 'Bad request', err: err }));
+			}
 		})
 		.catch(err=> res.status(404).json({ msg: 'User not found', err: err }));
 });
@@ -166,6 +189,32 @@ userRoute.delete('/clients/:id', Auth.authorize, Auth.isSMM, (req: Request, res:
 			res.status(200).json({ client: req.user!.client });
 		})
 		.catch(err=> res.status(404).json({ msg: 'Client not found', err: err }));
+});
+
+//block a user
+//only a moderator can do this
+userRoute.put('/:id/block', Auth.authorize, Auth.isMod, (req: Request, res: Response) => {
+	UserSchema.findById(req.params.id)
+		.then((user: User | null) => {
+			if(!user) return res.status(404).json({ msg: 'User not found' });
+			user.block = true;
+			user.save();
+			res.status(200).json({ msg: 'User blocked' });
+		})
+		.catch(err=> res.status(404).json({ msg: 'User not found', err: err }));
+});
+
+//unblock a user
+//only a moderator can do this
+userRoute.put('/:id/unblock', Auth.authorize, Auth.isMod, (req: Request, res: Response) => {
+	UserSchema.findById(req.params.id)
+		.then((user: User | null) => {
+			if(!user) return res.status(404).json({ msg: 'User not found' });
+			user.block = false;
+			user.save();
+			res.status(200).json({ msg: 'User unblocked' });
+		})
+		.catch(err=> res.status(404).json({ msg: 'User not found', err: err }));
 });
 
 //authentication routes
