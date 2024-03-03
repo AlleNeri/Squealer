@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Users</title>
+		<link rel="stylesheet" href="./global.css">
+	</head>
+	<body>
+		<my-header isLogged="true"></my-header>
+		<div class="grid-container header-space">
+			<my-sidebar>
+				<h3>Menu</h3>
+				<my-users-filter></my-users-filter>
+			</my-sidebar>
+			<div>
+				<h1>Users</h1>
+				<my-users id="all-users-section" filterUsername="" filterFirstName="" filterLastName="" filterType=""></my-users>
+			</div>
+			<my-edit-user id="edit-user-section"></my-edit-user>
+		</div>
+		<script type="module" src="./components/header.js"></script>
+		<script type="module" src="./components/sidebar.js"></script>
+		<script type="module" src="./components/users.js"></script>
+		<script type="module" src="./components/edit-user.js"></script>
+		<script type="module" src="./components/my-users-filter.js"></script>
+		<script>
+			// catch the edit user event
+			document.addEventListener('edit-user', function(e) {
+				// get the user data
+				const user = e.detail;
+				// set the user data to the edit-user component
+				const editUsers = document.querySelector('#edit-user-section');
+				editUsers.setAttribute('user', JSON.stringify(user));
+			});
+			// catch the new user event
+			document.addEventListener('new-user', function(e) {
+				// get the new user
+				const user = e.detail;
+				// send the new user to the all-users component
+				const allUsers = document.querySelector('#all-users-section');
+				allUsers.updateUser(user);
+				// reset the edit-user component
+				const editUsers = document.querySelector('#edit-user-section');
+				editUsers.removeAttribute('user');
+			});
+
+			// catch the filter-applied event
+			document.addEventListener('filter-applied', (e) => {
+				const username = e.detail.filterUsername;
+				const firstName = e.detail.filterFirstName;
+				const lastName = e.detail.filterLastName;
+				const type = e.detail.filterType;
+				const myUsers = document.querySelector('#all-users-section');
+				myUsers.setAttribute('filterUsername', username);
+				myUsers.setAttribute('filterFirstName', firstName);
+				myUsers.setAttribute('filterLastName', lastName);
+				myUsers.setAttribute('filterType', type);
+				myUsers.render();
+			});
+		</script>
+	</body>
+</html>

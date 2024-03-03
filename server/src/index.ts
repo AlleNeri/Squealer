@@ -3,6 +3,7 @@ import express, { Express, Router, Request, Response } from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import path from "path";
+import compression from "compression";
 
 import "./env"; //do not move this line and be careful to not import anything or write any code before this line
 
@@ -42,6 +43,7 @@ const app: Express = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
+app.use(compression());
 
 /*** Api ***/
 const apiRouter: Router = Router();
@@ -53,16 +55,6 @@ apiRouter.use("/media", mediaRoute);
 
 app.use("/api", apiRouter);
 
-<<<<<<< HEAD
-//TODO: remove this route, it's only for testing purposes
-/*
-app.get('/', (_: Request, res: Response)=>{
-	res.status(200).send(`The server seams to run correctly.`);
-});
-*/
-
-=======
->>>>>>> 4f6abc96c8e4294c35aa92682e9546ff11260162
 /*** Frontends ***/
 const basePath: string = path.join(__dirname, '../');
 

@@ -33,7 +33,6 @@ const UserSchema: mongoose.Schema=new mongoose.Schema({
 		monthly: { type: Number, min: 0, default: process.env.START_M_QUOTE },
 	},
 	char_availability: {
-		last_update: { type: Date, default: Date.now },
 		dayly: { type: Number, min: 0, default: process.env.START_D_QUOTE },
 		weekly: { type: Number, min: 0, default: process.env.START_W_QUOTE },
 		monthly: { type: Number, min: 0, default: process.env.START_M_QUOTE },
@@ -51,6 +50,7 @@ const UserSchema: mongoose.Schema=new mongoose.Schema({
 		},
 		default: { positive: 0, negative: 0 },
 	},
+	block: {type: Boolean, default: false},
 });
 
 UserSchema.virtual('isSMM').get(function() {
@@ -71,13 +71,6 @@ UserSchema.virtual('isNormal').get(function() {
 
 UserSchema.virtual('isBot').get(function() {
 	return this.type===UserType.BOT;
-});
-
-UserSchema.virtual('isSubscribedTp').get(function(id: string) {
-	return this.appartenence.reduce((accumulatior: boolean, currVal: mongoose.Types.ObjectId)=> {
-		if(accumulatior) return true;
-		else return currVal.toString()==id;
-	});
 });
 
 UserSchema.methods.isClient=function(user_id: string): boolean {
@@ -109,44 +102,6 @@ UserSchema.methods.removeMySMM = function(): void {
 	if(this.isVip) this.smm = undefined;
 }
 
-UserSchema.methods.isAMidnightPassed=function(): boolean | undefined {
-	const now: Date=new Date();
-	if(this.char_availability.last_update) {
-		if(this.char_availability.last_update.getFullYear()!==now.getFullYear()) return true;
-		else if(this.char_availability.last_update.getMonth()!==now.getMonth()) return true;
-		else if(this.char_availability.last_update.getDate()!==now.getDate()) return true;
-		else return false;
-	}
-	this.char_availability.last_update=now;
-};
-
-UserSchema.methods.isAMondayPassed=function(): boolean | undefined {
-	const now: Date=new Date();
-	if(this.char_availability.last_update) {
-		if(this.char_availability.last_update.getFullYear()!==now.getFullYear()) return true;
-		else if(this.char_availability.last_update.getMonth()!==now.getMonth()) return true;
-		else if(this.char_availability.last_update.getDate()<(now.getDate()-now.getDay())) return true;	//check if the last update was before the last monday
-		else return false;
-	}
-	this.char_availability.last_update=now;
-};
-
-UserSchema.methods.isAMonthPassed=function(): boolean | undefined {
-	const now: Date=new Date();
-	if(this.char_availability.last_update) {
-		if(this.char_availability.last_update.getFullYear()!==now.getFullYear()) return true;
-		else if(this.char_availability.last_update.getMonth()!==now.getMonth()) return true;
-		else return false;
-	}
-	this.char_availability.last_update=now;
-};
-
-UserSchema.methods.updateCharAvailability=function(): void {
-	if(this.isAMidnightPassed()) this.char_availability.dayly=this.quote.dayly;
-	if(this.isAMondayPassed()) this.char_availability.weekly=this.quote.weekly;
-	if(this.isAMonthPassed()) this.char_availability.monthly=this.quote.monthly;
-};
-
 UserSchema.methods.canPost=function(amount: number): boolean {
 	if(this.char_availability.dayly < amount) return false;
 	else if(this.char_availability.weekly < amount) return false;
@@ -159,13 +114,13 @@ UserSchema.methods.canPost=function(amount: number): boolean {
 	}
 };
 
-UserSchema.methods.addQoute=function(percent: number=1): void {
+UserSchema.methods.addQuote=function(percent: number=1): void {
 	this.quote.dayly+=Math.round(this.quote.dayly*percent);
 	this.quote.weekly+=Math.round(this.quote.weekly*percent);
 	this.quote.monthly+=Math.round(this.quote.monthly*percent);
 };
 
-UserSchema.methods.removeQoute=function(percent: number=1): void {
+UserSchema.methods.removeQuote=function(percent: number=1): void {
 	this.quote.dayly-=Math.round(this.quote.dayly*percent);
 	this.quote.weekly-=Math.round(this.quote.weekly*percent);
 	this.quote.monthly-=Math.round(this.quote.monthly*percent);
@@ -175,7 +130,7 @@ UserSchema.methods.addPopular=function(): void {
 	this.messagePopularity.positive++;
 	if(this.messagePopularity.positive >= process.env.POPULAR_POSTS_LIMIT_POS!) {
 		this.messagePopularity.positive=0;
-		this.addQoute();
+		this.addQuote();
 	}
 };
 
@@ -187,7 +142,7 @@ UserSchema.methods.addUnpopular=function(): void {
 	this.messagePopularity.negative++;
 	if(this.messagePopularity.negative >= process.env.POPULAR_POSTS_LIMIT_NEG!) {
 		this.messagePopularity.negative=0;
-		this.removeQoute();
+		this.removeQuote();
 	}
 };
 

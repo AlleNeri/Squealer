@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button, TextField, Typography, Dialog, FormControlLabel, Checkbox, Grid, Divider, Box} from '@mui/material';
 
 const Channel = ({ isOpen, onClose }) => {
@@ -6,6 +7,7 @@ const Channel = ({ isOpen, onClose }) => {
     const [description, setDescription] = useState('');
     const [isPrivate, setPrivate] = useState(false);
     const token = localStorage.getItem('token');
+    const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -31,6 +33,10 @@ const Channel = ({ isOpen, onClose }) => {
                 throw new Error('Network response was not ok');
             }
             const data = await response.json();
+            if(localStorage.getItem('lastPath') === "NewChannel"){
+                navigate(`/AllChannels/${data._id}`);
+            }
+            localStorage.setItem('addedChannel', data._id);
             onClose();
         } catch (error) {
             console.error('Error creating channel', error);
@@ -67,9 +73,9 @@ const Channel = ({ isOpen, onClose }) => {
                                     label="Name"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
-                                    variant="outlined"
                                     fullWidth
                                     required
+                                    variant="standard" // This makes the TextField standard
                                 />
                             </Grid>
 
@@ -78,8 +84,8 @@ const Channel = ({ isOpen, onClose }) => {
                                     label="Description"
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
-                                    variant="outlined"
                                     fullWidth
+                                    variant="standard" // This makes the TextField standard
                                 />
                             </Grid>
 

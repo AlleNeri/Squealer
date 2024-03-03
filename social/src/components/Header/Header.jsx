@@ -21,7 +21,7 @@ import { SidebarContext } from '../../context/SidebarContext/SidebarContext';
 import { UserPostsContext } from '../../context/UserPostsContext/UserPostsContext';
 import { PostsContext } from '../../context/PostsContext/PostsContext';
 import { SearchContext } from '../../context/SearchContext/SearchContext';
-import { Menu, MenuItem, IconButton, Typography, Popover, Avatar, Divider} from '@mui/material';
+import { Menu, MenuItem, IconButton, Typography, Popover, Avatar, Divider, Badge} from '@mui/material';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 export default function ButtonAppBar() {
@@ -33,6 +33,7 @@ export default function ButtonAppBar() {
   const { posts, setPosts } = useContext(PostsContext);
   const [channelPosts, setChannelPosts] = useState([]);
   const [notificationEl, setNotificationEl] = useState(null);
+  const [totalNotifications, setTotalNotifications] = useState(0);
   const [notifications, setNotifications] = useState([]);
   const [myChannels, setMyChannels] = useState([]);
   const { userPosts, setUserPosts } = useContext(UserPostsContext);
@@ -41,6 +42,9 @@ export default function ButtonAppBar() {
   const location = useLocation();
   const token = localStorage.getItem('token');
   const userId = localStorage.getItem('userId');
+  const [userImage, setUserImage] = useState('');
+  const username = localStorage.getItem('username');
+  let avatarContent = userImage ? <img src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${userImage}`} style={{width:'20px', height:'20px'}} alt="Profile" /> : username[0].toUpperCase();
 
   const headerStyle = {
     paddingLeft: isSidebarMinimized ? '0' : '200px',
@@ -68,6 +72,9 @@ export default function ButtonAppBar() {
   }
 
   const handleNotificationClick = (event) => {
+    if (totalNotifications > 0) {
+      setNotificationEl(event.currentTarget);
+    }
     setNotificationEl(event.currentTarget);
   };
   
@@ -155,7 +162,7 @@ export default function ButtonAppBar() {
     };
 
     fetchPosts();
-  }, [myChannels, userId]);
+  }, [myChannels]);
   
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -171,6 +178,22 @@ export default function ButtonAppBar() {
   
     fetchNotifications();
   }, [channelPosts]);
+
+  useEffect(() => {
+    const fetchUserImage = async () => {
+      const token = localStorage.getItem('token');
+
+      const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/${userId}`, {
+        headers: {
+          'Authorization': `${token}`,
+        },
+      });
+
+      const user = await response.json();
+      setUserImage(user.img);
+    };
+    fetchUserImage();
+  }, [userId]);
 
   const getChannelName = async (channelId) => {
     const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels/${channelId}`);
@@ -239,7 +262,13 @@ export default function ButtonAppBar() {
     return groups;
   }, {});
 
-  return (
+  useEffect(() => {
+    const total = Object.values(groupedNotifications).reduce((total, notifications) => total + notifications.length, 0);
+    setTotalNotifications(total);
+  }, [groupedNotifications]);
+
+  
+  return ( 
     <div className="header" style={headerStyle}>
         <Toolbar className="Toolbar" style={{ flexDirection: 'column' }}>
         <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
@@ -266,61 +295,157 @@ export default function ButtonAppBar() {
           }
 
           {!isSidebarMinimized &&
-            <div>
-              <Link to='/HomePage' className="Link">
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems:'center', justifyContent:'space-between' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <Link to='/HomePage' className="Link">
                   <Tooltip title="Homepage">
-                    <HomeIcon/>
+                    <HomeIcon style={{cursor:'pointer'}}/>
                   </Tooltip>
-                  <span style={{ fontSize: '0.8rem' }}>Home</span>
-                </div>
-              </Link>
+                </Link>
+                <span style={{ fontSize: '0.8rem' }}>Home</span>
+              </div>
             </div>
           }
 
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            {!matches && <img src={logo} alt="Logo" style={{ height: '50px', marginRight: '10px' }} />}
-            <Typography className="Typography" fontWeight="fontWeightBold" style={{marginLeft:'10px'}}>
+            <Typography className="Typography" fontWeight="fontWeightBold">
               SQUEALER
             </Typography>
           </div>
 
           {!loggedIn &&
-          <div className='regLog'>
-            <Link to='/Register' className="Link">
+            <div className='regLog'>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <Tooltip title="Register">
-                  <AppRegistrationIcon />
-                </Tooltip>
+                <Link to='/Register' className="Link">
+                  <Tooltip title="Register">
+                    <AppRegistrationIcon />
+                  </Tooltip>
+                </Link>
                 <span style={{ fontSize: '0.8rem' }}>Register</span>
               </div>
-            </Link>
-            
-            <Link to='/Login' className="Link">
+
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <Tooltip title="Login">
-                  <LoginIcon />
-                </Tooltip>
+                <Link to='/Login' className="Link">
+                  <Tooltip title="Login">
+                    <LoginIcon />
+                  </Tooltip>
+                </Link>
                 <span style={{ fontSize: '0.8rem' }}>Login</span>
               </div>
-            </Link>
-          </div>
-          
+            </div>
           }
 
           {loggedIn && !matches &&
           <div className='newLog'>
             <div>
-            <IconButton style={{color: 'white'}} onClick={handleNotificationClick}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  <Tooltip title="Notifications">
-                    <NotificationsIcon />
-                  </Tooltip>
-                  <span style={{ fontSize: '0.8rem' }}>Notifications</span>
-                </div>
-              </IconButton>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <Tooltip title="Notifications" onClick={handleNotificationClick}>
+                <NotificationsIcon style={{color: 'white', cursor:"pointer"}} />
+              </Tooltip>
+              <span style={{ fontSize: '0.8rem' }}>Notifications</span>
+            </div>
 
               <Popover
+                key={totalNotifications}
+                id={id}
+                open={open}
+                anchorEl={notificationEl}
+                onClose={handleNotificationClose}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'center',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'center',
+                }}
+                style={{ maxHeight: '300px', overflow: 'auto'}}
+              >
+                {totalNotifications > 0 ? (
+                  <>
+                  {
+                  Object.entries(groupedNotifications).map(([date, notifications], index) => (
+                    <div style={{margin:'10px'}} key={index}>
+                      <Typography variant="body1" style={{ textTransform: 'uppercase', fontWeight: 'bold' }}>{date}</Typography>
+                      {notifications.map((notification, index) => (
+                        <Link to={`AllChannels/${notification.posted_on}`} style={{ textDecoration: 'none', color: 'inherit' }} key={index} onClick={handleNotificationClose}>
+                          <div>
+                            <Typography component="div" onMouseOver={(e) => e.target.style.color = 'blue'} onMouseOut={(e) => e.target.style.color = 'inherit'}>
+                              {notification.img ? (
+                                  <div>
+                                    <img src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${notification.img}`} alt="Profile" style={{height:"20px", width:"20px", borderRadius: "50%"}} />
+                                    <span style={{ marginLeft: '5px' }}>{notification.u_name} sent you a message!</span>
+                                  </div>
+                                ) : (
+                                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <Avatar style={{height:"20px", width:"20px"}}>{notification.u_name.charAt(0)}</Avatar>
+                                    <span style={{ marginLeft: '5px' }}>{notification.u_name} sent you a message!</span>
+                                  </div>
+                              )}
+                            </Typography>
+                            <Divider style={{ backgroundColor: 'black' }} /> 
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  ))}
+                  </>
+                ) : (
+                  <div style={{margin:'10px'}}><Typography>No notifications</Typography></div>
+                )}
+              </Popover>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <Tooltip title="New squeal">
+                <CreateIcon style={{ cursor:"pointer" }} onClick={handleNewPostClick} />
+              </Tooltip>
+              <span style={{ fontSize: '0.8rem' }}>New squeal</span>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <Tooltip title="Logout">
+                <LogoutIcon style={{ cursor:"pointer" }} onClick={handleLogout}/>
+              </Tooltip>
+              <span style={{ fontSize: '0.8rem' }}>Logout</span>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <Tooltip title="Profile" onClick={handleMenuOpen}>
+                <Avatar style={{ backgroundColor: 'white', color: 'black', width:'24px', height:'24px', marginTop:'2px', cursor:'pointer' }}>
+                  {avatarContent}
+                </Avatar>
+              </Tooltip>
+              <span style={{ fontSize: '0.8rem' }}>Profile</span>
+            </div>
+
+            <Menu
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+            >
+              <MenuItem onClick={handleProfileClick}>
+                <AccountCircleIcon/>
+                My profile
+              </MenuItem>
+              <MenuItem onClick={handleSettingsClick}>
+                <ManageAccountsIcon />
+                Settings
+              </MenuItem>
+            </Menu>
+          </div>}
+          
+          {loggedIn && isSidebarMinimized && matches && 
+            <div style={{display:'flex'}}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginRight:'10px'}}>
+                <Tooltip title="Notifications" onClick={handleNotificationClick}>
+                  <NotificationsIcon style={{color: 'white'}} />
+                </Tooltip>
+                <span style={{ fontSize: '0.8rem' }}>Notifications</span>
+              </div>
+
+              <Popover
+                key={totalNotifications}
                 id={id}
                 open={open}
                 anchorEl={notificationEl}
@@ -335,141 +460,49 @@ export default function ButtonAppBar() {
                 }}
                 style={{ maxHeight: '300px', overflow: 'auto' }} // Aggiungi qui la proprietà border
               >
-                {Object.entries(groupedNotifications).map(([date, notifications], index) => (
-                  <div key={index}>
-                    <Typography variant="body1" style={{ textTransform: 'uppercase', fontWeight: 'bold' }}>{date}</Typography>
-                    {notifications.map((notification, index) => (
-                      <Link to={`AllChannels/${notification.posted_on}`} style={{ textDecoration: 'none', color: 'inherit' }} key={index} onClick={handleNotificationClose}>
-                        <div>
-                          <Typography onMouseOver={(e) => e.target.style.color = 'blue'} onMouseOut={(e) => e.target.style.color = 'inherit'}>
-                            {notification.img ? (
-                              <div>
-                                <img src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${notification.img}`} alt="Profile" style={{height:"20px", width:"20px", borderRadius: "50%"}} />
-                                <span style={{ marginLeft: '5px' }}>{notification.u_name} sent you a message!</span>
-                              </div>
-                              ) : (
-                              <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <Avatar style={{height:"20px", width:"20px"}}>{notification.u_name.charAt(0)}</Avatar>
-                                <span style={{ marginLeft: '5px' }}>{notification.u_name} sent you a message!</span>
-                              </div>
-                            )}
-                            
-                          </Typography>
-                          <Divider style={{ backgroundColor: 'black' }} /> 
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                ))}
+                {totalNotifications > 0 ? (
+                  <>
+                  {
+                  Object.entries(groupedNotifications).map(([date, notifications], index) => (
+                    <div key={index} style={{ margin:'10px' }}>
+                      <Typography variant="body1" style={{ textTransform: 'uppercase', fontWeight: 'bold' }}>{date}</Typography>
+                      {notifications.map((notification, index) => (
+                        <Link to={`AllChannels/${notification.posted_on}`} style={{ textDecoration: 'none', color: 'inherit' }} key={index} onClick={handleNotificationClose}>
+                          <div>
+                            <Typography component="div" onMouseOver={(e) => e.target.style.color = 'blue'} onMouseOut={(e) => e.target.style.color = 'inherit'}>
+                              {notification.img ? (
+                                <div>
+                                  <img src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${notification.img}`} alt="Profile" style={{height:"20px", width:"20px", borderRadius: "50%"}} />
+                                  <span style={{ marginLeft: '5px' }}>{notification.u_name} sent you a message!</span>
+                                </div>
+                                ) : (
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                  <Avatar style={{height:"20px", width:"20px"}}>{notification.u_name.charAt(0)}</Avatar>
+                                  <span style={{ marginLeft: '5px' }}>{notification.u_name} sent you a message!</span>
+                                </div>
+                              )}
+                            </Typography>
+                            <Divider style={{ backgroundColor: 'black' }} /> 
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  ))}
+                  </>
+                ) : (
+                  <div style={{ margin:'10px' }}><Typography>No notifications</Typography></div>
+                )}
               </Popover>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <Tooltip title="New squeal">
-                <CreateIcon style={{ cursor:"pointer" }} onClick={handleNewPostClick} />
-              </Tooltip>
-              <span style={{ fontSize: '0.8rem' }}>New squeal</span>
-            </div>
 
-            <Link to='/Login' className="Link">
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <Tooltip title="Logout">
-                  <LogoutIcon onClick={handleLogout}/>
+                <Tooltip title="Other" onClick={handleClick}>
+                  <Avatar style={{ backgroundColor: 'white', color: 'black', width:'24px', height:'24px' }}>
+                    {avatarContent}
+                  </Avatar>
                 </Tooltip>
-                <span style={{ fontSize: '0.8rem' }}>Logout</span>
+                <span style={{ fontSize: '0.8rem' }}>Other</span>
               </div>
-            </Link>
-
-            <div>
-              <IconButton style={{color: 'white'}}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  <Tooltip title="Profile">
-                    <ManageAccountsIcon onClick={handleMenuOpen}/>
-                  </Tooltip>
-                  <span style={{ fontSize: '0.8rem' }}>Profile</span>
-                </div>
-              </IconButton>
-              <Menu
-                anchorEl={anchorEl}
-                keepMounted
-                open={Boolean(anchorEl)}
-                onClose={handleMenuClose}
-              >
-                <MenuItem onClick={handleProfileClick}>
-                  <AccountCircleIcon/>
-                  My profile
-                </MenuItem>
-                <MenuItem onClick={handleSettingsClick}>
-                  <ManageAccountsIcon />
-                  Settings
-                </MenuItem>
-              </Menu>
-            </div>
-            
-          </div>}
-          
-          {loggedIn && isSidebarMinimized && matches && 
-            <div>
-              <IconButton style={{color: 'white'}} onClick={handleNotificationClick}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  <Tooltip title="Notifications">
-                    <NotificationsIcon />
-                  </Tooltip>
-                  <span style={{ fontSize: '0.8rem' }}>Notifications</span>
-                </div>
-              </IconButton>
-
-              <Popover
-                id={id}
-                open={open}
-                anchorEl={notificationEl}
-                onClose={handleNotificationClose}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'center',
-                }}
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'center',
-                }}
-                style={{ maxHeight: '300px', overflow: 'auto' }} 
-              >
-                {Object.entries(groupedNotifications).map(([date, notifications], index) => (
-                  <div key={index}>
-                    <Typography variant="body1" style={{ textTransform: 'uppercase', fontWeight: 'bold' }}>{date}</Typography>
-                    {notifications.map((notification, index) => (
-                      <Link to={`AllChannels/${notification.posted_on}`} style={{ textDecoration: 'none', color: 'inherit' }} key={index} onClick={handleNotificationClose}>
-                        <div>
-                          <Typography onMouseOver={(e) => e.target.style.color = 'blue'} onMouseOut={(e) => e.target.style.color = 'inherit'}>
-                            {notification.img ? (
-                              <div>
-                                <img src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${notification.img}`} alt="Profile" style={{height:"20px", width:"20px", borderRadius: "50%"}} />
-                                <span style={{ marginLeft: '5px' }}>{notification.u_name} sent you a message!</span>
-                              </div>
-                              ) : (
-                              <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <Avatar style={{height:"20px", width:"20px"}}>{notification.u_name.charAt(0)}</Avatar>
-                                <span style={{ marginLeft: '5px' }}>{notification.u_name} sent you a message!</span>
-                              </div>
-                            )}
-                            
-                          </Typography>
-                          <Divider style={{ backgroundColor: 'black' }} /> 
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                ))}
-              </Popover>
-
-              <IconButton onClick={handleClick} style={{color: 'white'}}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  <Tooltip title="Other">
-                    <AppsIcon />
-                  </Tooltip>
-                  <span style={{ fontSize: '0.8rem' }}>Other</span>
-                </div>
-              </IconButton>
-
+              
               <Menu
                 anchorEl={anchorEl}
                 keepMounted
