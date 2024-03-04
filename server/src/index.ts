@@ -60,10 +60,14 @@ const basePath: string = path.join(__dirname, '../');
 
 app.use(express.static(path.join(basePath, 'social')));
 app.use('/smm', express.static(path.join(basePath, 'smm')));
+app.use('/mod', express.static(path.join(basePath, 'moderator')));
+
+app.use('/**/marker-icon.png', express.static(path.join(basePath, 'marker-icon.png')));
 
 //redirects
-app.get('/*', (_: Request, res: Response) => res.sendFile(path.join(basePath, 'social/index.html')));
 app.get('/smm/*', (_: Request, res: Response) => res.sendFile(path.join(basePath, 'smm/index.html')));
+app.get('/mod/*', (_: Request, res: Response) => res.sendFile(path.join(basePath, 'moderator/login.html')));
+app.get('*', (_: Request, res: Response) => res.sendFile(path.join(basePath, 'social/index.html')));
 
 /*** Server start ***/
 app.listen(PORT, ()=>console.log(`The server responds at: ${process.env.PRODUCTION ? 'https://site222352.tw.cs.unibo.it' : `http://localhost:${PORT}`}`));
