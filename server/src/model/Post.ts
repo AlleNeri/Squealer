@@ -130,7 +130,7 @@ PostSchema.virtual("posReaction").get(function(): number {
 });
 
 PostSchema.virtual("negReaction").get(function(): number {
-	return this.reactions.reduce((accumulator: number, reaction: any)=> accumulator + (reaction.value < 0 ? reaction.value : 0), 0);
+	return Math.abs(this.reactions.reduce((accumulator: number, reaction: any)=> accumulator + (reaction.value < 0 ? reaction.value : 0), 0));
 });
 
 PostSchema.virtual("views").get(function(): number {

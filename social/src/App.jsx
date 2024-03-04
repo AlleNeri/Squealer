@@ -9,6 +9,8 @@ import AllChannels from './pages/AllChannels/AllChannels';
 import Smm from './pages/Smm/Smm';
 import HomePage from './pages/HomePage/HomePage';
 import Keywords from './pages/Keywords/Keywords';
+import UserLandingPage from './pages/UserLandingPage/UserLandingPage';
+import UserBlockedLandingPage from './pages/UserBlockedLandingPage/UserBlockedLandingPage';
 import Settings from './pages/Settings/Settings';
 import NewPost from './pages/NewPost/NewPost';
 import Controversial from './pages/AllChannels/Controversial/Controversial';
@@ -73,6 +75,14 @@ const routes = createBrowserRouter([
 			{
 				path: '/NewPost',
 				element: <NewPost />
+			},
+			{
+				path: '/UserLandingPage',
+				element: <UserLandingPage />
+			},
+			{
+				path: '/UserBlockedLandingPage',
+				element: <UserBlockedLandingPage />
 			},
 		],
 	},

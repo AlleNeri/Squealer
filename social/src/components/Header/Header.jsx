@@ -21,7 +21,7 @@ import { SidebarContext } from '../../context/SidebarContext/SidebarContext';
 import { UserPostsContext } from '../../context/UserPostsContext/UserPostsContext';
 import { PostsContext } from '../../context/PostsContext/PostsContext';
 import { SearchContext } from '../../context/SearchContext/SearchContext';
-import { Menu, MenuItem, IconButton, Typography, Popover, Avatar, Divider, Badge} from '@mui/material';
+import { Menu, MenuItem, Typography, Popover, Avatar, Divider, Badge} from '@mui/material';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 export default function ButtonAppBar() {
@@ -38,6 +38,7 @@ export default function ButtonAppBar() {
   const [myChannels, setMyChannels] = useState([]);
   const { userPosts, setUserPosts } = useContext(UserPostsContext);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [userBlock, setUserBlock] = useState(false);
   const [isProfileClicked, setIsProfileClicked] = useState(false);
   const location = useLocation();
   const token = localStorage.getItem('token');
@@ -45,8 +46,8 @@ export default function ButtonAppBar() {
   const [userImage, setUserImage] = useState('');
   const username = localStorage.getItem('username') ? localStorage.getItem('username') : '';
   let avatarContent = loggedIn && userImage
-    ? <img src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${userImage}`} style={{width:'20px', height:'20px'}} alt="Profile" />
-    : username[0].toUpperCase();
+    ? <img src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${userImage}`} style={{width:'100%', height:'100%', objectFit: 'cover', margin: 0, padding: 0}} alt="Profile" />
+    : (username ? username[0].toUpperCase() : '');
 
   const headerStyle = {
     paddingLeft: isSidebarMinimized ? '0' : '200px',
@@ -88,7 +89,12 @@ export default function ButtonAppBar() {
   const id = open ? 'simple-popover' : undefined;
 
   const handleNewPostClick = () => {
-    navigate('/NewPost');
+    if(userBlock){
+      navigate('/UserBlockedLandingPage');
+    } else {
+      navigate('/NewPost');
+    }
+
     handleClose();
     setIsProfileClicked(false);
   };
@@ -192,6 +198,7 @@ export default function ButtonAppBar() {
       });
 
       const user = await response.json();
+      setUserBlock(user.block);
       setUserImage(user.img);
     };
     fetchUserImage();

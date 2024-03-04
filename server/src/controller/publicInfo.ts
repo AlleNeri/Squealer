@@ -9,6 +9,7 @@ function getUserPublicInfo(user: User | null) {
 		img: user.img,
 		creation_date: user.creation_date,
 		b_date: user.b_date,
+		block: user.block,
 	};
 }
 
