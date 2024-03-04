@@ -152,7 +152,7 @@ const AllChannels = () => {
     <Card style={{ backgroundColor: '#f5f5f5', width:'100%' }}>
         <CardContent>
             <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
-            <Typography variant="h5" component="h2" style={{ fontWeight: 'bold' }}>
+            <Typography variant="h5" component="h2" style={{ fontWeight: 'bold', marginTop:'20px'}}>
                 {channel.name.toUpperCase()}
             </Typography>
             <Typography variant="body2" component="p" style={{ textAlign: 'center' }}>

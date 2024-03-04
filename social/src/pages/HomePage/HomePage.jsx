@@ -86,7 +86,7 @@ function HomePage() {
 
     return (
       <ThemeProvider theme={theme}>
-        <Typography variant="h2" component="h1" gutterBottom style={{ textAlign: 'center', padding: '20px 0' }}>
+        <Typography variant="h2" component="h1" gutterBottom style={{ textAlign: 'center', marginTop:'20px' }}>
           EXPLORE
         </Typography>
         <Divider style={{ backgroundColor: 'black', width: '30%', margin: '0 auto' }} />
