@@ -122,11 +122,7 @@ function NewPost() {
   }, [contentType]);
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/mention`, {
-      headers: {
-        'Authorization': token,
-      },
-    })
+    fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/mention`)
       .then(response => response.json())
       .then(data => {
         const filteredData = data.filter(user => user.id !== localStorage.getItem('userId'));
@@ -379,9 +375,6 @@ function NewPost() {
       const getUsers = async () => {
         const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/mention`, {
           method: 'GET',
-          headers: {
-            'Authorization': token, // Assumendo che tu abbia un token di autenticazione
-          },
         });
 
         if (!response.ok) {
