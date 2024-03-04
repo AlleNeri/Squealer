@@ -31,7 +31,7 @@ const Sidebar = () => {
     },
     channel: {
       '&:hover': {
-        backgroundColor: '#444',
+        backgroundColor: 'gray',
       },
     },
     link: {
@@ -51,22 +51,7 @@ const Sidebar = () => {
   };
 
   useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth <= 445) { 
-        setSidebarMinimized(true);
-      } else {
-        setSidebarMinimized(false);
-      }
-    };
-
-    // Attach the event listener
-    window.addEventListener('resize', handleResize);
-
-    // Call the handler right away so the state gets updated with the initial window size
-    handleResize();
-
-    // Remove the event listener when the component is unmounted
-    return () => window.removeEventListener('resize', handleResize);
+    setSidebarMinimized(true);
   }, []); // Removed setSidebarMinimized from the dependency array
 
 

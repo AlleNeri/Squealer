@@ -16,7 +16,7 @@ userRoute.get('/', Auth.softAuthorize, Auth.isMod, (_: Request, res: Response) =
 });
 
 //get all users for a mention list
-userRoute.get('/mention', Auth.authorize, (_: Request, res: Response) => {
+userRoute.get('/mention', (_: Request, res: Response) => {
 	//get only the user of type normal or vip
 	UserSchema.find({ $or: [{ type: UserType.NORMAL }, { type: UserType.VIP }] })
 		.then((users: User[]) => {
