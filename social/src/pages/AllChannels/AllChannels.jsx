@@ -77,11 +77,7 @@ const AllChannels = () => {
 
   const handleOpen = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/mention`, {
-        headers: {
-          'Authorization': token
-        }
-      });
+      const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/mention`);
 
       if (!response.ok) {
         throw new Error('Error getting users');
@@ -156,7 +152,7 @@ const AllChannels = () => {
     <Card style={{ backgroundColor: '#f5f5f5', width:'100%' }}>
         <CardContent>
             <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
-            <Typography variant="h5" component="h2" style={{ fontWeight: 'bold' }}>
+            <Typography variant="h5" component="h2" style={{ fontWeight: 'bold', marginTop:'20px'}}>
                 {channel.name.toUpperCase()}
             </Typography>
             <Typography variant="body2" component="p" style={{ textAlign: 'center' }}>

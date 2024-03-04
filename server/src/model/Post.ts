@@ -157,7 +157,7 @@ PostSchema.methods.addReaction = async function(user_id: string, reaction: numbe
 	else this.reactions.push({user_id: user_id, value: reaction});
 	//check only if the popular and unpopular values increase because a reaction can't decrease them
 	if(this.posReaction > (this.views * CM_COEFFICIENT)) this.addPopular();
-	if(this.negReaction > (this.views * CM_COEFFICIENT)) this.removePopular();
+	if(this.negReaction > (this.views * CM_COEFFICIENT)) this.addUnpopular();
 	if(await this.isControversial()) this.addControversial();
 	return true;
 };

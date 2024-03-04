@@ -59,8 +59,7 @@ function HomePage() {
           // Get my channels
           const myChannelsResponse = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels/all`);
           const myChannels = myChannelsResponse ? await myChannelsResponse.json() : [];
-
-
+  
           // Get all posts of my channels
           const channelsPosts = await Promise.all(myChannels.map(async (channel) => {
               const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels/${channel._id}/posts`, options);
@@ -87,7 +86,7 @@ function HomePage() {
 
     return (
       <ThemeProvider theme={theme}>
-        <Typography variant="h2" component="h1" gutterBottom style={{ textAlign: 'center', padding: '20px 0' }}>
+        <Typography variant="h2" component="h1" gutterBottom style={{ textAlign: 'center', marginTop:'20px' }}>
           EXPLORE
         </Typography>
         <Divider style={{ backgroundColor: 'black', width: '30%', margin: '0 auto' }} />

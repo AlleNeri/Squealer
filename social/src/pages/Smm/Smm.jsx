@@ -70,7 +70,7 @@ const SmmPage = () => {
 
   return (
     <div>
-      <Typography variant="h4" align="center" gutterBottom>
+      <Typography variant="h4" align="center" style={{ marginTop: '20px' }}>
         Choose your SMM
       </Typography>
       <Divider style={{ backgroundColor: 'black', marginBottom: '20px' }} />
@@ -86,7 +86,7 @@ const SmmPage = () => {
             </Typography>
           </CardContent>
           <CardActions>
-          {smm.client.includes(localStorage.getItem('userId')) ? (
+          {smm.client.includes(userId) ? (
             <Button variant="contained" color="secondary" onClick={handleRevoke}>
               REVOCA SMM
             </Button>

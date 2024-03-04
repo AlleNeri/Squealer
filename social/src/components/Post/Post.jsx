@@ -110,11 +110,7 @@ export default function Post({post}) {
 
   useEffect(() => {
     // Fai una richiesta al backend per ottenere le informazioni degli utenti
-    fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/mention`, {
-      headers: {
-        'Authorization': token,
-      }
-    })
+    fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/mention`)
     .then(response => response.json())
     .then(data => {
       setUsers(data);
