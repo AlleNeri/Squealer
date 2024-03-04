@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useContext } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, Typography, Avatar, Menu, MenuItem, Grid, Dialog, DialogContent, 
   DialogTitle, DialogActions, Button, TextField, Select, Table, TableHead, TableBody, 
-  TableCell, TableRow} from '@material-ui/core';
+  TableCell, TableRow, Divider} from '@material-ui/core';
 import CakeIcon from '@mui/icons-material/Cake';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
@@ -267,15 +267,20 @@ const Profile = () => {
 
   return (
     <>
-    <Card style={{ backgroundColor: '#f5f5f5', width:'100%' }}>
+    <Card style={{ backgroundColor: '#f5f5f5', width:'100%', marginTop:'20px' }}>
     <CardContent>
       <Grid container spacing={2}>
         <Grid item xs={12} align="center">
           <Avatar 
-            src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${user.img}`} 
+            src={user.img ? `${import.meta.env.VITE_DEFAULT_URL}/media/image/${user.img}` : undefined}
             onClick={handleAvatarClick} 
-            style={{ height: '200px', width: '200px' }} 
-          />
+            style={{ height: '200px', width: '200px' }}
+          >
+            {user.img ? undefined : 
+            <Typography variant="h1">
+              {user.u_name.charAt(0).toUpperCase()}
+            </Typography>}
+          </Avatar>
             <Menu
                 anchorEl={anchorEl}
                 keepMounted
@@ -402,9 +407,12 @@ const Profile = () => {
     </Card>
 
     {loggedIn && 
-      <Typography variant="h4" component="h6" gutterBottom style={{ textAlign: 'center', marginTop:'20px' }}>
-          POST PUBBLICATI DA {user.u_name.toUpperCase()}
-      </Typography>
+      <div>
+        <Typography variant="h4" component="h6" gutterBottom style={{ textAlign: 'center', marginTop:'20px' }}>
+            {user.u_name.toUpperCase()}'s POSTS
+        </Typography>
+        <Divider style={{ backgroundColor: 'black', width: '30%', margin: '0 auto' }} />
+      </div>
     }
 
     {!loggedIn &&
