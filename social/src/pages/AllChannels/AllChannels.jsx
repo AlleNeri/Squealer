@@ -77,11 +77,7 @@ const AllChannels = () => {
 
   const handleOpen = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/mention`, {
-        headers: {
-          'Authorization': token
-        }
-      });
+      const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/mention`);
 
       if (!response.ok) {
         throw new Error('Error getting users');

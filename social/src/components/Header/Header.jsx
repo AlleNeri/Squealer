@@ -26,7 +26,7 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 export default function ButtonAppBar() {
   const navigate = useNavigate();
-  const { loggedIn, setLoggedIn, justRegistered, setJustRegistered } = useContext(LoginContext);
+  const { loggedIn, setLoggedIn } = useContext(LoginContext);
   const { setIsSearching } = useContext(SearchContext);
   const {isSidebarMinimized, setSidebarMinimized} = useContext(SidebarContext);
   const [searchValue, setSearchValue] = useState('');
@@ -43,8 +43,10 @@ export default function ButtonAppBar() {
   const token = localStorage.getItem('token');
   const userId = localStorage.getItem('userId');
   const [userImage, setUserImage] = useState('');
-  const username = localStorage.getItem('username');
-  let avatarContent = userImage ? <img src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${userImage}`} style={{width:'20px', height:'20px'}} alt="Profile" /> : username[0].toUpperCase();
+  const username = localStorage.getItem('username') ? localStorage.getItem('username') : '';
+  let avatarContent = loggedIn && userImage
+    ? <img src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${userImage}`} style={{width:'20px', height:'20px'}} alt="Profile" />
+    : username[0].toUpperCase();
 
   const headerStyle = {
     paddingLeft: isSidebarMinimized ? '0' : '200px',
