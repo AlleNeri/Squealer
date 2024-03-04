@@ -1,9 +1,25 @@
 .logo {
   width: 120px;
   height: 31px;
-  background: rgba(255, 255, 255, 0.2);
   margin: 16px 30px 16px 0;
   float: left;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo img {
+  margin-top: 5px;
+  /* width: 95%; */
+  height: 280%;
+  width: auto;
+}
+
+.logo span {
+  font-size: 11px;
+  line-height: 12px;
+  color: #fff;
+  margin-left: 5px;
 }
 
 .header-menu {
