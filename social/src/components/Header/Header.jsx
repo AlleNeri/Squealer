@@ -273,7 +273,7 @@ export default function ButtonAppBar() {
   return ( 
     <div className="header" style={headerStyle}>
         <Toolbar className="Toolbar" style={{ flexDirection: 'column' }}>
-        <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', alignItems:'center' }}>
           {isSidebarMinimized && 
             <div style={{ display: 'flex', alignItems:'center', justifyContent:'space-between' }}>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -309,12 +309,26 @@ export default function ButtonAppBar() {
             </div>
           }
 
+          {!matches &&
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Typography className="Typography" fontWeight="fontWeightBold">
-              SQUEALER
-            </Typography>
+            <div>
+              <img src={logo} alt="logo" style={{ width: '70px', height: '70px' }} />
+            </div>
+            <div>
+              <Typography className="Typography" fontWeight="fontWeightBold">
+                SQUEALER
+              </Typography>
+            </div>
           </div>
+          }
 
+          {matches &&
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <div>
+                <img src={logo} alt="logo" style={{ width: '70px', height: '70px' }} />
+              </div>
+            </div>
+          }
           {!loggedIn &&
             <div className='regLog'>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
