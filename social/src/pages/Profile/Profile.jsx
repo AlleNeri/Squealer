@@ -41,7 +41,7 @@ const Profile = () => {
           setUser(prevState => ({ ...prevState, img: `${import.meta.env.VITE_DEFAULT_URL}/media/image/${image}` }));
         }
       }, [image, purchased, token]);
-    
+
     useEffect(() => {
       if(isSearching) return;
       Promise.all(userPosts.map(post => 
@@ -60,7 +60,7 @@ const Profile = () => {
 
     useEffect(() => {
       if (isSearching) return;
-        if (id !== currentUserId) {
+        if (id !== currentUserId && loggedIn) {
           const fetchUserPosts = async () => {
             const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/posts?of=${id}`, {
               headers: {
@@ -212,7 +212,7 @@ const Profile = () => {
 
   useEffect(() => {  
     const userId = id;
-  
+
     fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/${userId}`, {
       method: 'GET',
       headers: {
@@ -227,9 +227,14 @@ const Profile = () => {
         return response.json();
       })
       .then(data => {
-        setUser(data);
+        if(data.block || data.msg ==='User not found'){
+          navigate('/UserLandingPage');
+        }else{
+          setUser(data);
+        }
       })
       .catch(error => {
+        navigate('/UserLandingPage');
         console.error('There was an error!', error);
       });
   }, [id, token, purchased]);
@@ -408,8 +413,8 @@ const Profile = () => {
 
     {loggedIn && 
       <div>
-        <Typography variant="h4" component="h6" gutterBottom style={{ textAlign: 'center', marginTop:'20px' }}>
-            {user.u_name.toUpperCase()}'s POSTS
+        <Typography variant="h4" component="h6" gutterBottom style={{ textAlign: 'center', marginTop:'20px', fontWeight:'bold' }}>
+            {user.u_name.toUpperCase()}'S POSTS
         </Typography>
         <Divider style={{ backgroundColor: 'black', width: '30%', margin: '0 auto' }} />
       </div>
@@ -417,18 +422,23 @@ const Profile = () => {
 
     {!loggedIn &&
       <Typography variant="body1" style={{ marginTop: '50px', textAlign: 'center' }}>
-        Per vedere i post di questo utente, per favore <Link to="/login">accedi</Link> o <Link to="/register">registrati</Link>.
+        To see {user.u_name}'s posts, please <Link to="/login">login</Link> or <Link to="/register">register</Link>.
       </Typography>     
     }
 
-    {id === currentUserId ? (
-        <MyPosts/>
+
+    {userPosts.length === 0 && loggedIn ? (
+      <Typography variant="body1" style={{ textAlign: 'center' }}>
+        There are no posts to show.
+      </Typography>
+    ) : id === currentUserId ? (
+      <MyPosts/>
     ) : (
-        userPosts
-        .filter(post => channels[post._id] && !channels[post._id].name.startsWith('__direct__'))
-        .map(post => (
-          <Post key={post._id} post={post} />
-        ))
+      userPosts
+      .filter(post => channels[post._id] && !channels[post._id].name.startsWith('__direct__'))
+      .map(post => (
+        <Post key={post._id} post={post} />
+      ))
     )}
     </>
 

@@ -1,8 +1,8 @@
 import React, { useState, useContext } from 'react';
 import "./register.css";
 import { LoginContext } from '../../context/LoginContext/LoginContext';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import {TextField, Button, Container, Typography, Box, InputLabel, Select, MenuItem, Snackbar} from '@material-ui/core';
+import {TextField, Button, Container, Typography, Box, InputLabel, Select, MenuItem, Snackbar, IconButton} from '@material-ui/core';
+import ClearIcon from '@mui/icons-material/Clear';
 import { Alert } from '@mui/material';
 import {green} from '@material-ui/core/colors/';
 import { useNavigate } from 'react-router-dom';
@@ -10,19 +10,21 @@ import { useNavigate } from 'react-router-dom';
 function Register() {
   const [user, setUser] = useState({
     name: {
-      first: undefined,
-      last: undefined
+      first: '',
+      last: ''
     },
-    email: undefined,
+    email: '',
     type: 'normal',
-    b_date: undefined, 
-    img: undefined,
-    u_name: undefined
+    b_date: '', 
+    img: '',
+    u_name: ''
   });
 
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [uploadComplete, setUploadComplete] = useState(false);
   const [imageFile, setImageFile] = useState(null);
+  const [preview, setPreview] = useState(''); 
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const { setLoggedIn, setJustRegistered } = useContext(LoginContext);
@@ -64,7 +66,13 @@ function Register() {
       setShowAlert(true);
       return;
     }
-  
+    
+    if (password !== confirmPassword) {
+      setAlertMessage('Passwords do not match');
+      setShowAlert(true);
+      return;
+    }
+
     if (!isPasswordValid(password)) {
       setAlertMessage('Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number');
       setShowAlert(true);
@@ -111,6 +119,19 @@ function Register() {
   const handleImageSelection = (event) => {
     setImageFile(event.target.files[0]);
     setUploadComplete(true);
+  
+    // Crea un URL di anteprima per il file selezionato
+    setPreview(URL.createObjectURL(event.target.files[0]));
+  }
+
+  const handleClearImage = () => {
+    // Annulla l'URL di anteprima
+    URL.revokeObjectURL(preview);
+  
+    // Reimposta lo stato dell'immagine e della preview
+    setImageFile(null);
+    setPreview(null);
+    setUploadComplete(false);
   }
 
   const handleImageUpload = (file) => {
@@ -204,6 +225,16 @@ function Register() {
             fullWidth
             style={{ marginTop: '10px' }}
           />
+          
+          <TextField
+            className='register-Form-Input'
+            label="Confirm Password"
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            fullWidth
+            style={{ marginTop: '10px' }}
+          />
 
           <InputLabel style={{marginTop:'10px'}}>Type</InputLabel>
           <Select
@@ -219,18 +250,31 @@ function Register() {
           <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column">
             <Button
               component="label"
+              variant="contained"
+              color="primary"
+              fullWidth
+              style={{ marginTop: '10px' }}
             >
               Upload profile image
               <input
                 type="file"
                 hidden
-                fullWidth
                 onChange={handleImageSelection}
                 style={{ marginTop: '10px' }}
               />
             </Button>
-            {uploadComplete && <CheckCircleIcon style={{ color: green[500] }} />}
           </Box>
+
+          {preview && (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <div>
+                <img src={preview} alt="preview" style={{maxHeight:"200px", width:"50%", objectFit:'cover'}}/>
+              </div>
+              <IconButton style={{ color: 'red' }} onClick={handleClearImage}>
+                <ClearIcon />
+              </IconButton>
+            </div>
+          )}
 
           <Button 
             className="register-button"

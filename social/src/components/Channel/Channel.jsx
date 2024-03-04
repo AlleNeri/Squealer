@@ -53,43 +53,43 @@ const Channel = ({ isOpen, onClose }) => {
             onClose={onClose} 
             fullScreen={false} 
             maxWidth='md'
-            PaperProps={{ style: { maxHeight: '100vh', width: '80%' } }}
+            PaperProps={{ style: { maxHeight: '100vh', width: '80%', backgroundColor: '#f5f5f5' } }}
         >
             <Grid container direction="column" spacing={2}>
                 <Grid item xs={12}>
-                    <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column">
-                        <Typography variant="h4" component="h2" gutterBottom>
+                    <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column" mt={4}>
+                        <Typography variant="h4" style={{ fontWeight: 'bold' }}>
                             NEW CHANNEL
                         </Typography>
-                        <Divider style={{ width: '100%', backgroundColor: 'black' }} />
+                        <Divider style={{ width: '85%', backgroundColor: 'black' }} />
                     </Box>
                 </Grid>
 
                 <Grid item xs={12}>
                     <form onSubmit={handleSubmit}>
                         <Grid container direction="column" spacing={2}>
-                            <Grid item xs={12} style={{ paddingLeft:'30px' }}>
+                            <Grid item xs={12} style={{ paddingLeft:'30px', paddingRight:'30px' }}>
                                 <TextField
                                     label="Name"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
                                     fullWidth
                                     required
-                                    variant="standard" // This makes the TextField standard
+                                    variant='standard'
                                 />
                             </Grid>
 
-                            <Grid item xs={12} style={{ paddingLeft: '30px' }}>
+                            <Grid item xs={12} style={{ paddingLeft: '30px', paddingRight:'30px' }}>
                                 <TextField
                                     label="Description"
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
                                     fullWidth
-                                    variant="standard" // This makes the TextField standard
+                                    variant='standard'
                                 />
                             </Grid>
 
-                            <Grid item xs={12} style={{ paddingLeft: '30px' }}>
+                            <Grid item xs={12} style={{ paddingLeft: '30px', paddingRight:'30px' }}>
                                 <FormControlLabel
                                     control={
                                         <Checkbox 
@@ -102,7 +102,7 @@ const Channel = ({ isOpen, onClose }) => {
                                 />
                             </Grid>
 
-                            <Grid item xs={12} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <Grid item xs={12} style={{ display: 'flex', justifyContent: 'flex-end', paddingRight:'30px' }}>
                                 <Button type="submit" variant="contained" color="primary">
                                     Create Channel
                                 </Button>

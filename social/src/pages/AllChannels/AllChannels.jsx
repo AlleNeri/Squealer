@@ -190,7 +190,7 @@ const AllChannels = () => {
                     )}
                   </List>
                 </Dialog>
-                <AddCircleIcon onClick={handleOpen} />
+                <AddCircleIcon onClick={handleOpen} style={{cursor: 'pointer'}}/>
                 <Dialog open={open} onClose={handleClose}>
                   <DialogTitle>Add User to Channel</DialogTitle>
                   <DialogContent>

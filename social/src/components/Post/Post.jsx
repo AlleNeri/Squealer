@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useContext, useState } from 'react';
-import { Card, CardContent, Typography, IconButton, Grid, Avatar, Tooltip, useMediaQuery, useTheme } from '@material-ui/core';
+import { Card, CardContent, Typography, IconButton, Grid, Avatar, Tooltip, useMediaQuery, useTheme, Dialog,
+         DialogContent, DialogTitle } from '@material-ui/core';
 import L, {Icon} from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import markerIconPng from "leaflet/dist/images/marker-icon.png";
 import { SentimentVeryDissatisfied, SentimentDissatisfied, SentimentSatisfied, SentimentVerySatisfied } from '@material-ui/icons';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import AlarmIcon from '@mui/icons-material/Alarm';
+import CloseIcon from '@mui/icons-material/Close';
 import { LoginContext } from '../../context/LoginContext/LoginContext';
 import CountUp from 'react-countup';
 import Linkify from 'react-linkify';
@@ -17,6 +19,7 @@ export default function Post({post}) {
     const [users, setUsers] = useState([]);
     const [channel, setChannel] = useState(null);
     const mapRef = useRef(); // Assign useRef to a variable
+    const [open, setOpen] = useState(false);
     const token = localStorage.getItem('token');
     const { loggedIn } = useContext(LoginContext);
     const views = reactions?.filter(reaction => [-2, -1, 0, 1, 2].includes(reaction.value)).length;
@@ -168,7 +171,7 @@ export default function Post({post}) {
           if (mapRef.current && mapRef.current.leafletElement) return;
       
           try {
-              const map = L.map(mapRef.current).setView([content.position.latitude, content.position.longitude], 13);
+              const map = L.map(mapRef.current, { scrollWheelZoom: false}).setView([content.position.latitude, content.position.longitude], 13);
       
               L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -217,6 +220,14 @@ export default function Post({post}) {
       }
     };
 
+    const handleClickOpen = () => {
+      setOpen(true);
+    }
+
+    const handleClose = () => {
+      setOpen(false);
+    }
+
     return (
       <div style={{ display: 'flex', justifyContent: 'center' }}>
       
@@ -240,7 +251,9 @@ export default function Post({post}) {
                         <Avatar alt="Profile" src={user && user.img ? `${import.meta.env.VITE_DEFAULT_URL}/media/image/${user.img}` : undefined} >
                           {user?.u_name?.charAt(0).toUpperCase()}
                         </Avatar>
-                        {user && <Link to={`/Profile/${posted_by}`} style={{ color: 'inherit', marginLeft: isScreenLarge ? '0' : '10px' }}>@{user.u_name}</Link>}
+                        {user && user.u_name 
+                          ? <Link to={`/Profile/${posted_by}`} style={{ color: 'inherit', marginLeft: isScreenLarge ? '0' : '10px' }}>@{user.u_name}</Link> 
+                          : <Link to={`/UserLandingPage`} style={{ color: 'inherit', marginLeft: isScreenLarge ? '0' : '10px' }}>@deleted_user</Link>}
                       </div>
                       {timed && isSmallScreen &&
                         <div style={{ alignSelf: isScreenLarge ? 'flex-end' : 'initial' }}>
@@ -296,7 +309,26 @@ export default function Post({post}) {
                       : <p></p>
                     }
                     {content && content.position && <div ref={mapRef} style={{ width: '100%', height: '300px', zIndex: 500 }}></div>}
-                    {content && content.img && <img src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${content.img}`} alt="description" style={{ width: '100%', maxHeight: '400px', objectFit: 'cover', objectPosition: 'center' }} />}
+                    {content && content.img && (
+                      <div>
+                        <img 
+                          src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${content.img}`} 
+                          alt="description" 
+                          style={{ width: '100%', maxHeight: '400px', objectFit: 'cover', objectPosition: 'center', cursor:'pointer' }} 
+                          onClick={handleClickOpen}
+                        />
+
+                        <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
+                          <DialogContent style={{ overflow: 'hidden' }}>
+                            <img 
+                              src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${content.img}`} 
+                              alt="description" 
+                              style={{ width: '100%', maxHeight: '600px', objectFit: 'cover', objectPosition: 'center' }} 
+                            />
+                          </DialogContent>
+                        </Dialog>
+                      </div>
+                    )}
                     <Typography variant="body2" component="p">
                       {keywords && renderKeywords(keywords)}
                     </Typography>

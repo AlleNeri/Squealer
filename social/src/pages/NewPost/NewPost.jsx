@@ -3,7 +3,7 @@ import { LoginContext } from '../../context/LoginContext/LoginContext';
 import { PostsContext } from '../../context/PostsContext/PostsContext';
 import { TimeContext } from '../../context/TimeContext/TimeContext';
 import Channel from '../../components/Channel/Channel';
-import { TextField, Button, InputLabel, FormControl, MenuItem, Select, Box, Link, Popover, List, ListItem,
+import { TextField, Button, InputLabel, FormControl, MenuItem, Select, Box, Link, Popover, List, ListItem, Card, CardContent,
     Typography, Avatar, Checkbox, FormControlLabel, Chip, InputAdornment, Dialog, DialogTitle, makeStyles, ListItemText,
     Container, Grid, Paper, Table, TableBody, TableCell, TableRow, Divider, IconButton, DialogActions, DialogContent } from '@material-ui/core';
 import { Autocomplete } from '@mui/material';
@@ -11,6 +11,7 @@ import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import ClearIcon from '@mui/icons-material/Clear';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import RoomIcon from '@mui/icons-material/Room';
 import { Alert } from '@mui/material';
 import './newPost.css';
 import { useNavigate } from 'react-router-dom';
@@ -67,12 +68,23 @@ function NewPost() {
     avatar: {
       marginRight: theme.spacing(1),
     },
+    card: {
+      backgroundColor: '#f5f5f5',
+      borderRadius: '15px',
+    },
+    button: {
+      backgroundColor: '#3f51b5',
+      color: 'white',
+      '&:hover': {
+        backgroundColor: '#303f9f',
+      },
+    },
   }));
 
   const classes = useStyles();
 
   const textFieldRef = useRef(null); // add this line
-
+  
   useEffect(() => {
     if (anchorEl) {
       textFieldRef.current.focus();
@@ -108,6 +120,11 @@ function NewPost() {
       .then(data => {
         setCharAvailability(data?.char_availability);
         setInitialCharAvailability(data?.char_availability);
+        setCharAvailability(prevState => ({
+          dayly: prevState?.dayly - lessChar,
+          weekly: prevState?.weekly - lessChar,
+          monthly: prevState?.monthly - lessChar,
+        }));
       })
       .catch(error => {
         console.error('Error fetching user data', error);
@@ -157,6 +174,17 @@ function NewPost() {
   }, [loggedIn, token, addedChannel]);
 
   const handlePostTypeChange = (event) => {
+    if(lessChar > 0){
+      setCharAvailability(prevState => ({
+        ...prevState,
+        dayly: prevState?.dayly + lessChar,
+        weekly: prevState?.weekly + lessChar,
+        monthly: prevState?.monthly + lessChar,
+      }));
+
+      setLessChar(0);
+    }
+
     setHasImage(false);
     setHasPosition(false);
     setPostType(event.target.value);
@@ -170,25 +198,25 @@ function NewPost() {
       monthly: prevState?.monthly + lessChar,
     }));
 
-    setLessChar(0);
+    setLessChar(lessChar - 125);
     setImage(null);
     setHasImage(false);
   };
 
   const handlePostTextChange = event => {
     const newPostText = event.target.value;
-  const words = newPostText.split(' ');
-  const lastWord = words[words.length - 1];
+    const words = newPostText.split(' ');
+    const lastWord = words[words.length - 1];
 
-  if (lastWord.startsWith('@')) {
-    setAnchorEl(event.currentTarget);
-    setMentionFilter(lastWord.slice(1));
-  } else if (anchorEl && newPostText.includes('@')) {
-    setMentionFilter(lastWord);
-  } else {
-    setPostText(newPostText);
-    setAnchorEl(null);
-  }
+    if (lastWord.startsWith('@')) {
+      setAnchorEl(event.currentTarget);
+      setMentionFilter(lastWord.slice(1));
+    } else if (anchorEl && newPostText.includes('@')) {
+      setMentionFilter(lastWord);
+    } else {
+      setPostText(newPostText);
+      setAnchorEl(null);
+    }
 
     if(postType === 'normal'){
       const diff = postText.length - newPostText.length;
@@ -210,7 +238,7 @@ function NewPost() {
         setAlert('You have reached your daily, weekly, or monthly character limit');
         return;
       }
-      setLessChar(newPostText.length);
+      setLessChar(lessChar + newPostText.length);
     }
     setPostText(newPostText);
   };
@@ -237,6 +265,7 @@ function NewPost() {
         setAlert('You have reached your daily, weekly, or monthly character limit');
         return;
       }
+      setLessChar(lessChar + newSubject.length);
     }
     setSubject(newSubject);
   };
@@ -248,10 +277,11 @@ function NewPost() {
         setCharAvailability(prevAvailability => ({
           dayly: prevAvailability.dayly - (inputValue.length),
           weekly: prevAvailability.weekly - (inputValue.length),
-          monthly: prevAvailability.monthly - inputValue.length,
+          monthly: prevAvailability.monthly - (inputValue.length),
         }));
-      }
 
+      }
+      setLessChar(lessChar + inputValue.length);
       setKeywords([...keywords, inputValue]);
       setInputValue('');
     }
@@ -268,6 +298,7 @@ function NewPost() {
         monthly: prevAvailability.monthly + keywordToDelete.length,
       }));
     }
+    setLessChar(lessChar - keywordToDelete.length);
     setKeywords(keywords.filter((keyword) => keyword !== keywordToDelete));
   };
 
@@ -279,7 +310,6 @@ function NewPost() {
         weekly: prevState?.weekly + lessChar,
         monthly: prevState?.monthly + lessChar,
       }));
-
       setLessChar(0);
     }
     setHasImage(false);
@@ -306,7 +336,7 @@ function NewPost() {
               monthly: prevState?.monthly - 125,
             }));
             setHasPosition(true); // Set hasPosition to true after getting the position
-            setLessChar(125);
+            setLessChar(lessChar + 125);
           }
 
           if (latitude !== null && longitude !== null) {
@@ -349,7 +379,7 @@ function NewPost() {
         weekly: prevState?.weekly - 125,
         monthly: prevState?.monthly - 125,
       }));
-      setLessChar(125);
+      setLessChar(lessChar + 125);
       setHasImage(true); // Set hasImage to true after loading the image
     };
   };
@@ -418,7 +448,7 @@ function NewPost() {
           return;
         }
 
-        if(!channel){
+        if(!channel && postType !== 'direct'){
           setAlert({ open: true, message: 'Please select a channel or add a new one', severity: 'error' });
           return;
         }
@@ -599,7 +629,6 @@ function NewPost() {
     
         if (response.ok) {
           setPurchased(!purchased);
-          // Update your state here to reflect the new char availability
         } else {
           console.log('Failed to add char availability');
         }
@@ -631,7 +660,7 @@ function NewPost() {
           {loggedIn ? (
             <Grid container spacing={3}>
               <Grid item xs={12}>
-                <Typography variant="h4" component="h2" gutterBottom align="center">
+                <Typography variant="h4" gutterBottom style={{ textAlign: 'center', marginTop:'20px', fontWeight:'bold' }}>
                   NEW SQUEAL
                 </Typography>
                 <Divider style={{ backgroundColor: 'black' }} />
@@ -799,35 +828,61 @@ function NewPost() {
 
               {contentType === 'geolocation' && (
                 <Grid item xs={12}>
-                  <Button variant="contained" fullWidth onClick={handlePositionChange}>Get Current Position</Button>
-                  {position && (
-                    <Typography variant="body1">
-                      Latitude: {position.latitude}, Longitude: {position.longitude}
-                    </Typography>
-                  )}
-                </Grid>
+                <Card variant="outlined" className={classes.card}>
+                  <CardContent>
+                    <Grid container justifyContent ="space-between" alignItems="center">
+                      <Grid item>
+                        <IconButton onClick={handlePositionChange}>
+                          <RoomIcon />
+                          Get current position
+                        </IconButton>
+                      </Grid>
+                      <Grid item container direction="column" justifyContent="center" alignItems="center">
+                          {position && (
+                              <>
+                                  <Typography variant="body1" align="center">
+                                      Latitude: {position.latitude}
+                                  </Typography>
+                                  <Typography variant="body1" align="center">
+                                      Longitude: {position.longitude}
+                                  </Typography>
+                              </>
+                          )}
+                      </Grid>
+                    </Grid>
+                  </CardContent>
+                </Card>
+              </Grid>
               )}
 
-              <Grid item xs={12}>
-                <FormControl fullWidth>
-                  <InputLabel id="channel-label">Channel</InputLabel>
-                  <Select
-                    labelId="channel-label"
-                    id="channel"
-                    value={channel}
-                    onChange={(e) => setChannel(e.target.value)}
-                    disabled={postType === 'direct'}
-                  >
-                    {myChannels.filter(ch => !ch.name.startsWith('__direct__')).map((ch) => (
-                      <MenuItem key={ch._id} value={ch._id}>{ch.name}</MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                <Button variant="contained"  fullWidth onClick={handleOpen} style={{ marginTop: '10px' }}>
-                  Add Channel
-                </Button>
-                <Channel isOpen={open} onClose={handleClose} />
-              </Grid>
+              {postType === 'normal' && (
+                <Grid item xs={12}>
+                  <FormControl fullWidth>
+                    <InputLabel id="channel-label">Channel</InputLabel>
+                    <Select
+                      labelId="channel-label"
+                      id="channel"
+                      value={channel}
+                      onChange={(e) => setChannel(e.target.value)}
+                      disabled={postType === 'direct'}
+                    >
+                      {myChannels.filter(ch => !ch.name.startsWith('__direct__')).length > 0 ? (
+                        myChannels.filter(ch => !ch.name.startsWith('__direct__')).map((ch) => (
+                          <MenuItem key={ch._id} value={ch._id}>{ch.name}</MenuItem>
+                        ))
+                      ) : (
+                        <Typography variant="body1" align="center">
+                          No channels available.
+                        </Typography>
+                      )}
+                    </Select>
+                  </FormControl>
+                  <Button variant="contained"  fullWidth onClick={handleOpen} style={{ marginTop: '10px' }}>
+                    Add Channel
+                  </Button>
+                  <Channel isOpen={open} onClose={handleClose} />
+                </Grid>
+              )}
 
               <Grid item xs={12}>
                 <TextField 
