@@ -14,7 +14,7 @@ import Linkify from 'react-linkify';
 import {Link} from 'react-router-dom';
 
 export default function Post({post}) {
-  const {title, content, keywords, reactions, posted_by, posted_on, timed, popular, unpopular, date} = post;
+    const {title, content, keywords, reactions, posted_by, posted_on, timed, popular, unpopular, date} = post;
     const [user, setUser] = useState(null);
     const [users, setUsers] = useState([]);
     const [channel, setChannel] = useState(null);
@@ -32,8 +32,8 @@ export default function Post({post}) {
     const userID = localStorage.getItem('userId');
     const [userReaction, setUserReaction] = useState(post?.reactions?.find(reaction => reaction.user_id === userID));
     const theme = useTheme();
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-    const isScreenLarge = useMediaQuery(theme.breakpoints.up('md'));
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down('xs'));
+    const isScreenLarge = useMediaQuery(theme.breakpoints.up('sm'));
     if(!loggedIn) { localStorage.removeItem('userId'); }
     const postDate = new Date(date);
     const today = new Date();

@@ -254,7 +254,8 @@ function NewPost() {
 
   const handleSubjectChange = event => {
     const newSubject = event.target.value;
-      if(postType === 'normal'){
+
+    if(postType === 'normal'){
       const diff = subject.length - newSubject.length;
       if (diff > 0 && charAvailability?.dayly < initialCharAvailability?.dayly) {
         setCharAvailability(prevState => ({
@@ -276,9 +277,9 @@ function NewPost() {
       }
       setLessChar(lessChar + (subject.length - newSubject.length));
     }
+    
     setSubject(newSubject);
   };
-
   const handleAddKeyword = () => {
     if (inputValue && !keywords.includes(inputValue)) {
       if (postType === 'normal') {
@@ -339,9 +340,8 @@ function NewPost() {
         monthly: prevState?.monthly + lessChar,
       }));
 
-      if(lessChar - charsToReturn >= 0){
-        setLessChar(lessChar - charsToReturn);
-      }
+      // Always update lessChar, regardless of the value of lessChar - charsToReturn
+      setLessChar(Math.max(0, lessChar - charsToReturn));
     }
     setcontentType(event.target.value);
   };
