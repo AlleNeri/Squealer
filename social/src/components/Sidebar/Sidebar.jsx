@@ -19,10 +19,13 @@ const Sidebar = () => {
   const [isDirectMessagesExpanded, setDirectMessagesExpanded] = useState(false);
   const [isExplore, setExplore] = useState(false);
   const [isTrending, setTrending] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [otherUsers, setOtherUsers] = useState([]);
   const { loggedIn } = useContext(LoginContext);
   const location = useLocation();
   const token = localStorage.getItem('token');
   const addedChannel = localStorage.getItem('addedChannel');
+  const currentUserId = localStorage.getItem('userId');
   const { isSidebarMinimized, setSidebarMinimized } = useContext(SidebarContext);
 
   const useStyles = makeStyles({
@@ -54,6 +57,38 @@ const Sidebar = () => {
     setSidebarMinimized(true);
   }, []); // Removed setSidebarMinimized from the dependency array
 
+  useEffect(() => {
+    // Fetch the users from users/mention
+    const fetchUsers = async () => {
+      const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/mention`, {
+        headers: {
+          'Authorization': token,
+        }
+      });
+      const users = await response.json();
+      setUsers(users);
+    };
+  
+    fetchUsers();
+  }, []);
+  
+  useEffect(() => {
+    // For each channel, find the other user
+    const otherUsers = myChannels.map(channel => {
+      // Only process channels that start with "__direct__"
+      if (!channel.name.startsWith('__direct__')) {
+        return null;
+      }
+
+      // Find the user in channel.owners that is not the current user
+      const otherUserId = channel.owners.find(id => id !== currentUserId);
+      // Find the user in the users list that has the same ID as otherUserId
+      const otherUser = users.find(user => user.id === otherUserId);
+      return otherUser;
+    });
+
+    setOtherUsers(otherUsers);
+  }, [users, myChannels]);
 
   const handleChannelClick = (channelId) => {
     setSelectedChannel(channelId);
@@ -270,28 +305,25 @@ const Sidebar = () => {
                 {isDirectMessagesExpanded ? <ExpandMoreIcon style={{color:'black'}}/> : <ChevronRightIcon style={{color:'black'}}/>}
               </ListItem>
               <Collapse in={isDirectMessagesExpanded}>
-                {myChannels.some(channel => channel.name.startsWith('__direct__')) ? (
-                  myChannels.map(channel => {
+              {myChannels.some(channel => channel.name.startsWith('__direct__')) ? (
+                  myChannels.map((channel, index) => {
                     // Only include channels that start with "__direct__"
                     if (!channel.name.startsWith('__direct__')) {
                       return null;
                     }
 
+                    // Get the other user for this channel
+                    const otherUser = otherUsers[index];
+
                     return (
                       <NavLink key={channel._id} className={classes.link} to={`/AllChannels/${channel._id}`} onClick={() => handleChannelClick(channel._id)}>
                         <ListItem button>
-                          <ListItemText primary={`§${channel.name}`} style={{color:'black'}}/>
+                          <ListItemText primary={`@${otherUser?.u_name}`} style={{color:'black'}}/>
                         </ListItem>
                       </NavLink>
                     );
                   })
-                ) : (
-                  !isSidebarMinimized && (
-                    <ListItem>
-                      <ListItemText primary="You have not direct messages" style={{ color: 'black' }} />
-                    </ListItem>
-                  )
-                )}
+                ) : null}
               </Collapse>
             </>
           )}

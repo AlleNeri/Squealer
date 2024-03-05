@@ -16,13 +16,12 @@ function Register() {
     email: '',
     type: 'normal',
     b_date: '', 
-    img: '',
+    img: undefined,
     u_name: ''
   });
 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [uploadComplete, setUploadComplete] = useState(false);
   const [imageFile, setImageFile] = useState(null);
   const [preview, setPreview] = useState(''); 
   const [showAlert, setShowAlert] = useState(false);
@@ -108,6 +107,7 @@ function Register() {
     if(data.success) {
       localStorage.setItem('token', data.jwt.token);
       localStorage.setItem('userId', data.id);
+      localStorage.setItem('username', data.u_name);
       setJustRegistered(true);
       setLoggedIn(true);
       handleImageUpload(imageFile);
@@ -118,7 +118,6 @@ function Register() {
 
   const handleImageSelection = (event) => {
     setImageFile(event.target.files[0]);
-    setUploadComplete(true);
   
     // Crea un URL di anteprima per il file selezionato
     setPreview(URL.createObjectURL(event.target.files[0]));
@@ -131,7 +130,6 @@ function Register() {
     // Reimposta lo stato dell'immagine e della preview
     setImageFile(null);
     setPreview(null);
-    setUploadComplete(false);
   }
 
   const handleImageUpload = (file) => {

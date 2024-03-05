@@ -162,6 +162,10 @@ export default function ButtonAppBar() {
       const allPosts = [];
       for (const channel of myChannels) {
         const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels/${channel._id}/posts`);
+        if (!response.ok) {
+          console.log(response);
+          return;
+        }
         const data = await response.json();
         const filteredData = data.filter(post => post.posted_by !== userId);
         allPosts.push(...filteredData);
@@ -319,7 +323,7 @@ export default function ButtonAppBar() {
           {!matches &&
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <div>
-              <img src={logo} alt="logo" style={{ width: '70px', height: '70px' }} />
+              <img src={logo} alt="logo" style={{ width: '40px', height: '40px'}} />
             </div>
             <div>
               <Typography className="Typography" fontWeight="fontWeightBold">
@@ -332,7 +336,7 @@ export default function ButtonAppBar() {
           {matches &&
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <div>
-                <img src={logo} alt="logo" style={{ width: '70px', height: '70px' }} />
+                <img src={logo} alt="logo" style={{ width: '40px', height: '40px' }} />
               </div>
             </div>
           }

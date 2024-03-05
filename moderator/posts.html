@@ -16,11 +16,12 @@
                 <my-posts id="all-posts-section" filterDate="" filterSender="" filterRecipient=""></my-posts>
             </div>
 			<my-edit-post id="edit-post-section"></my-edit-post>
+		</div>
 		<script type="module" src="./components/header.js"></script>
 		<script type="module" src="./components/sidebar.js"></script>
 		<script type="module" src="./components/posts.js"></script>
 		<script type="module" src="./components/edit-post.js"></script>
-		<script type="module" src="./components/my-posts-filter.js"></script>
+		<script type="module" src="./components/posts-filter.js"></script>
 		<script>
 			// catch the edit post event
 			document.addEventListener('edit-post', function(e) {
@@ -53,7 +54,6 @@
 				myPosts.setAttribute('filterRecipient', recipient);
 				myPosts.render();
 			});
-
 		</script>
 	</body>
 </html>

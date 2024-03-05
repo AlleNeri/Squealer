@@ -21,7 +21,7 @@
 		<script type="module" src="./components/sidebar.js"></script>
 		<script type="module" src="./components/users.js"></script>
 		<script type="module" src="./components/edit-user.js"></script>
-		<script type="module" src="./components/my-users-filter.js"></script>
+		<script type="module" src="./components/users-filter.js"></script>
 		<script>
 			// catch the edit user event
 			document.addEventListener('edit-user', function(e) {
@@ -35,9 +35,11 @@
 			document.addEventListener('new-user', function(e) {
 				// get the new user
 				const user = e.detail;
-				// send the new user to the all-users component
+				console.log(user);
 				const allUsers = document.querySelector('#all-users-section');
-				allUsers.updateUser(user);
+				if(!user);
+				else if(user.block) allUsers.block(user.id);
+				else allUsers.unblock(user.id);
 				// reset the edit-user component
 				const editUsers = document.querySelector('#edit-user-section');
 				editUsers.removeAttribute('user');
