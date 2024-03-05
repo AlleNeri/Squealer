@@ -60,7 +60,7 @@ const Profile = () => {
 
     useEffect(() => {
       if (isSearching) return;
-        if (id !== currentUserId && loggedIn) {
+        if (loggedIn) {
           const fetchUserPosts = async () => {
             const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/posts?of=${id}`, {
               headers: {
