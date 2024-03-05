@@ -81,11 +81,7 @@ class EditUser extends HTMLElement {
                     display: flex;
                     justify-content: space-between;
                     margin-bottom: 10px;
-                }
-                .button-container {
-                    display: flex;
-                    justify-content: space-between;
-                    margin-top: 20px; 
+					margin-top: 20px;
                 }
                 .button-container button {
                     margin-right: 10px; 
@@ -136,6 +132,10 @@ class EditUser extends HTMLElement {
         // Event listener block event
         blockButton.addEventListener('click', async () => {
             await Backend.put('users/'+this.user._id+'/block', {}, Auth.getToken())
+				.then(() => {
+					const event = new CustomEvent('new-user', { bubbles: true, composed: true, detail: this.user._id });
+					this.dispatchEvent(event);
+				})
                 .catch(e => {
                     console.log(e);
                     alert('Errore durante il blocco dell\'utente');
@@ -160,17 +160,14 @@ class EditUser extends HTMLElement {
                 monthly: Number(this.newUser.quote.monthly),
             };
             const result = await Backend.put('users/'+this.user._id+'/quote', data, Auth.getToken())
-                            .catch(e => {
-                                console.log(e);
-                                alert('Errore durante la modifica dell\'utente');
-                            });
-            if (result && result.user) {
-                const { user } = result;
-                const event = new CustomEvent('new-user', { bubbles: true, composed: true, detail: user });
+				.catch(e => {
+					console.log(e);
+					alert('Errore durante la modifica dell\'utente');
+				});
+            if (result && result.new_quote) {
+                const event = new CustomEvent('new-user', { bubbles: true, composed: true, detail: true });
                 this.dispatchEvent(event);
-            } else {
-                return;
-            }
+			}
         });
     }
 }

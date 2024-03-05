@@ -35,9 +35,7 @@
 			document.addEventListener('new-user', function(e) {
 				// get the new user
 				const user = e.detail;
-				// send the new user to the all-users component
 				const allUsers = document.querySelector('#all-users-section');
-				allUsers.updateUser(user);
 				// reset the edit-user component
 				const editUsers = document.querySelector('#edit-user-section');
 				editUsers.removeAttribute('user');
