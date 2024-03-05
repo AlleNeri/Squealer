@@ -35,7 +35,11 @@
 			document.addEventListener('new-user', function(e) {
 				// get the new user
 				const user = e.detail;
+				console.log(user);
 				const allUsers = document.querySelector('#all-users-section');
+				if(!user);
+				else if(user.block) allUsers.block(user.id);
+				else allUsers.unblock(user.id);
 				// reset the edit-user component
 				const editUsers = document.querySelector('#edit-user-section');
 				editUsers.removeAttribute('user');

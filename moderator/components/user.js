@@ -32,14 +32,19 @@ class User extends HTMLElement {
 					background-color: white;
 					border-radius: 5px;
 				}
-				.user span.name,
-				.user span.type {
+				span.name,
+				span.type,
+				span.block {
 					color: #00000073;
 					font-size: 0.9em;
 					margin-right: 5px;
 				}
-				.user span.type {
+				span.block,
+				span.type {
 					margin-left: 5px;
+				}
+				span.block {
+					color: red;
 				}
 				.user span.email {
 					color: #00000073;
@@ -75,6 +80,10 @@ class User extends HTMLElement {
 						}
 						<h2 class="user-name">${this.user.u_name}</h2>
 						${this.renderType()}
+						${this.user.block
+							? `<span class='block'>Bloccato</span>`
+							: ""
+						}
 					</div>
                     <button id="${this.editId + this.user._id}">Modifica</button>
 				</div>

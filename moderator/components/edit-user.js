@@ -132,8 +132,11 @@ class EditUser extends HTMLElement {
         // Event listener block event
         blockButton.addEventListener('click', async () => {
             await Backend.put('users/'+this.user._id+'/block', {}, Auth.getToken())
-				.then(() => {
-					const event = new CustomEvent('new-user', { bubbles: true, composed: true, detail: this.user._id });
+				.then(res => {
+					const event = new CustomEvent(
+						'new-user',
+						{ bubbles: true, composed: true, detail: res.user }
+					);
 					this.dispatchEvent(event);
 				})
                 .catch(e => {
@@ -145,6 +148,13 @@ class EditUser extends HTMLElement {
         // Event listener unblock event
         unblockButton.addEventListener('click', async () => {
             await Backend.put('users/'+this.user._id+'/unblock', {}, Auth.getToken())
+				.then(res => {
+					const event = new CustomEvent(
+						'new-user',
+						{ bubbles: true, composed: true, detail: res.user }
+					);
+					this.dispatchEvent(event);
+				})
                 .catch(e => {
                     console.log(e);
                     alert('Errore durante lo sblocco dell\'utente');
@@ -165,7 +175,10 @@ class EditUser extends HTMLElement {
 					alert('Errore durante la modifica dell\'utente');
 				});
             if (result && result.new_quote) {
-                const event = new CustomEvent('new-user', { bubbles: true, composed: true, detail: true });
+                const event = new CustomEvent(
+					'new-user',
+					{ bubbles: true, composed: true, detail: false }
+				);
                 this.dispatchEvent(event);
 			}
         });
