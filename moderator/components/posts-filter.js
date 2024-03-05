@@ -68,8 +68,8 @@ class PostsFilter extends HTMLElement {
         this.shadowRoot.innerHTML = `
         <style>
             input[type="date"], input[type="text"], select, button {
-                width: 50%;
-                padding: 12px 20px;
+                width: 100%;
+                padding: 10px 15px;
                 margin: 8px 0;
                 box-sizing: border-box;
                 border: 1px solid #ccc;
@@ -77,7 +77,7 @@ class PostsFilter extends HTMLElement {
                 font-size: 16px;
             }
             button {
-                background-color: #4CAF50;
+                background-color: #007bff;
                 color: white;
                 border: none;
                 cursor: pointer;
