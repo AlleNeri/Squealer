@@ -306,24 +306,28 @@ const Sidebar = () => {
               </ListItem>
               <Collapse in={isDirectMessagesExpanded}>
               {myChannels.some(channel => channel.name.startsWith('__direct__')) ? (
-                  myChannels.map((channel, index) => {
-                    // Only include channels that start with "__direct__"
-                    if (!channel.name.startsWith('__direct__')) {
-                      return null;
-                    }
+                myChannels.map((channel, index) => {
+                  // Only include channels that start with "__direct__"
+                  if (!channel.name.startsWith('__direct__')) {
+                    return null;
+                  }
 
-                    // Get the other user for this channel
-                    const otherUser = otherUsers[index];
+                  // Get the other user for this channel
+                  const otherUser = otherUsers[index];
 
-                    return (
-                      <NavLink key={channel._id} className={classes.link} to={`/AllChannels/${channel._id}`} onClick={() => handleChannelClick(channel._id)}>
-                        <ListItem button>
-                          <ListItemText primary={`@${otherUser?.u_name}`} style={{color:'black'}}/>
-                        </ListItem>
-                      </NavLink>
-                    );
-                  })
-                ) : null}
+                  return (
+                    <NavLink key={channel._id} className={classes.link} to={`/AllChannels/${channel._id}`} onClick={() => handleChannelClick(channel._id)}>
+                      <ListItem button>
+                        <ListItemText primary={`@${otherUser?.u_name}`} style={{color:'black'}}/>
+                      </ListItem>
+                    </NavLink>
+                  );
+                })
+              ) : (
+                <Typography variant="body1" component="p" style={{ paddingLeft: '20px' }}>
+                  You have not messages
+                </Typography>
+              )}
               </Collapse>
             </>
           )}

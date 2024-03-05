@@ -36,8 +36,10 @@ function NewPost() {
   const [hasPosition, setHasPosition] = useState(false);
   const [hasImage, setHasImage] = useState(false);
   const [inputValue, setInputValue] = useState('');
+  const [firstContent, setFirstContent] = useState(true);
   const [keywords, setKeywords] = useState([]);
   const [contentType, setcontentType] = useState('geolocation'); // ['text', 'image', 'geo']
+  const [previousPostType, setPreviousPostType] = useState('geolocation'); // ['text', 'image', 'geo']
   const [postType, setPostType] = useState('normal');
   const [anchorEl, setAnchorEl] = useState(null);
   const [directRecipient, setDirectRecipient] = useState('');
@@ -79,6 +81,11 @@ function NewPost() {
         backgroundColor: '#303f9f',
       },
     },
+    iconButton: {
+      '&:hover': {
+        backgroundColor: 'transparent', // Remove hover color
+      },
+    },
   }));
 
   const classes = useStyles();
@@ -114,7 +121,6 @@ function NewPost() {
         'Authorization': token
       }
     };
-
     fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/${localStorage.getItem('userId')}`, options)
       .then(response => response.json())
       .then(data => {
@@ -193,12 +199,14 @@ function NewPost() {
   const handleClearImage = () => {
     setCharAvailability(prevState => ({
       ...prevState,
-      dayly: prevState?.dayly + lessChar,
-      weekly: prevState?.weekly + lessChar,
-      monthly: prevState?.monthly + lessChar,
+      dayly: prevState?.dayly + 125,
+      weekly: prevState?.weekly + 125,
+      monthly: prevState?.monthly + 125,
     }));
 
-    setLessChar(lessChar - 125);
+    if(lessChar - 125 >= 0){
+      setLessChar(lessChar - 125);
+    }
     setImage(null);
     setHasImage(false);
   };
@@ -238,14 +246,16 @@ function NewPost() {
         setAlert('You have reached your daily, weekly, or monthly character limit');
         return;
       }
-      setLessChar(lessChar + newPostText.length);
+      setLessChar(lessChar - diff);
     }
+    setPreviousPostType('text');
     setPostText(newPostText);
   };
 
   const handleSubjectChange = event => {
     const newSubject = event.target.value;
-      if(postType === 'normal'){
+
+    if(postType === 'normal'){
       const diff = subject.length - newSubject.length;
       if (diff > 0 && charAvailability?.dayly < initialCharAvailability?.dayly) {
         setCharAvailability(prevState => ({
@@ -265,11 +275,11 @@ function NewPost() {
         setAlert('You have reached your daily, weekly, or monthly character limit');
         return;
       }
-      setLessChar(lessChar + newSubject.length);
+      setLessChar(lessChar + (subject.length - newSubject.length));
     }
+    
     setSubject(newSubject);
   };
-
   const handleAddKeyword = () => {
     if (inputValue && !keywords.includes(inputValue)) {
       if (postType === 'normal') {
@@ -284,9 +294,7 @@ function NewPost() {
       setLessChar(lessChar + inputValue.length);
       setKeywords([...keywords, inputValue]);
       setInputValue('');
-    }
-
-    
+    }  
   };
 
   const handleDeleteKeyword = (keywordToDelete) => () => {
@@ -302,18 +310,39 @@ function NewPost() {
     setKeywords(keywords.filter((keyword) => keyword !== keywordToDelete));
   };
 
+  const [charsUsed, setCharsUsed] = useState(0);
+
+  // Update charsUsed whenever postText changes
+  useEffect(() => {
+    setCharsUsed(postText.length);
+  }, [postText]);
+
   const handlecontentTypeChange = (event) => {
-    if(lessChar > 0){
+    if (lessChar > 0) {
+      let charsToReturn = 0;
+
+      // Check if the post was in "geolocation" or "image"
+      if ((previousPostType === 'geolocation' && !firstContent)  || previousPostType === 'image') {
+        if(previousPostType === 'geolocation'){
+          setHasPosition(false);
+        }else if(previousPostType === 'image'){
+          setHasImage(false);
+        }
+        charsToReturn = 125;
+      } else {
+        charsToReturn = charsUsed; // Use charsUsed instead of postText.length
+      }
+
       setCharAvailability(prevState => ({
         ...prevState,
         dayly: prevState?.dayly + lessChar,
         weekly: prevState?.weekly + lessChar,
         monthly: prevState?.monthly + lessChar,
       }));
-      setLessChar(0);
+
+      // Always update lessChar, regardless of the value of lessChar - charsToReturn
+      setLessChar(Math.max(0, lessChar - charsToReturn));
     }
-    setHasImage(false);
-    setHasPosition(false);
     setcontentType(event.target.value);
   };
 
@@ -340,15 +369,17 @@ function NewPost() {
           }
 
           if (latitude !== null && longitude !== null) {
+            setFirstContent(false);
+            setPreviousPostType('geolocation');
             setPosition({latitude, longitude});
             setHasPosition(true); // Set hasPosition to true after getting the position
           } else {
-            setAllert('Could not get current position');
+            setAlert('Could not get current position');
           }
           
         },
         (error) => {
-          setAllert('Error getting current position', error);
+          setAlert('Error getting current position', error);
         }
       );
     }
@@ -380,27 +411,30 @@ function NewPost() {
         monthly: prevState?.monthly - 125,
       }));
       setLessChar(lessChar + 125);
+      setPreviousPostType('image');
       setHasImage(true); // Set hasImage to true after loading the image
     };
   };
 
   const createChannel = async (channel) => {
-    const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': token, 
-      },
-      body: JSON.stringify({ channel }),
-    });
 
-    if (!response.ok) {
+    const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token, 
+        },
+        body: JSON.stringify({ channel }),
+      });
+
+      if (!response.ok) {
         throw new Error('Error creating channel');
       }
 
-        const data = await response.json();
-        return data;
-      };
+      const data = await response.json();
+      localStorage.setItem('addedChannel', data._id);
+      return data;
+  };
       
       const getUsers = async () => {
         const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/mention`, {
@@ -520,7 +554,7 @@ function NewPost() {
           console.error('Error creating post');
           return;
         }
-      
+
         const newPost = await postResponse.json();
       
         // Then, if an image was selected, upload the image with the post ID
@@ -539,39 +573,8 @@ function NewPost() {
           if (!imageResponse.ok) {
             return;
           }
-
           const imageResponseData = await imageResponse.json();
           newPost.post.content.img = imageResponseData.imgId; // Assuming the image ID is available as imgId
-        }
-      
-        try {
-          const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/${localStorage.getItem('userId')}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': token,
-            },
-            body: JSON.stringify({
-              user: {
-                char_availability: {
-                  dayly: charAvailability.dayly,
-                  weekly: charAvailability.weekly,
-                  monthly: charAvailability.monthly,
-                },
-              },
-            }),
-          });
-
-          const data = await response.json();
-
-          if (!response.ok) {
-            throw new Error(data.msg);
-          }
-
-          // Handle successful update
-        } catch (error) {
-          // Handle error
-          console.error('Failed to update user', error);
         }
 
         // Updated the posts list
@@ -827,15 +830,15 @@ function NewPost() {
               )}
 
               {contentType === 'geolocation' && (
-                <Grid item xs={12}>
-                <Card variant="outlined" className={classes.card}>
+              <Grid item xs={12}>
+                <Card variant="outlined" className={classes.card} >
                   <CardContent>
                     <Grid container justifyContent ="space-between" alignItems="center">
-                      <Grid item>
-                        <IconButton onClick={handlePositionChange}>
+                      <Grid item container alignItems="center" justifyContent="center">
+                        <div onClick={handlePositionChange} className={classes.iconButton} style={{cursor: 'pointer'}}>
                           <RoomIcon />
                           Get current position
-                        </IconButton>
+                        </div>
                       </Grid>
                       <Grid item container direction="column" justifyContent="center" alignItems="center">
                           {position && (
@@ -953,13 +956,16 @@ function NewPost() {
                     <Alert severity={alert.severity}>{alert.message}</Alert>
                   </Grid>
               )}
+              
               <Grid item xs={12} style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <Button variant="contained" style={{ marginRight: '10px' }} onClick={() => navigate('/Homepage')}>
                   Cancel
                 </Button>
+                {postType === 'normal' && (
                 <Button onClick={handleClickOpenPurchase} startIcon={<AttachMoneyIcon />} color="primary" variant="contained" style={{ marginRight: '10px' }}>
                   Buy Chars
                 </Button>
+                )}
                 <Dialog open={openPurchase} onClose={handleClosePurchase}>
                   <DialogTitle>Buy Chars</DialogTitle>
                   <DialogContent>
@@ -1002,7 +1008,7 @@ function NewPost() {
                   Submit
                 </Button>
               </Grid>
-            </Grid>
+            </Grid> 
           ) : (
             <Typography variant="body1" style={{ marginTop: '50px', textAlign: 'center' }}>
               Please <Link to="/login">login</Link> or <Link to="/register">create a new account</Link>.

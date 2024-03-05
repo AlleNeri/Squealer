@@ -163,7 +163,6 @@ export default function ButtonAppBar() {
       for (const channel of myChannels) {
         const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels/${channel._id}/posts`);
         if (!response.ok) {
-          console.log(response);
           return;
         }
         const data = await response.json();
@@ -192,20 +191,22 @@ export default function ButtonAppBar() {
   }, [channelPosts]);
 
   useEffect(() => {
-    const fetchUserImage = async () => {
-      const token = localStorage.getItem('token');
+    if(loggedIn){
+      const fetchUserImage = async () => {
+        const token = localStorage.getItem('token');
 
-      const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/${userId}`, {
-        headers: {
-          'Authorization': `${token}`,
-        },
-      });
+        const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/${userId}`, {
+          headers: {
+            'Authorization': `${token}`,
+          },
+        });
 
-      const user = await response.json();
-      setUserBlock(user.block);
-      setUserImage(user.img);
-    };
-    fetchUserImage();
+        const user = await response.json();
+        setUserBlock(user.block);
+        setUserImage(user.img);
+      };
+      fetchUserImage();
+    }
   }, [userId]);
 
   const getChannelName = async (channelId) => {

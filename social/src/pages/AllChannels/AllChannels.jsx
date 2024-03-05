@@ -17,11 +17,13 @@ const AllChannels = () => {
   const [open, setOpen] = useState(false);
   const [open2, setOpen2] = useState(false);
   const [users, setUsers] = useState([]);
+  const [otherUser, setOtherUser] = useState(null);
   const [triggerRender, setTriggerRender] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [owners, setOwners] = useState([]);
   let reversedPosts = [...posts].reverse();
   const token = localStorage.getItem('token');
+  const userId = localStorage.getItem('userId');
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels/${id}`)
@@ -41,7 +43,11 @@ const AllChannels = () => {
 
   useEffect(() => {
     // Fetch posts
-    fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels/${id}/posts`)
+    fetch(`${import.meta.env.VITE_DEFAULT_URL}/channels/${id}/posts`, {
+      headers: {
+        'Authorization': token,
+      }
+    })
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -98,7 +104,35 @@ const AllChannels = () => {
       console.error(error);
     }
   };
-  
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_DEFAULT_URL}/users/mention`);
+
+        if (!response.ok) {
+          throw new Error('Error getting users');
+        }
+
+        let data = await response.json();
+        if (Array.isArray(data)) {
+          // If the channel is a direct channel, find the other user
+          if (channel?.name.startsWith('__direct__')) {
+            const otherUserId = channel.owners.find(id => id !== userId);
+            const otherUser = data.find(user => user.id === otherUserId);
+            setOtherUser(otherUser?.u_name);
+          }
+        } else {
+          console.error('Data is not an array:', data);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+  }, [channel, userId]);
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -118,9 +152,6 @@ const AllChannels = () => {
       body: JSON.stringify({ channel: { owners: channel.owners.filter(owner => owner !== userId) } })
     })
       .then(response => response.json())
-      .then(data => {
-        
-      })
       .catch(error => console.error(error));
 
     setTriggerRender(!triggerRender);
@@ -152,9 +183,15 @@ const AllChannels = () => {
     <Card style={{ backgroundColor: '#f5f5f5', width:'100%' }}>
         <CardContent>
             <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
-            <Typography variant="h5" component="h2" style={{ fontWeight: 'bold', marginTop:'20px'}}>
-                {channel.name.toUpperCase()}
-            </Typography>
+            {channel.name.startsWith('__direct__') ? (
+              <Typography variant="h5" component="h2" style={{ fontWeight: 'bold', marginTop:'20px'}}>
+                @{otherUser}
+              </Typography>
+            ) : (
+              <Typography variant="h5" component="h2" style={{ fontWeight: 'bold', marginTop:'20px'}}>
+                §{channel.name}
+              </Typography>
+            )}
             <Typography variant="body2" component="p" style={{ textAlign: 'center' }}>
                 {channel.description}
             </Typography>
@@ -176,7 +213,11 @@ const AllChannels = () => {
                             width="100%"
                           >
                             <Box display="flex" alignItems="center">
-                              <Avatar src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${owner.img}`} />
+                              {owner.img ? (
+                                  <Avatar src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${owner.img}`} />
+                              ) : (
+                                  <Avatar>{owner.u_name.charAt(0)}</Avatar>
+                              )}
                               <Typography style={{ marginLeft: '10px' }}>
                                 {owner.name.first} {owner.name.last}
                               </Typography>

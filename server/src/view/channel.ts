@@ -32,7 +32,7 @@ channelRoute.get("/:id/posts", Auth.softAuthorize, async (req: Request, res: Res
 
 	if(!channel) return res.status(404).json({ msg: "Channel not found" });
 	else if(channel.private && !req.user) return res.status(401).json({ msg: "You are not logged in" });
-	else if(channel.private && !req.user?.appartenence.contains(channelId)) return res.status(401).json({ msg: "You do not have access to this channel" });
+	else if(channel.private && !channel.owners.includes(req.user!._id)) return res.status(401).json({ msg: "You do not have access to this channel" });
 
 	PostSchema.find({
 		$or: [
