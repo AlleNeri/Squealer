@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useContext, useState } from 'react';
 import { Card, CardContent, Typography, IconButton, Grid, Avatar, Tooltip, useMediaQuery, useTheme, Dialog,
-         DialogContent, DialogTitle } from '@material-ui/core';
+         DialogContent, DialogActions } from '@material-ui/core';
 import L, {Icon} from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import markerIconPng from "leaflet/dist/images/marker-icon.png";
@@ -110,6 +110,15 @@ export default function Post({post}) {
       }
     });
   };
+
+  useEffect(() => {
+    setReactionCounts({
+      veryDissatisfied: reactions?.filter(reaction => reaction.value === -2).length,
+      dissatisfied: reactions?.filter(reaction => reaction.value === -1).length,
+      satisfied: reactions?.filter(reaction => reaction.value === 1).length,
+      verySatisfied: reactions?.filter(reaction => reaction.value === 2).length,
+    });
+  }, [reactions]); // Listen for changes in reactions, not post
 
   useEffect(() => {
     // Fai una richiesta al backend per ottenere le informazioni degli utenti
@@ -310,24 +319,29 @@ export default function Post({post}) {
                     }
                     {content && content.position && <div ref={mapRef} style={{ width: '100%', height: '300px', zIndex: 500 }}></div>}
                     {content && content.img && (
-                      <div>
-                        <img 
-                          src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${content.img}`} 
-                          alt="description" 
-                          style={{ width: '100%', maxHeight: '400px', objectFit: 'cover', objectPosition: 'center', cursor:'pointer' }} 
-                          onClick={handleClickOpen}
-                        />
-
-                        <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
-                          <DialogContent style={{ overflow: 'hidden' }}>
+                        <div>
                             <img 
-                              src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${content.img}`} 
-                              alt="description" 
-                              style={{ width: '100%', maxHeight: '600px', objectFit: 'cover', objectPosition: 'center' }} 
+                                src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${content.img}`} 
+                                alt="description" 
+                                style={{ width: '100%', maxHeight: '400px', objectFit: 'cover', objectPosition: 'center', cursor:'pointer' }} 
+                                onClick={handleClickOpen}
                             />
-                          </DialogContent>
-                        </Dialog>
-                      </div>
+
+                            <Dialog open={open} onClose={handleClose}>
+                                <DialogActions>
+                                    <IconButton edge="end" color="inherit" onClick={handleClose} aria-label="close">
+                                        <CloseIcon/>
+                                    </IconButton>
+                                </DialogActions>
+                                <DialogContent style={{ padding: '0px', overflow: 'hidden', overflowX: 'hidden' }}>
+                                  <img 
+                                    src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${content.img}`} 
+                                    alt="description" 
+                                    style={{ width: '100%', maxHeight: '600px', objectFit: 'contain', objectPosition: 'center' }} 
+                                  />
+                                </DialogContent>
+                            </Dialog>
+                        </div>
                     )}
                     <Typography variant="body2" component="p">
                       {keywords && renderKeywords(keywords)}
