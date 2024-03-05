@@ -71,10 +71,10 @@ channelRoute.put("/:id", Auth.authorize, async (req: Request, res: Response) => 
 	const channel: Channel | null = await ChannelSchema.findById(channelId);
 
 	if(!channel) return res.status(404).json({ msg: "Channel not found" });
-	else if(!channel.owners.includes(req.user!._id)) return res.status(401).json({ msg: "You are not an owner of this channel" });
+	else if(!req.user!.isMod && !channel.owners.includes(req.user!._id)) return res.status(401).json({ msg: "You are not an owner of this channel" });
 
 	ChannelSchema.findByIdAndUpdate(channelId, req.body.channel)
-		.then((_: Channel | null) => res.status(200).json({ msg: "Channel updated" }))
+		.then((c: Channel | null) => res.status(200).json({ msg: "Channel updated", channel: c }))
 		.catch((err: Error) => res.status(500).json({ msg: "Error updating channel", err: err }));
 });
 

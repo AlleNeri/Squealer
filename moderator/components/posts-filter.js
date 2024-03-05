@@ -2,7 +2,6 @@ import { Backend } from "../utils/backend.js";
 import { Auth } from "../utils/auth.js";
 
 class PostsFilter extends HTMLElement {
-
     users = [];
     channels = [];
 
@@ -66,40 +65,40 @@ class PostsFilter extends HTMLElement {
     //render
     render(){
         this.shadowRoot.innerHTML = `
-        <style>
-            input[type="date"], input[type="text"], select, button {
-                width: 100%;
-                padding: 10px 15px;
-                margin: 8px 0;
-                box-sizing: border-box;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                font-size: 16px;
-            }
-            button {
-                background-color: #007bff;
-                color: white;
-                border: none;
-                cursor: pointer;
-            }
-            button:hover {
-                opacity: 0.8;
-            }
-            div {
-                display: flex;
-                flex-direction: column;
-                align-items: flex-start;
-            }
-        </style>
-        <div>
-            <label for="filterDate">Publish date:</label>
-            <input type="date" id="filterDate" value="${this.filterDate || ''}" />
-            <label for="filterSender">Sender:</label>
-            <input type="text" id="filterSender" placeholder="Enter Sender">
-            <label for="filterRecipient">Recipient:</label>
-            <input type="text" id="filterRecipient" placeholder="Enter Recipient">
-            <button id="applyFilter">Apply Filters</button>
-        </div>
+			<style>
+				input[type="date"], input[type="text"], select, button {
+					width: 100%;
+					padding: 10px 15px;
+					margin: 8px 0;
+					box-sizing: border-box;
+					border: 1px solid #ccc;
+					border-radius: 4px;
+					font-size: 16px;
+				}
+				button {
+					background-color: #007bff;
+					color: white;
+					border: none;
+					cursor: pointer;
+				}
+				button:hover {
+					opacity: 0.8;
+				}
+				div {
+					display: flex;
+					flex-direction: column;
+					align-items: flex-start;
+				}
+			</style>
+			<div>
+				<label for="filterDate">Publish date:</label>
+				<input type="date" id="filterDate" value="${this.filterDate || ''}" />
+				<label for="filterSender">Sender:</label>
+				<input type="text" id="filterSender" placeholder="Enter Sender">
+				<label for="filterRecipient">Recipient:</label>
+				<input type="text" id="filterRecipient" placeholder="Enter Recipient">
+				<button id="applyFilter">Apply Filters</button>
+			</div>
         `;
 
         // In your render method:

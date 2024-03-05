@@ -18,10 +18,6 @@ class Posts extends HTMLElement {
         this.setAttribute('filterDate', value);
     }
 
-    static get observedAttributes() {
-        return ['filterDate'];
-    }
-
 	get filterSender() {
 		return this.getAttribute('filterSender');
 	}
@@ -43,7 +39,6 @@ class Posts extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-		console.log(`Attribute ${name} changed from ${oldValue} to ${newValue}`);
 		if (['filterDate', 'filterSender', 'filterRecipient'].includes(name) && String(oldValue) !== String(newValue)) {
 			this.render();
 		}
@@ -89,7 +84,6 @@ async loadPosts() {
     connectedCallback() { this.render(); }
 
     async render() {
-		console.log('Rendering posts');
         await this.loadPosts();
         this.shadowRoot.innerHTML = `
             <style>
