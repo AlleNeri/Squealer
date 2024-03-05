@@ -18,7 +18,7 @@ class Post extends HTMLElement {
 	static get observedAttributes() { return ['post']; }
 
 	attributeChangedCallback(name, oldValue, newValue) {
-		if(name === 'post'  && oldValue !== newValue) this.render();
+		if(name === 'post' && oldValue !== newValue) this.render();
 	}
 
 	connectedCallback() { this.render(); }

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Channels</title>
+		<link rel="stylesheet" href="./global.css">
+	</head>
+	<body>
+		<my-header isLogged="true"></my-header>
+		<div class="grid-container header-space">
+			<my-sidebar>
+				<h3>Filtri</h3>
+				<my-channels-filter></my-channels-filter>
+			</my-sidebar>
+			<div>
+				<h1>Channels</h1>
+				<my-channels id="all-channels-section" filterName="" filterType=""></my-channels>
+			</div>
+			<my-edit-channel id="edit-channel-section"></my-edit-channel>
+		</div>
+		<script type="module" src="./components/header.js"></script>
+		<script type="module" src="./components/sidebar.js"></script>
+		<script type="module" src="./components/channels-filter.js"></script>
+		<script type="module" src="./components/channels.js"></script>
+		<script type="module" src="./components/edit-channel.js"></script>
+		<script>
+			document.addEventListener('edit-channel', function(e) {
+				const channel = e.detail;
+				const editChannels = document.querySelector('#edit-channel-section');
+				editChannels.setAttribute('channel', JSON.stringify(channel));
+			});
+			document.addEventListener('new-channel', function(e) {
+				const channel = e.detail;
+				const allChannels = document.querySelector('#all-channels-section');
+				allChannels.updateChannel(channel);
+				const editChannels= document.querySelector('#edit-channel-section');
+				editChannels.removeAttribute('channel');
+			});
+			document.addEventListener('filter-applied', function(e) {
+				const name = e.detail;
+				const allChannels = document.querySelector('#all-channels-section');
+				allChannels.setAttribute('filterName', name);
+				allChannels.render();
+			});
+		</script>
+	</body>
+</html>

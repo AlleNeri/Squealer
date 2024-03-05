@@ -6,7 +6,6 @@ class EditPost extends HTMLElement {
 	titleId = 'title';
 	textId = 'text';
 	submitId = 'submit';
-	deleteImage = false;
 
 	constructor() {
 		super();
@@ -107,6 +106,9 @@ class EditPost extends HTMLElement {
 				div.edit-post-section form.edit-post div.keyword-container label {
 					padding: 0;
 				}
+				div.edit-post-section form.edit-post input[type="submit"] {
+					margin-top: 10px;
+				}
 			</style>
 			<div class="edit-post-section">
 				<h1>Edit post</h1>
@@ -177,7 +179,7 @@ class EditPost extends HTMLElement {
 				content,
 				keywords: this.newPost.keywords
 			};
-			if(this.post.content.img && this.deleteImage) {
+			if(this.post.content.img && this.newPost.deleteImage) {
 				await Backend.delete('media/image', { postId: this.post._id }, Auth.getToken())
 					.catch(e => {
 						console.log(e)
