@@ -20,6 +20,7 @@ class Sidebar extends HTMLElement {
 				}
 				.fixed-pos {
 					position: fixed;
+					width: 13%;
 				}
 			</style>
 			<div class="sidebar">

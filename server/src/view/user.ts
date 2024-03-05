@@ -199,7 +199,7 @@ userRoute.put('/:id/block', Auth.authorize, Auth.isMod, (req: Request, res: Resp
 			if(!user) return res.status(404).json({ msg: 'User not found' });
 			user.block = true;
 			user.save();
-			res.status(200).json({ msg: 'User blocked' });
+			res.status(200).json({ msg: 'User blocked', user });
 		})
 		.catch(err=> res.status(404).json({ msg: 'User not found', err: err }));
 });
@@ -212,7 +212,7 @@ userRoute.put('/:id/unblock', Auth.authorize, Auth.isMod, (req: Request, res: Re
 			if(!user) return res.status(404).json({ msg: 'User not found' });
 			user.block = false;
 			user.save();
-			res.status(200).json({ msg: 'User unblocked' });
+			res.status(200).json({ msg: 'User unblocked', user });
 		})
 		.catch(err=> res.status(404).json({ msg: 'User not found', err: err }));
 });
