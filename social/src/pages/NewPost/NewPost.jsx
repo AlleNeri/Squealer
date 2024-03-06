@@ -865,7 +865,7 @@ function NewPost() {
                     <Select
                       labelId="channel-label"
                       id="channel"
-                      value={channel}
+                      value={channel || ''}
                       onChange={(e) => setChannel(e.target.value)}
                       disabled={postType === 'direct'}
                     >
