@@ -79,6 +79,9 @@ const SmmPage = () => {
           <CardContent>
             <Avatar alt="SMM Profile" src={`${import.meta.env.VITE_DEFAULT_URL}/media/image/${smm.img}`} />
             <Typography variant="subtitle1" component="div">
+              <b>Username:</b> {smm.u_name}
+            </Typography>
+            <Typography variant="subtitle1" component="div">
               <b>Nome:</b> {smm.name.first}
             </Typography>
             <Typography variant="subtitle1" component="div">
