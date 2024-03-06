@@ -68,7 +68,7 @@ export class PostComponent implements OnInit {
 
   protected async loadChannelName() {
     this.backendComunication.get(`channels/${this.post.posted_on}`)
-      .subscribe((channel: Object) => this.channelName = (channel as IChannel).name);
+      .subscribe((channel: Object) => this.channelName = channel ? (channel as IChannel).name : '');
   }
 
   protected underlineMention(text: string): string {
