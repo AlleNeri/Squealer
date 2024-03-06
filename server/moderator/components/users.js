@@ -78,8 +78,6 @@ export class Users extends HTMLElement {
 		await this.loadUsers();
 		this.shadowRoot.innerHTML = `
 			<style>
-				ul { list-style: none; padding: 0; }
-				li { margin-bottom: 10px; }
 			</style>
 			<div>
 				${
@@ -89,6 +87,16 @@ export class Users extends HTMLElement {
 				}
 			</div>
 		`;
+	}
+
+	block(user_id) {
+		this.users.map(user => user._id === user_id ? user.block = true : user);
+		this.render();
+	}
+
+	unblock(user_id) {
+		this.users.map(user => user._id === user_id ? user.block = false : user);
+		this.render();
 	}
 }
 
