@@ -487,13 +487,13 @@ function NewPost() {
           return;
         }
 
-        if (charAvailability?.dayly <= 0) {
+        if (charAvailability?.dayly <= 0 && postType === 'normal') {
           setAlert({ open: true, message: 'You have reached your daily character limit', severity: 'error' });
           return; // return early to prevent further execution
-        } else if (charAvailability?.weekly <= 0) {
+        } else if (charAvailability?.weekly <= 0 && postType === 'normal') {
           setAlert({ open: true, message: 'You have reached your weekly character limit', severity: 'error' });
           return; // return early to prevent further execution
-        } else if (charAvailability?.monthly <= 0) {
+        } else if (charAvailability?.monthly <= 0 && postType === 'normal') {
           setAlert({ open: true, message: 'You have reached your monthly character limit', severity: 'error' });
           return; // return early to prevent further execution
         } else{
